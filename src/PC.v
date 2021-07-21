@@ -34,13 +34,10 @@ module PC
     reg         [NBITS-1  :0]         PC_Reg;
     assign  o_PC =   PC_Reg;
        
-    //always @(negedge i_clk) definir en que flanco aumenta el pc
-    always @(*)
+    always @(negedge i_clk)
     begin
         if(i_reset)
-        begin
             PC_Reg          <=      {NBITS{1'b0}}   ;
-        end
         //else if(wr_pc)
         else 
             PC_Reg          <=      i_NPC           ;
