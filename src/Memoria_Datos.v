@@ -39,17 +39,17 @@ module Memoria_Datos
     
     initial 
     begin
-        memory[0]       <=      16'b00010_000_0000_0001 ; //Load variable 0x01 => ACC=0x01
-        memory[1]       <=      16'b00101_000_0000_0010 ; //Add immediate +0x2 => ACC=0x03
-        memory[2]       <=      16'b00001_000_0000_0111 ; //Store in 0x7 => ACC=0x03
-        memory[3]       <=      16'b00011_000_0000_1000 ; //Load immediate 0x08 => ACC=0x08
-        memory[4]       <=      16'b00110_000_0000_0010 ; //Substract variable in 0x02 => ACC=0x06  
-        memory[5]       <=      16'b00100_000_0000_0011 ; //Add variable in 0x03 => ACC=0x09
-        memory[6]       <=      16'b00001_000_0000_1000 ; //Store in 0x08 => ACC=0x09
-        memory[7]       <=      16'b00010_000_0000_1000 ; //Load variable 0x08 => ACC=0x09
-        memory[8]       <=      16'b00111_000_0000_0001 ; //Substract innmediate 0x01 => ACC=0x08
-        memory[9]       <=      16'b00000_000_0000_0000 ; // Halt   
-        instruction     <=      16'b11111_000_0000_0000 ; //Default     
+        memory[0]       <=      16'b00000_000_0000_0001 ; 
+        memory[1]       <=      16'b00000_000_0000_0010 ; 
+        memory[2]       <=      16'b00000_000_0000_0011 ; 
+        memory[3]       <=      16'b00000_000_0000_0100 ; 
+        memory[4]       <=      16'b00000_000_0000_0101 ;   
+        memory[5]       <=      16'b00000_000_0000_0110 ; 
+        memory[6]       <=      16'b00000_000_0000_0111 ; 
+        memory[7]       <=      16'b00000_000_0000_1000 ; 
+        memory[8]       <=      16'b00000_000_0000_1001 ; 
+        memory[9]       <=      16'b00000_000_0000_1010 ;    
+        instruction     <=      16'b00000_000_0000_1011 ;      
     end
     
     always @(posedge i_clk)

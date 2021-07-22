@@ -31,6 +31,7 @@
 `define LW  6'b100011
 `define SW  6'b101011
 `define BEQ 6'b000100
+`define BAS 6'b000000
 
 module Control_Unidad
     #(
@@ -70,54 +71,65 @@ module Control_Unidad
     always @(*)
     begin : Decoder
         case(i_Instruction)
-        000000:       
-            RegDst_Reg      <=  1'b1    ;
-            Branch_Reg      <=  1'b0    ;
-            MemRead_Reg     <=  1'b0    ; 
-            MemToReg_Reg    <=  1'b0    ;
-            ALUOp_Reg       <=  2'b10   ;
-            MemWrite_Reg    <=  1'b0    ;
-            ALUSrc_Reg      <=  1'b0    ;
-            RegWrite_Reg    <=  1'b1    ;
-        
-        `LW:       
-            RegDst_Reg      <=  1'b0    ;
-            Branch_Reg      <=  1'b0    ;
-            MemRead_Reg     <=  1'b1    ; 
-            MemToReg_Reg    <=  1'b1    ;
-            ALUOp_Reg       <=  2'b00   ;
-            MemWrite_Reg    <=  1'b0    ;
-            ALUSrc_Reg      <=  1'b1    ;
-            RegWrite_Reg    <=  1'b1    ;
-
-        `SW:       
-            RegDst_Reg      <=  1'b0    ;
-            Branch_Reg      <=  1'b0    ;
-            MemRead_Reg     <=  1'b0    ; 
-            MemToReg_Reg    <=  1'b0    ;
-            ALUOp_Reg       <=  2'b00   ;
-            MemWrite_Reg    <=  1'b1    ;
-            ALUSrc_Reg      <=  1'b1    ;
-            RegWrite_Reg    <=  1'b0    ;
-
-        `BEQ:       
-            RegDst_Reg      <=  1'b0    ;
-            Branch_Reg      <=  1'b1    ;
-            MemRead_Reg     <=  1'b0    ; 
-            MemToReg_Reg    <=  1'b0    ;
-            ALUOp_Reg       <=  2'b01   ;
-            MemWrite_Reg    <=  1'b0    ;
-            ALUSrc_Reg      <=  1'b1    ;
-            RegWrite_Reg    <=  1'b0    ;
-
-        default:       
-            RegDst_Reg      <=  1'b0    ;
-            Branch_Reg      <=  1'b0    ;
-            MemRead_Reg     <=  1'b0    ; 
-            MemToReg_Reg    <=  1'b0    ;
-            ALUOp_Reg       <=  2'b00   ;
-            MemWrite_Reg    <=  1'b0    ;
-            ALUSrc_Reg      <=  1'b0    ;
-            RegWrite_Reg    <=  1'b0    ;         
+            `BAS:
+            begin
+                RegDst_Reg      <=  1'b1    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b10   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b0    ;
+                RegWrite_Reg    <=  1'b1    ;
+            end
+            
+            `LW:
+            begin       
+                RegDst_Reg      <=  1'b0    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b1    ; 
+                MemToReg_Reg    <=  1'b1    ;
+                ALUOp_Reg       <=  2'b00   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b1    ;
+                RegWrite_Reg    <=  1'b1    ;
+            end
+    
+            `SW:
+            begin       
+                RegDst_Reg      <=  1'b0    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b00   ;
+                MemWrite_Reg    <=  1'b1    ;
+                ALUSrc_Reg      <=  1'b1    ;
+                RegWrite_Reg    <=  1'b0    ;
+            end
+    
+            `BEQ:
+            begin       
+                RegDst_Reg      <=  1'b0    ;
+                Branch_Reg      <=  1'b1    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b01   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b1    ;
+                RegWrite_Reg    <=  1'b0    ;
+            end
+    
+            default:
+            begin       
+                RegDst_Reg      <=  1'b0    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b00   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b0    ;
+                RegWrite_Reg    <=  1'b0    ;
+            end  
+        endcase       
     end
 endmodule
