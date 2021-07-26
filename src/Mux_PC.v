@@ -1,24 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 16.07.2021 14:50:43
-// Design Name: 
-// Module Name: Mux_PC
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module Mux_PC
     #(
@@ -27,6 +7,7 @@ module Mux_PC
     (
         input   wire                        i_Branch        ,
         input   wire                        i_Cero          ,
+        input   wire                        i_Jump          ,
         input   wire    [NBITS-1      :0]   i_Sumador       ,
         input   wire    [NBITS-1      :0]   i_SumadorPC4    ,
         output  wire    [NBITS-1      :0]   o_PC                 

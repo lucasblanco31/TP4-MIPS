@@ -21,12 +21,12 @@
 
 module Registros
     #(
-        parameter   REGISTROS   =   5   ,
+        parameter   REGS        =   5   ,
         parameter   NBITS       =   32  ,
         parameter   RS          =   5   ,
         parameter   RT          =   5   ,
         parameter   RD          =   5   ,
-        parameter CELDAS        =   32  
+        parameter   CELDAS      =   32  
     )
     (
         input   wire                    i_clk           ,

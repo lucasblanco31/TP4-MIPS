@@ -36,7 +36,7 @@ module ALU
     (
         input   wire    [NBITS-1:0]     i_Reg       ,
         input   wire    [NBITS-1:0]     i_Mux       ,
-        input   wire                    i_Op        ,
+        input   wire    [BOP-1  :0]     i_Op        ,
         output  wire                    o_Cero      ,
         output  wire    [NBITS-1:0]     o_Result    
     );
