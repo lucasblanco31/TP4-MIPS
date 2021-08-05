@@ -49,7 +49,9 @@ module Registros
     //TODO: PONER EN CERO TODA LA MEMORIA
     initial 
     begin
-        memory[0]       <=      32'b0; 
+        memory[0]       <=      32'b1;
+        memory[1]       <=      32'b10;
+        memory[2]       <=      32'b0;
     end
     
     always @(*)
