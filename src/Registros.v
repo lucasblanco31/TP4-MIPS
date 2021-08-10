@@ -52,14 +52,15 @@ module Registros
         memory[0]       <=      32'b1;
         memory[1]       <=      32'b10;
         memory[2]       <=      32'b0;
+        memory[3]       <=      32'b0;
     end
     
-    always @(*)
+    always @(posedge i_clk)
     begin
             Reg_RS      <=  memory[i_RS]    ;
             Reg_RT      <=  memory[i_RT]    ;
     end
-    always @(*)
+    always @(negedge i_clk)
     begin
         if(i_RegWrite)
         begin

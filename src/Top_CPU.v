@@ -17,7 +17,8 @@ module Top_CPU
         parameter ALUOP       = 4,
         parameter BOP         = 4,
 
-        parameter CTRLNBITS   = 6
+        parameter CTRLNBITS   = 6,
+        parameter REGS        = 5
     )
     (
         input   wire                            i_clk    ,
@@ -94,6 +95,8 @@ module Top_CPU
     assign InstrAluCtrl = Instr16[ALUNBITS-1   :                  0];
 
     assign InstrContol  = Instr[NBITS-1        :    NBITS-CTRLNBITS];
+    
+    assign o_clk_wzd    = o_clk_out1                                ;
 
        
     PC
@@ -141,7 +144,8 @@ module Top_CPU
         .i_Cero             (Cero           ),
         .i_Jump             (Jump           ),
         .i_Sumador          (SumPcBranch    ),
-        .i_SumadorPC4       (SumPc4         )
+        .i_SumadorPC4       (SumPc4         ),
+        .o_PC               (PcIn           )
     );
 
     
@@ -169,7 +173,7 @@ module Top_CPU
 
     Mux_Registro
     #(
-        .NBITS                (NBITS         )
+        .NBITS                (REGS         )
     )
     u_Mux_Registro
     (
@@ -273,7 +277,7 @@ module Top_CPU
 
     Control_Unidad
     #(
-        .NBITS                      (NBITS      )
+        .NBITS                      (CTRLNBITS   )
     )
     u_Control_Unidad
     (
@@ -289,7 +293,7 @@ module Top_CPU
 
     );
 
-     clk_wiz_0 my_clock(
+    clk_wiz_0 my_clock(
         .reset              (i_rst_clk    ),        
         .clk_in1            (i_clk        ),
         .locked             (o_locked     ),

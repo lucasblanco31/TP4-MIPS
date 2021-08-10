@@ -6,7 +6,7 @@ module tb_full();
     localparam NBITS      =   32;
     localparam INBITS     =   16;
     localparam CELDAS_REG =   32;
-    localparam CELDAS_M   =   10;
+    localparam CELDAS_M   =   70;
     //UART PARAMETERS
     localparam  RS        =    5;
     localparam  RT        =    5;
@@ -18,15 +18,16 @@ module tb_full();
     localparam  BOP       =    4; //50Mhz -> 115000baudrate 
 
     localparam  CTRLNBITS =    6;
+    localparam  REGS      =    5;
     
    
-    reg         rst_clk; //reset del clock
+    reg         rst_clk; //reset del clock wizard
     reg         rst;    //reset del sistema que tiene que ser despues de que el clk_wzd se estabiliza
     reg         clk;
     wire        locked;
     
     wire                             o_clk_wzd;
-    wire                             i_clk_wzd;
+   //wire                             i_clk_wzd;
         
     initial begin
       #10
@@ -68,21 +69,22 @@ module tb_full();
         .ALUCNBITS          (ALUCNBITS      ),
         .ALUOP              (ALUOP          ),
         .BOP                (BOP            ),
-        .CTRLNBITS          (CTRLNBITS      )
+        .CTRLNBITS          (CTRLNBITS      ),
+        .REGS               (REGS           )
     )
     u_top
     (
         .i_clk              (clk            ),
         .i_reset            (rst            ),
         .i_rst_clk          (rst_clk        ),
-        .o_tx               (tx_out         ),
+        //.o_tx               (tx_out         ),
         .o_locked           (locked         ),
         .o_clk_wzd          (o_clk_wzd      )         
     );
    
-   assign i_stick   =     o_stick;
-   assign rx_in     =     tx_out;
-   assign i_clk_wzd =     o_clk_wzd;
+  // assign i_stick   =     o_stick;
+   //assign rx_in     =     tx_out;
+   //assign i_clk_wzd =     o_clk_wzd;
     
 endmodule
  
