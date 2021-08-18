@@ -26,11 +26,13 @@
 //AND:  000000  |   RS  |   RT  |   RD  |   00000   |   100100
 //OR:   000000  |   RS  |   RT  |   RD  |   00000   |   100101
 //SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
-//BEQ:  000100  |   RS  |   RT  |   OFFSET   
+//BEQ:  000100  |   RS  |   RT  |   OFFSET
+//J:    000010  |   INSTR_INDEX   
 
 `define LW  6'b100011
 `define SW  6'b101011
 `define BEQ 6'b000100
+`define J   6'b000010
 `define BAS 6'b000000
 
 module Control_Unidad
@@ -41,6 +43,7 @@ module Control_Unidad
         input   wire    [NBITS-1        :0]     i_Instruction   ,
         
         output  wire                            o_RegDst        ,
+        output  wire                            o_Jump          ,
         output  wire                            o_Branch        ,
         output  wire                            o_MemRead       ,
         output  wire                            o_MemToReg      ,
@@ -51,6 +54,7 @@ module Control_Unidad
     );
     
     reg         RegDst_Reg      ;
+    reg         Jump_Reg        ;
     reg         Branch_Reg      ;
     reg         MemRead_Reg     ;
     reg         MemToReg_Reg    ;
@@ -60,6 +64,7 @@ module Control_Unidad
     reg         RegWrite_Reg    ;
     
     assign  o_RegDst    =   RegDst_Reg      ;
+    assign  o_Jump      =   Jump_Reg        ;
     assign  o_Branch    =   Branch_Reg      ;
     assign  o_MemRead   =   MemRead_Reg     ;
     assign  o_MemToReg  =   MemToReg_Reg    ;
@@ -74,6 +79,7 @@ module Control_Unidad
             `BAS:
             begin
                 RegDst_Reg      <=  1'b1    ;
+                Jump_Reg        <=  1'b0    ;
                 Branch_Reg      <=  1'b0    ;
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
@@ -86,6 +92,7 @@ module Control_Unidad
             `LW:
             begin       
                 RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b0    ;
                 Branch_Reg      <=  1'b0    ;
                 MemRead_Reg     <=  1'b1    ; 
                 MemToReg_Reg    <=  1'b1    ;
@@ -98,6 +105,7 @@ module Control_Unidad
             `SW:
             begin       
                 RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b0    ;
                 Branch_Reg      <=  1'b0    ;
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
@@ -110,6 +118,7 @@ module Control_Unidad
             `BEQ:
             begin       
                 RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b0    ;
                 Branch_Reg      <=  1'b1    ;
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
@@ -118,10 +127,24 @@ module Control_Unidad
                 ALUSrc_Reg      <=  1'b0    ;
                 RegWrite_Reg    <=  1'b0    ;
             end
+
+            `J:
+            begin       
+                RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b1    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b00   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b0    ;
+                RegWrite_Reg    <=  1'b0    ;
+            end
     
             default:
             begin       
                 RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b0    ;
                 Branch_Reg      <=  1'b0    ;
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
