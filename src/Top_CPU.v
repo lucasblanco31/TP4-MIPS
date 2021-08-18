@@ -3,6 +3,7 @@
 module Top_CPU
     #(
         parameter NBITS       = 32,
+        parameter NBITSJUMP   = 26,
         parameter INBITS      = 16,
  
         parameter CELDAS_REG  = 32,
@@ -38,7 +39,7 @@ module Top_CPU
     wire     [NBITS-1     :0]        Instr       ;
 
     wire     [NBITS-1     :0]        SumPcBranch ;
-
+    wire     [NBITS-1     :0]        MuxPcBranch ;
 
     //Instruccion
     wire     [INBITS-1    :0]        Instr16     ;
@@ -60,6 +61,7 @@ module Top_CPU
     wire                             RegWrite    ;
     wire                             MemToReg    ;
     wire                             Branch      ;
+    wire                             Jump        ;
     wire                             RegDst      ;
     wire                             ALUSrc      ;
     wire                             MemRead     ;
@@ -96,9 +98,14 @@ module Top_CPU
 
     assign InstrContol  = Instr[NBITS-1        :    NBITS-CTRLNBITS];
     
+    assign InstrJump    = Instr[NBITSJUMP-1    :                  0];
+
     assign o_clk_wzd    = o_clk_out1                                ;
 
-       
+
+    //////////////////////////////////////////////
+    /// PC
+    /////////////////////////////////////////////       
     PC
     #(
         .NBITS              (NBITS          )
@@ -111,6 +118,9 @@ module Top_CPU
         .o_PC               (PcAddr         )
     );
 
+    //////////////////////////////////////////////
+    /// SUMADOR PC
+    /////////////////////////////////////////////
     Sumador_PC
     #(
         .NBITS              (NBITS          )
@@ -121,6 +131,9 @@ module Top_CPU
         .o_Mux              (SumPc4         )
     );
 
+    //////////////////////////////////////////////
+    /// SUMADOR BRANCH
+    /////////////////////////////////////////////
     Sumador_Branch
     #
     (
@@ -133,7 +146,10 @@ module Top_CPU
         .o_Mux              (SumPcBranch    )
     );
 
- 
+    
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR BRANCH
+    /////////////////////////////////////////////
     Mux_PC
     #(
         .NBITS              (NBITS           )           
@@ -142,13 +158,31 @@ module Top_CPU
     (
         .i_Branch           (Branch         ),
         .i_Cero             (Cero           ),
-        .i_Jump             (Jump           ),
         .i_Sumador          (SumPcBranch    ),
         .i_SumadorPC4       (SumPc4         ),
+        .o_MuxPC            (MuxPcBranch    )
+    );
+
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR JUMP
+    /////////////////////////////////////////////
+    Mux_PC_Jump
+    #(
+        .NBITS              (NBITS           ),
+        .NBITSJUMP          (NBITSJUMP       )           
+    )
+    u_Mux_PC_Jump
+    (
+        .i_Jump             (Jump           ),
+        .i_IJump            (InstrJump      ),
+        .i_PC4              (SumPc4         ),
+        .i_SumadorBranch    (MuxPcBranch    ),
         .o_PC               (PcIn           )
     );
 
-    
+    //////////////////////////////////////////////
+    /// REGISTROS
+    /////////////////////////////////////////////
     Registros
     #(
         .REGS               (REGS           ),
@@ -171,6 +205,9 @@ module Top_CPU
 
     );
 
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR DE REGISTRO
+    /////////////////////////////////////////////
     Mux_Registro
     #(
         .NBITS                (REGS         )
@@ -183,6 +220,9 @@ module Top_CPU
         .o_Registro            (Reg_mux_rd   )
     );
 
+    //////////////////////////////////////////////
+    /// EXTENSOR DE SIGNO
+    /////////////////////////////////////////////
     Extensor_Signo
     #(
         .i_NBITS                 (INBITS    ),
@@ -196,7 +236,9 @@ module Top_CPU
     );
 
    
-
+    //////////////////////////////////////////////
+    /// MEMORIA DE INSTRUCCIONES
+    /////////////////////////////////////////////
     Memoria_Instrucciones
     #(
         .NBITS              (NBITS          ),
@@ -209,6 +251,9 @@ module Top_CPU
         .o_Instruction      (Instr          )
     );
 
+    //////////////////////////////////////////////
+    /// MEMORIA DE DATOS
+    /////////////////////////////////////////////
     Memoria_Datos
     #(
         .NBITS                      (NBITS      ),
@@ -224,6 +269,9 @@ module Top_CPU
         .o_DatoLeido                (DatoMemoria)
     );
 
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR MEMORIA
+    /////////////////////////////////////////////
     Mux_Memoria
     #(
         .NBITS                      (NBITS      )
@@ -236,7 +284,10 @@ module Top_CPU
         .o_Registro                 (DatoEscritura)
     );
 
-     Mux_ALU
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR ALU
+    /////////////////////////////////////////////
+    Mux_ALU
     #(
         .NBITS                   (NBITS     )
     )
@@ -248,6 +299,9 @@ module Top_CPU
         .o_ACC                    (ACC       )
     );
 
+    //////////////////////////////////////////////
+    /// CONTROL ALU
+    /////////////////////////////////////////////
     Control_ALU
     #(
         .NBITS                     (ALUNBITS  ),
@@ -261,6 +315,9 @@ module Top_CPU
         .o_ALUOp                   (ALUCtrl      )
     );
 
+    //////////////////////////////////////////////
+    /// ALU
+    /////////////////////////////////////////////
     ALU
     #(
         .NBITS                     (NBITS        ),
@@ -275,6 +332,9 @@ module Top_CPU
         .o_Result                  (ALUResult    )
     );
 
+    //////////////////////////////////////////////
+    /// UNIDAD DE CONTROL
+    /////////////////////////////////////////////
     Control_Unidad
     #(
         .NBITS                      (CTRLNBITS   )
@@ -283,6 +343,7 @@ module Top_CPU
     (
         .i_Instruction              (InstrContol),
         .o_RegDst                   (RegDst     ),
+        .o_Jump                     (Jump       ),
         .o_Branch                   (Branch     ),
         .o_MemRead                  (MemRead    ),
         .o_MemToReg                 (MemToReg   ),
@@ -293,15 +354,14 @@ module Top_CPU
 
     );
 
+    //////////////////////////////////////////////
+    /// CLOCK WIZARD
+    /////////////////////////////////////////////
     clk_wiz_0 my_clock(
         .reset              (i_rst_clk    ),        
         .clk_in1            (i_clk        ),
         .locked             (o_locked     ),
         .clk_out1           (o_clk_out1   )
     );
-
-
-
-    
     
 endmodule

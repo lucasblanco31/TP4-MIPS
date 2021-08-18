@@ -7,14 +7,13 @@ module Mux_PC
     (
         input   wire                        i_Branch        ,
         input   wire                        i_Cero          ,
-        input   wire                        i_Jump          ,
         input   wire    [NBITS-1      :0]   i_Sumador       ,
         input   wire    [NBITS-1      :0]   i_SumadorPC4    ,
-        output  wire    [NBITS-1      :0]   o_PC                 
+        output  wire    [NBITS-1      :0]   o_MuxPC                 
     );
     
     reg [NBITS-1  :0]   to_PC   ;    
-    assign  o_PC   =    to_PC   ;
+    assign  o_MuxPC   =    to_PC   ;
     
     always @(*)
     begin
