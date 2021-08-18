@@ -84,6 +84,9 @@ module Top_CPU
 
     //Clock wizard
     wire                            o_clk_out1 ;  
+    
+    //Mux Jump
+    wire     [NBITSJUMP-1 :  0]       InstrJump;    
 
 
     assign o_PcSum      = SumPc4               ;

@@ -4,6 +4,7 @@
 module tb_full();
     //BIP PARAMETERS
     localparam NBITS      =   32;
+    localparam NBITSJUMP  =   26;
     localparam INBITS     =   16;
     localparam CELDAS_REG =   32;
     localparam CELDAS_M   =   70;
@@ -59,6 +60,7 @@ module tb_full();
     Top_CPU
     #(
         .NBITS              (NBITS          ),
+        .NBITSJUMP          (NBITSJUMP      ),
         .INBITS             (INBITS         ),
         .CELDAS_REG         (CELDAS_REG     ),
         .CELDAS_M           (CELDAS_M       ),
