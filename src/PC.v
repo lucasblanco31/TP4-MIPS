@@ -8,7 +8,7 @@ module PC
     (
         input   wire                            i_clk           ,
         input   wire                            i_reset         ,
-        input   wire                            i_NPC           ,
+        input   wire    [NBITS-1    :0]         i_NPC           ,
         output  wire    [NBITS-1    :0]         o_PC     
     );
     

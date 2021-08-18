@@ -8,6 +8,9 @@
 `define	OR	    6'b100101	//Or
 `define	SLT	    6'b101010	//Set on less than
 
+`define	CERO    2'b00
+`define	CEROUNO 2'b01
+`define	UNOCERO 2'b10
 
 module Control_ALU
     #(
@@ -27,18 +30,18 @@ module Control_ALU
     always @(*)
     begin : ALUOp
             case(i_ALUOp)
-                00:       
+                `CERO :       
                                     ALUOp_Reg   <=   4'b0010    ;
-                01:        
+                `CEROUNO :        
                                     ALUOp_Reg   <=   4'b0110    ;
-                10:
+                `UNOCERO :
                     case(i_Funct)
                         `ADD :     ALUOp_Reg   <=   4'b0010    ;
                         `SUB :     ALUOp_Reg   <=   4'b0110    ;
                         `AND :     ALUOp_Reg   <=   4'b0000    ;
                         `OR  :     ALUOp_Reg   <=   4'b0001    ;
                         `SLT :     ALUOp_Reg   <=   4'b0111    ;
-                        default:    ALUOp_Reg   <=   -1        ;
+                        default:    ALUOp_Reg   <=   -2        ;
                     endcase       
                 default:            ALUOp_Reg   <=   -1        ;
             endcase

@@ -115,7 +115,7 @@ module Control_Unidad
                 MemToReg_Reg    <=  1'b0    ;
                 ALUOp_Reg       <=  2'b01   ;
                 MemWrite_Reg    <=  1'b0    ;
-                ALUSrc_Reg      <=  1'b1    ;
+                ALUSrc_Reg      <=  1'b0    ;
                 RegWrite_Reg    <=  1'b0    ;
             end
     
@@ -125,7 +125,7 @@ module Control_Unidad
                 Branch_Reg      <=  1'b0    ;
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
-                ALUOp_Reg       <=  2'b00   ;
+                ALUOp_Reg       <=  2'b11   ;
                 MemWrite_Reg    <=  1'b0    ;
                 ALUSrc_Reg      <=  1'b0    ;
                 RegWrite_Reg    <=  1'b0    ;
