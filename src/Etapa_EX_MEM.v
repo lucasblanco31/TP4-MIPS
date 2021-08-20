@@ -4,7 +4,7 @@ module Etapa_EX_MEM
     #(
         parameter NBITS     =   32    
     )
-    (   
+    (   //GeneralInputs
         input   wire                        i_clk               ,
         input   wire    [NBITS-1    :0]     i_PCBranch          ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
@@ -13,12 +13,31 @@ module Etapa_EX_MEM
         input   wire    [NBITS-1    :0]     i_Registro2         ,
         input   wire    [NBITS-1    :0]     i_RegistroDestino   ,
         
+        ///IControlM
+        input   wire                        i_Branch            ,
+        input   wire                        i_MemWrite          ,
+        input   wire                        i_MemRead           ,    
+        
+        ///IControlWB
+        input   wire                        i_MemToReg          ,
+        input   wire                        i_RegWrite          ,
+        
+        //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PCBranch          ,
         output  wire    [NBITS-1    :0]     o_Instruction       ,
         output  wire                        o_Cero              ,
         output  wire    [NBITS-1    :0]     o_ALU               ,
         output  wire    [NBITS-1    :0]     o_Registro2         ,
-        output  wire    [NBITS-1    :0]     o_RegistroDestino            
+        output  wire    [NBITS-1    :0]     o_RegistroDestino   ,
+        
+        ///OControlM
+        output   wire                        o_Branch           ,
+        output   wire                        o_MemWrite         ,
+        output   wire                        o_MemRead          ,    
+        
+        ///OControlWB
+        output   wire                        o_MemToReg         ,
+        output   wire                        o_RegWrite               
     );
     
     reg     [NBITS-1    :0] PCBranch_reg        ;
@@ -28,12 +47,30 @@ module Etapa_EX_MEM
     reg     [NBITS-1    :0] Registro2_reg       ;
     reg     [NBITS-1    :0] RegistroDestino_reg ;
     
+    //RegM
+    reg                     Branch_reg          ;
+    reg                     MemWrite_reg        ;
+    reg                     MemRead_reg         ;
+    
+    //RegWB
+    reg                     MemToReg_reg        ;
+    reg                     RegWrite_reg        ;
+    
     assign o_PCBranch           =   PCBranch_reg        ;
     assign o_Instruction        =   Instruction_reg     ;
     assign o_Cero               =   Cero_reg            ;
     assign o_ALU                =   ALU_reg             ;
     assign o_Registro2          =   Registro2_reg       ;
     assign o_RegistroDestino    =   RegistroDestino_reg ;
+    
+    //AssignM
+    assign o_Branch         =   Branch_reg      ;
+    assign o_MemWrite       =   MemWrite_reg    ;
+    assign o_MemRead        =   MemRead_reg     ;
+    
+    //AssignWB
+    assign o_MemToReg       =   MemToReg_reg    ;
+    assign o_RegWrite       =   RegWrite_reg    ;
     
     always @(posedge i_clk)
         begin 
@@ -43,5 +80,14 @@ module Etapa_EX_MEM
             ALU_reg             <=  i_ALU               ;       
             Registro2_reg       <=  i_Registro2         ;
             RegistroDestino_reg <=  i_RegistroDestino   ;
+            
+            //M
+            Branch_reg      <=  i_Branch                ;
+            MemWrite_reg    <=  i_MemWrite              ;
+            MemRead_reg     <=  i_MemRead               ;
+    
+            //WB
+            MemToReg_reg    <=  i_MemToReg              ;
+            RegWrite_reg    <=  i_RegWrite              ;
         end
 endmodule
