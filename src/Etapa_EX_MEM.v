@@ -6,6 +6,7 @@ module Etapa_EX_MEM
     )
     (   //GeneralInputs
         input   wire                        i_clk               ,
+        input   wire                        i_PC4               ,
         input   wire    [NBITS-1    :0]     i_PCBranch          ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire                        i_Cero              ,
@@ -23,6 +24,7 @@ module Etapa_EX_MEM
         input   wire                        i_RegWrite          ,
         
         //GeneralOutputs
+        output  wire    [NBITS-1    :0]     o_PC4               ,
         output  wire    [NBITS-1    :0]     o_PCBranch          ,
         output  wire    [NBITS-1    :0]     o_Instruction       ,
         output  wire                        o_Cero              ,
@@ -40,6 +42,7 @@ module Etapa_EX_MEM
         output   wire                        o_RegWrite               
     );
     
+    reg     [NBITS-1    :0] PC4_reg             ;
     reg     [NBITS-1    :0] PCBranch_reg        ;
     reg     [NBITS-1    :0] Instruction_reg     ;
     reg                     Cero_reg            ;
@@ -56,6 +59,7 @@ module Etapa_EX_MEM
     reg                     MemToReg_reg        ;
     reg                     RegWrite_reg        ;
     
+    assign o_PC4                =   PC4_reg             ;
     assign o_PCBranch           =   PCBranch_reg        ;
     assign o_Instruction        =   Instruction_reg     ;
     assign o_Cero               =   Cero_reg            ;
@@ -74,6 +78,7 @@ module Etapa_EX_MEM
     
     always @(posedge i_clk)
         begin 
+            PC4_reg             <=  i_PC4               ;
             PCBranch_reg        <=  i_PCBranch          ;
             Instruction_reg     <=  i_Instruction       ;
             Cero_reg            <=  i_Cero              ;

@@ -28,17 +28,17 @@ module Mux_ALU
         input   wire                          i_ALUSrc        ,
         input   wire     [NBITS-1      :0]    i_Registro      ,
         input   wire     [NBITS-1      :0]    i_ExtensionData ,
-        output  wire     [NBITS-1      :0]    o_ACC                 
+        output  wire     [NBITS-1      :0]    o_toALU                 
     );
     
-    reg [NBITS-1  :0]   to_ACC;
-    assign  o_ACC   =   to_ACC;
+    reg [NBITS-1  :0]   to_ALU;
+    assign  o_toALU   =   to_ALU;
     
     always @(*)
     begin
         case(i_ALUSrc)
-            1'b0:   to_ACC  <=  i_Registro      ;   
-            1'b1:   to_ACC  <=  i_ExtensionData ;
+            1'b0:   to_ALU  <=  i_Registro      ;   
+            1'b1:   to_ALU  <=  i_ExtensionData ;
         endcase
     end   
 endmodule
