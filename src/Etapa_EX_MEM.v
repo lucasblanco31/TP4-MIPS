@@ -2,17 +2,18 @@
 
 module Etapa_EX_MEM
     #(
-        parameter NBITS     =   32    
+        parameter NBITS     =   32  ,
+        parameter REGS      =   5       
     )
     (   //GeneralInputs
         input   wire                        i_clk               ,
-        input   wire                        i_PC4               ,
+        input   wire    [NBITS-1    :0]     i_PC4               ,
         input   wire    [NBITS-1    :0]     i_PCBranch          ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire                        i_Cero              ,
         input   wire    [NBITS-1    :0]     i_ALU               ,
         input   wire    [NBITS-1    :0]     i_Registro2         ,
-        input   wire    [NBITS-1    :0]     i_RegistroDestino   ,
+        input   wire    [REGS-1     :0]     i_RegistroDestino   ,
         
         ///IControlM
         input   wire                        i_Branch            ,
@@ -30,7 +31,7 @@ module Etapa_EX_MEM
         output  wire                        o_Cero              ,
         output  wire    [NBITS-1    :0]     o_ALU               ,
         output  wire    [NBITS-1    :0]     o_Registro2         ,
-        output  wire    [NBITS-1    :0]     o_RegistroDestino   ,
+        output  wire    [REGS-1     :0]     o_RegistroDestino   ,
         
         ///OControlM
         output   wire                        o_Branch           ,
@@ -48,7 +49,7 @@ module Etapa_EX_MEM
     reg                     Cero_reg            ;
     reg     [NBITS-1    :0] ALU_reg             ;
     reg     [NBITS-1    :0] Registro2_reg       ;
-    reg     [NBITS-1    :0] RegistroDestino_reg ;
+    reg     [REGS-1     :0] RegistroDestino_reg ;
     
     //RegM
     reg                     Branch_reg          ;

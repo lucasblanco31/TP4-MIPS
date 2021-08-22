@@ -36,8 +36,8 @@ module Etapa_ID_EX
         output  wire    [NBITS-1    :0]     o_Registro1     ,
         output  wire    [NBITS-1    :0]     o_Registro2     ,
         output  wire    [NBITS-1    :0]     o_Extension     ,
-        output  wire    [NBITS-1    :0]     o_Rt            ,
-        output  wire    [NBITS-1    :0]     o_Rd            ,
+        output  wire    [RNBITS-1   :0]     o_Rt            ,
+        output  wire    [RNBITS-1   :0]     o_Rd            ,
         
         ///OControlEX
         output   wire                        o_ALUSrc        ,

@@ -78,8 +78,8 @@ module Top_CPU
     wire    [NBITS-1        :0]     ID_EX_Registro1 ;
     wire    [NBITS-1        :0]     ID_EX_Registro2 ;
     wire    [NBITS-1        :0]     ID_EX_Extension ;
-    wire    [NBITS-1        :0]     ID_EX_Rt        ;
-    wire    [NBITS-1        :0]     ID_EX_Rd        ;
+    wire    [REGS-1         :0]     ID_EX_Rt        ;
+    wire    [REGS-1         :0]     ID_EX_Rd        ;
     wire                            ID_EX_ALUSrc    ;     
     wire    [1              :0]     ID_EX_ALUOp     ;
     wire                            ID_EX_RegDst    ;
@@ -109,7 +109,7 @@ module Top_CPU
     wire                            EX_MEM_Cero             ;
     wire    [NBITS-1        :0]     EX_MEM_ALU              ;
     wire    [NBITS-1        :0]     EX_MEM_Registro2        ;
-    wire    [NBITS-1        :0]     EX_MEM_RegistroDestino  ;
+    wire    [REGS-1         :0]     EX_MEM_RegistroDestino  ;
     wire                            EX_MEM_Branch           ;
     wire                            EX_MEM_MemWrite         ;
     wire                            EX_MEM_MemRead          ;
@@ -126,7 +126,7 @@ module Top_CPU
     wire    [NBITS-1        :0]     MEM_WB_Instruction      ;
     wire    [NBITS-1        :0]     MEM_WB_ALU              ;
     wire    [NBITS-1        :0]     MEM_WB_DatoMemoria      ;
-    wire    [NBITS-1        :0]     MEM_WB_RegistroDestino  ;
+    wire    [REGS-1         :0]     MEM_WB_RegistroDestino  ;
     wire                            MEM_WB_MemToReg         ;
     wire                            MEM_WB_RegWrite         ;
     //-------------------------------------------------------
@@ -148,7 +148,7 @@ module Top_CPU
     //-----------------------------------------------------------------------
     //EX
     //ALUControl
-    assign InstrAluControl = ID_EX_Extension[ALUNBITS-1 :0]                 ;
+    assign InstrAluControl = ID_EX_Instr[ALUNBITS-1 :0]                 ;
     //-----------------------------------------------------------------------
     
     //VER COMO IMPLEMENTAR JUMP
@@ -278,11 +278,12 @@ module Top_CPU
     //////////////////////////////////////////////
     /// ID/EX
     /////////////////////////////////////////////
-        Etapa_ID_EX
+    Etapa_ID_EX
     #(
         .NBITS                      (NBITS          ),
         .RNBITS                     (REGS           )   
     )
+    u_Etapa_ID_EX
     (   
         //General
         .i_clk                      (o_clk_out1     ),
@@ -380,7 +381,7 @@ module Top_CPU
     /////////////////////////////////////////////
     Control_ALU
     #(
-        .NBITS                     (ALUNBITS  ),
+        .ANBITS                    (ALUNBITS  ),
         .NBITSCONTROL              (ALUCNBITS ),
         .ALUOP                     (ALUOP     )
     )
@@ -409,7 +410,8 @@ module Top_CPU
     /////////////////////////////////////////////
     Etapa_EX_MEM
     #(
-        .NBITS  (NBITS)
+        .NBITS  (NBITS),
+        .REGS   (REGS)
     )
     u_Etapa_EX_MEM
     (
@@ -428,7 +430,7 @@ module Top_CPU
         .i_MemWrite                 (ID_EX_MemWrite         ),
         .i_MemRead                  (ID_EX_MemRead          ),
         //ControlWB
-        .i_MemtoReg                 (ID_EX_MemToReg         ),
+        .i_MemToReg                 (ID_EX_MemToReg         ),
         .i_RegWrite                 (ID_EX_RegWrite         ),
         
         .o_PC4                      (EX_MEM_PC4             ),

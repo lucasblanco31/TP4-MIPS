@@ -8,11 +8,11 @@ module Etapa_MEM_WB
     (   
         //GeneralInputs
         input   wire                        i_clk               ,
-        input   wire                        i_PC4               ,
+        input   wire    [NBITS-1    :0]     i_PC4               ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire    [NBITS-1    :0]     i_ALU               ,
         input   wire    [NBITS-1    :0]     i_DatoMemoria       ,
-        input   wire    [NBITS-1    :0]     i_RegistroDestino   ,
+        input   wire    [RNBITS-1   :0]     i_RegistroDestino   ,
         
         ///IControlWB
         input   wire                        i_MemToReg          ,
@@ -23,7 +23,7 @@ module Etapa_MEM_WB
         output  wire    [NBITS-1    :0]     o_Instruction       ,
         output  wire    [NBITS-1    :0]     o_ALU               ,
         output  wire    [NBITS-1    :0]     o_DatoMemoria       ,
-        output  wire    [NBITS-1    :0]     o_RegistroDestino   ,
+        output  wire    [RNBITS-1   :0]     o_RegistroDestino   ,
         
         ///OControlWB
         output   wire                        o_MemToReg         ,
@@ -34,7 +34,7 @@ module Etapa_MEM_WB
     reg     [NBITS-1    :0] Instruction_reg     ;
     reg     [NBITS-1    :0] ALU_reg             ;
     reg     [NBITS-1    :0] DatoMemoria_reg     ;
-    reg     [NBITS-1    :0] RegistroDestino_reg ;
+    reg     [RNBITS-1   :0] RegistroDestino_reg ;
     
     //RegWB
     reg                     MemToReg_reg        ;
