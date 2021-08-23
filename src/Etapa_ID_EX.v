@@ -99,7 +99,7 @@ module Etapa_ID_EX
     assign o_MemToReg       =   MemToReg_reg    ;
     assign o_RegWrite       =   RegWrite_reg    ;
     
-    always @(posedge i_clk)
+    always @(negedge i_clk)
         begin 
             PC4_reg         <=  i_PC4           ;
             Instruction_reg <=  i_Instruction   ;

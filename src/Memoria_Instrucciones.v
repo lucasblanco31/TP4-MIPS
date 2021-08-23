@@ -60,7 +60,7 @@ module Memoria_Instrucciones
         instruction     <=      32'b000000_00000_00000_00000_00000_000000   ; //Default     
     end
     
-    always @(negedge i_clk)
+    always @(posedge i_clk)
     begin
             instruction <=      memory[i_PC];
     end
