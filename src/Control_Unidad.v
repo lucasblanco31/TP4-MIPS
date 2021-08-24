@@ -29,11 +29,10 @@
 //NOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100111
 //XOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100110
 //SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
+//SLTI: 001010  |   RS  |   RT  |   IMMEDIATE
 //BEQ:  000100  |   RS  |   RT  |   OFFSET
 //J:    000010  |   INSTR_INDEX   
 //ADDI: 001000  |   RS  |   RT  |   IMMEDIATE
-
-
 
 `define LW      6'b100011
 `define SW      6'b101011
@@ -41,6 +40,7 @@
 `define J       6'b000010
 `define BAS     6'b000000
 `define ADDI    6'b001000
+`define SLTI    6'b001010
 
 module Control_Unidad
     #(
@@ -104,6 +104,19 @@ module Control_Unidad
                 MemRead_Reg     <=  1'b0    ; 
                 MemToReg_Reg    <=  1'b0    ;
                 ALUOp_Reg       <=  2'b00   ;
+                MemWrite_Reg    <=  1'b0    ;
+                ALUSrc_Reg      <=  1'b1    ;
+                RegWrite_Reg    <=  1'b1    ;
+            end
+            
+            `SLTI:
+            begin
+                RegDst_Reg      <=  1'b0    ;
+                Jump_Reg        <=  1'b0    ;
+                Branch_Reg      <=  1'b0    ;
+                MemRead_Reg     <=  1'b0    ; 
+                MemToReg_Reg    <=  1'b0    ;
+                ALUOp_Reg       <=  2'b11   ;
                 MemWrite_Reg    <=  1'b0    ;
                 ALUSrc_Reg      <=  1'b1    ;
                 RegWrite_Reg    <=  1'b1    ;

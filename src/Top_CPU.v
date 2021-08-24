@@ -103,6 +103,7 @@ module Top_CPU
     wire                            Cero            ;
     //ALUControl
     wire     [ALUNBITS-1    :0]     InstrALUControl ;
+    wire     [ALUNBITS-1    :0]     OpcodeALUControl;
     wire     [ALUOP-1       :0]     ALUCtrl         ;
     //MultiplexorRegistro
     wire     [RD-1          :0]     Reg_mux_rd              ;
@@ -142,19 +143,20 @@ module Top_CPU
     //-----------------------------------------------------------------------
     //ID
     //SumadorJump
-    assign IJump        =   IF_ID_Instr[NBITSJUMP-1     :0]                 ;
+    assign IJump            =   IF_ID_Instr[NBITSJUMP-1     :0]                 ;
     //Control
-    assign InstrControl =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
+    assign InstrControl     =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
     //Registros
-    assign Reg_rs       =   IF_ID_Instr[INBITS+RT+RS-1  :INBITS+RT]         ;
-    assign Reg_rt       =   IF_ID_Instr[INBITS+RT-1     :INBITS]            ;
-    assign Reg_rd       =   IF_ID_Instr[INBITS-1        :INBITS-RD]         ;
+    assign Reg_rs           =   IF_ID_Instr[INBITS+RT+RS-1  :INBITS+RT]         ;
+    assign Reg_rt           =   IF_ID_Instr[INBITS+RT-1     :INBITS]            ;
+    assign Reg_rd           =   IF_ID_Instr[INBITS-1        :INBITS-RD]         ;
     //Instruccion
-    assign Instr16      =   IF_ID_Instr[INBITS-1        :0]                 ;
+    assign Instr16          =   IF_ID_Instr[INBITS-1        :0]                 ;
     //-----------------------------------------------------------------------
     //EX
     //ALUControl
-    assign InstrALUControl = ID_EX_Extension[ALUNBITS-1 :0]                 ;
+    assign InstrALUControl  = ID_EX_Extension[ALUNBITS-1    :0]                 ;
+    assign OpcodeALUControl = ID_EX_Instr[NBITS-1           :RS+RT+INBITS]      ;
     //-----------------------------------------------------------------------
 
     //******************************************
@@ -433,6 +435,7 @@ module Top_CPU
     u_Control_ALU
     (
         .i_Funct                   (InstrALUControl ),
+        .i_Opcode                  (OpcodeALUControl),
         .i_ALUOp                   (ID_EX_ALUOp     ),
         .o_ALUOp                   (ALUCtrl         )
     );
