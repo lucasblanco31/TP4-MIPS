@@ -6,8 +6,10 @@
 `define	SUB	    6'b100010	//Resta
 `define	AND	    6'b100100	//And
 `define	OR	    6'b100101	//Or
+`define NOR     6'b100111   //Nor
 `define	SLT	    6'b101010	//Set on less than
 `define	ADDU    6'b100001   //Add Unsigned Word
+
 
 `define	CERO    2'b00
 `define	CEROUNO 2'b01
@@ -41,8 +43,10 @@ module Control_ALU
                         `SUB :     ALUOp_Reg   <=   4'b0110    ;
                         `AND :     ALUOp_Reg   <=   4'b0000    ;
                         `OR  :     ALUOp_Reg   <=   4'b0001    ;
+                        `NOR :     ALUOp_Reg   <=   4'b1100    ;
                         `SLT :     ALUOp_Reg   <=   4'b0111    ;
                         `ADDU:     ALUOp_Reg   <=   4'b0010    ;
+                                                    
                         default:    ALUOp_Reg   <=   -2        ;
                     endcase       
                 default:            ALUOp_Reg   <=   -1        ;
