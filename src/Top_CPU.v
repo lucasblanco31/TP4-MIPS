@@ -54,19 +54,20 @@ module Top_CPU
     //----------------------------------------------------
     //ID
     //Sumador PC Jump
-    wire     [NBITSJUMP-1   :0]      IJump          ;
-    wire     [NBITS-1       :0]      OIJump         ;
-    //Control
-    wire     [CTRLNBITS-1   :0]      InstrControl   ;
-    wire                             RegWrite       ;
-    wire                             MemToReg       ;
-    wire                             Branch         ;
-    wire                             Jump           ;
-    wire                             RegDst         ;
-    wire                             ALUSrc         ;
-    wire                             MemRead        ;
-    wire                             MemWrite       ;
-    wire     [ALUCNBITS-1  :0]       ALUOp          ;
+    wire     [NBITSJUMP-1   :0]     IJump            ;
+    wire     [NBITS-1       :0]     OIJump           ;
+    //Control   
+    wire     [CTRLNBITS-1   :0]     InstrControl    ;
+    wire                            RegWrite        ;
+    wire                            MemToReg        ;
+    wire                            Branch          ;
+    wire                            Jump            ;
+    wire                            RegDst          ;
+    wire                            ALUSrc          ;
+    wire                            MemRead         ;
+    wire                            MemWrite        ;
+    wire     [ALUCNBITS-1  :0]      ALUOp           ;
+    wire                            ExtensionMode   ;  
     //Registros
     wire     [RS-1        :0]        Reg_rs         ;
     wire     [RD-1        :0]        Reg_rd         ;
@@ -280,7 +281,8 @@ module Top_CPU
         .o_ALUOp                    (ALUOp          ),
         .o_MemWrite                 (MemWrite       ),
         .o_ALUSrc                   (ALUSrc         ),
-        .o_RegWrite                 (RegWrite       )
+        .o_RegWrite                 (RegWrite       ),
+        .o_ExtensionMode            (ExtensionMode  )
 
     );
     //////////////////////////////////////////////
@@ -319,8 +321,9 @@ module Top_CPU
     )
     u_Extensor_Signo
     (
-        .i_signal                (Instr16   ),
-        .o_ext_signal            (InstrExt  )
+        .i_signal               (Instr16        ),
+        .i_ExtensionMode        (ExtensionMode  ),
+        .o_ext_signal           (InstrExt       )
     );
     //////////////////////////////////////////////
     /// ID/EX

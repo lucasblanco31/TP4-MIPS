@@ -6,6 +6,7 @@
 `define	SUB	    6'b100010	//Resta
 `define	SUBU    6'b100011	//Resta Unsigned
 `define	AND	    6'b100100	//And
+`define	ANDI    6'b001100	//And Immediate
 `define	OR	    6'b100101	//Or
 `define NOR     6'b100111   //Nor
 `define XOR     6'b100110   //Xor
@@ -57,7 +58,7 @@ module Control_ALU
                 `UNOUNO :
                     case(i_Opcode)
                         `SLTI:     ALUOp_Reg   <=   4'b0111    ;
-                        `ADDU:     ALUOp_Reg   <=   4'b0010    ;                           
+                        `ANDI:     ALUOp_Reg   <=   4'b0000    ;                           
                         default:    ALUOp_Reg   <=   -3        ;
                     endcase       
                 default:            ALUOp_Reg   <=   -1        ;
