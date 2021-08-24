@@ -265,7 +265,7 @@ module Top_CPU
     u_Registros
     (
         .i_clk               (o_clk_out1                ),
-        .i_RegWrite          (RegWrite                  ),
+        .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (Reg_rs                    ),
         .i_RT                (Reg_rt                    ),
         .i_RD                (MEM_WB_RegistroDestino    ),
@@ -415,8 +415,8 @@ module Top_CPU
     u_Mux_Registro
     (
         .i_RegDst              (ID_EX_RegDst    ),
-        .i_rd                  (ID_EX_Rt        ),
-        .i_rt                  (ID_EX_Rd        ),
+        .i_rt                  (ID_EX_Rt        ),
+        .i_rd                  (ID_EX_Rd        ),
         .o_Registro            (Reg_mux_rd      )
     );
     //////////////////////////////////////////////
