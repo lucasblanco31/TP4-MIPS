@@ -21,12 +21,18 @@
 //LW:   100011  | base  |   RT  |   OFFSET
 //SW:   101011  |  base |   RT  |   OFFSET
 //ADD:  000000  |   RS  |   RT  |   RD  |   00000   |   100000
+//ADDI: 001000  |   RS  |   RT  |   IMMEDIATE
 //SUB:  000000  |   RS  |   RT  |   RD  |   00000   |   100010
+//SUBU: 000000  |   RS  |   RT  |   RD  |   00000   |   100011
 //AND:  000000  |   RS  |   RT  |   RD  |   00000   |   100100
 //OR:   000000  |   RS  |   RT  |   RD  |   00000   |   100101
+//ORI:  001101  |   RS  |   RT  |   IMMEDIATE
+//NOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100111
+//XOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100110
 //SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
+//SLTI: 001010  |   RS  |   RT  |   IMMEDIATE
 //BEQ:  000100  |   RS  |   RT  |   OFFSET   
-//ADDI: 001000  |   RS  |   RT  |   OFFSET
+
 
 module Memoria_Instrucciones
     #(
@@ -47,8 +53,8 @@ module Memoria_Instrucciones
     initial 
     begin
         memory[0]       <=      32'b111111_11111_11111_11111_11111_111111   ;
-        memory[4]       <=      32'b000000_00000_00001_00010_00000_100111   ; //NOR ~(r0||r1)=r2=1..00
-        memory[8]       <=      32'b000000_00000_00001_00010_00000_100001   ; //ADD r0+r1 -> r2 = 3
+        memory[4]       <=      32'b001110_00001_00000_11000_00000_111110   ; //SUBU (r0 xor r2)=r1= 1
+        memory[8]       <=      32'b000000_00000_00001_11110_00000_100001   ; //ADD r0+r1 -> r2 = 3
         //memory[8]       <=      32'b000010_00000_00000_00000_00000_000101   ; //JUMP a instruccion 20; 
         //memory[8]       <=      32'b000000_00011_00000_00001_00000_100010   ; //SUB r3-r0 -> r1 = 2
         memory[12]      <=      32'b000000_00001_00001_00000_00000_100100   ; //AND(r1&&r1) 10&&10 -> r0=2

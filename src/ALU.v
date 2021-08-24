@@ -26,6 +26,7 @@
 `define SUB     4'b0110       //Salida-> A - B
 `define SLT     4'b0111       //Salida-> A and B
 `define NOR     4'b1100       //Salida-> A nor B
+`define XOR     4'b1101       //Salida-> A xor B
 
 
 module ALU
@@ -55,6 +56,7 @@ module ALU
                 `SUB:       result  =   i_Reg   -   i_Mux       ;
                 `SLT:       result  =   i_Reg   <   i_Mux ? 1:0 ;
                 `NOR:       result  =   ~(i_Reg |   i_Mux)      ;
+                `XOR:       result  =   i_Reg   ^   i_Mux       ;
                 default:    result  =   -1                      ;
             endcase
         end
