@@ -16,6 +16,7 @@
 `define SLTI    6'b001010   //Set on Less than Immediate
 `define	ADDU    6'b100001   //Add Unsigned Word
 `define	SLL     6'b000000   //Shift Word Left Logical
+`define SLLV    6'b000100   //Shift Word Left Logical Variable
 `define	SRL     6'b000010   //Shift Word Right Logical
 
 `define	CERO    2'b00
@@ -58,7 +59,8 @@ module Control_ALU
                         `SLT    :   ALUOp_Reg   <=   4'b0111    ;
                         `ADDU   :   ALUOp_Reg   <=   4'b0010    ;
                         `SLL    :   ALUOp_Reg   <=   4'b0011    ;
-                        `SRL    :   ALUOp_Reg   <=   4'b0100    ;                           
+                        `SRL    :   ALUOp_Reg   <=   4'b0100    ;  
+                        `SLLV   :   ALUOp_Reg   <=   4'b0101    ;                         
                         default :   ALUOp_Reg   <=   -2         ;
                     endcase       
                 `UNOUNO :

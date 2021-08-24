@@ -66,7 +66,7 @@ module Control_Unidad
         output  wire                            o_MemWrite      ,
         output  wire                            o_ALUSrc        ,
         output  wire                            o_RegWrite      ,
-        output  wire                            o_ExtensionMode 
+        output  wire                            o_ExtensionMode  
     );
     
     reg         RegDst_Reg          ;
