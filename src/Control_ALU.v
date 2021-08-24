@@ -8,9 +8,10 @@
 `define	AND	    6'b100100	//And
 `define	ANDI    6'b001100	//And Immediate
 `define	OR	    6'b100101	//Or
-`define	ORI	    6'b001101	//Or immediate
+`define	ORI	    6'b001101	//Or Immediate
 `define NOR     6'b100111   //Nor
 `define XOR     6'b100110   //Xor
+`define XORI    6'b001110   //Xor Immediate
 `define	SLT	    6'b101010	//Set on Less than
 `define SLTI    6'b001010   //Set on Less than Immediate
 `define	ADDU    6'b100001   //Add Unsigned Word
@@ -60,7 +61,8 @@ module Control_ALU
                     case(i_Opcode)
                         `SLTI   :   ALUOp_Reg   <=   4'b0111    ;
                         `ANDI   :   ALUOp_Reg   <=   4'b0000    ;
-                        `ORI    :   ALUOp_Reg   <=   4'b0001    ;                           
+                        `ORI    :   ALUOp_Reg   <=   4'b0001    ;   
+                        `XORI   :   ALUOp_Reg   <=   4'b1101    ;                           
                         default :   ALUOp_Reg   <=   -3         ;
                     endcase       
                 default:            ALUOp_Reg   <=   -1        ;
