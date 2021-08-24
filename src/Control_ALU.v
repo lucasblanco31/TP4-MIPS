@@ -8,6 +8,7 @@
 `define	AND	    6'b100100	//And
 `define	ANDI    6'b001100	//And Immediate
 `define	OR	    6'b100101	//Or
+`define	ORI	    6'b001101	//Or immediate
 `define NOR     6'b100111   //Nor
 `define XOR     6'b100110   //Xor
 `define	SLT	    6'b101010	//Set on Less than
@@ -44,22 +45,23 @@ module Control_ALU
                                     ALUOp_Reg   <=   4'b0110    ;
                 `UNOCERO :
                     case(i_Funct)
-                        `ADD :     ALUOp_Reg   <=   4'b0010    ;
-                        `SUB :     ALUOp_Reg   <=   4'b0110    ;
-                        `SUBU:     ALUOp_Reg   <=   4'b0110    ;
-                        `AND :     ALUOp_Reg   <=   4'b0000    ;
-                        `OR  :     ALUOp_Reg   <=   4'b0001    ;
-                        `NOR :     ALUOp_Reg   <=   4'b1100    ;
-                        `XOR :     ALUOp_Reg   <=   4'b1101    ;
-                        `SLT :     ALUOp_Reg   <=   4'b0111    ;
-                        `ADDU:     ALUOp_Reg   <=   4'b0010    ;                           
-                        default:    ALUOp_Reg   <=   -2        ;
+                        `ADD    :   ALUOp_Reg   <=   4'b0010    ;
+                        `SUB    :   ALUOp_Reg   <=   4'b0110    ;
+                        `SUBU   :   ALUOp_Reg   <=   4'b0110    ;
+                        `AND    :   ALUOp_Reg   <=   4'b0000    ;
+                        `OR     :   ALUOp_Reg   <=   4'b0001    ;
+                        `NOR    :   ALUOp_Reg   <=   4'b1100    ;
+                        `XOR    :   ALUOp_Reg   <=   4'b1101    ;
+                        `SLT    :   ALUOp_Reg   <=   4'b0111    ;
+                        `ADDU   :   ALUOp_Reg   <=   4'b0010    ;                           
+                        default :   ALUOp_Reg   <=   -2         ;
                     endcase       
                 `UNOUNO :
                     case(i_Opcode)
-                        `SLTI:     ALUOp_Reg   <=   4'b0111    ;
-                        `ANDI:     ALUOp_Reg   <=   4'b0000    ;                           
-                        default:    ALUOp_Reg   <=   -3        ;
+                        `SLTI   :   ALUOp_Reg   <=   4'b0111    ;
+                        `ANDI   :   ALUOp_Reg   <=   4'b0000    ;
+                        `ORI    :   ALUOp_Reg   <=   4'b0001    ;                           
+                        default :   ALUOp_Reg   <=   -3         ;
                     endcase       
                 default:            ALUOp_Reg   <=   -1        ;
             endcase

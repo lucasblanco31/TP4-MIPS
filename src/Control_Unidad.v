@@ -27,6 +27,7 @@
 //AND:  000000  |   RS  |   RT  |   RD  |   00000   |   100100
 //ANDI: 001100  |   RS  |   RT  |   IMMEDIATE
 //OR:   000000  |   RS  |   RT  |   RD  |   00000   |   100101
+//ORI:  001101  |   RS  |   RT  |   IMMEDIATE
 //NOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100111
 //XOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100110
 //SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
@@ -43,6 +44,7 @@
 `define ADDI    6'b001000
 `define ANDI    6'b001100
 `define SLTI    6'b001010
+`define ORI     6'b001101
 
 module Control_Unidad
     #(
@@ -117,6 +119,20 @@ module Control_Unidad
             end
             
             `ANDI:
+            begin
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b0    ; 
+                MemToReg_Reg        <=  1'b0    ;
+                ALUOp_Reg           <=  2'b11   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  1'b1    ;
+            end
+            
+            `ORI:
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
