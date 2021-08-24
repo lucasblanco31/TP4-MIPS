@@ -42,7 +42,8 @@ module Top_CPU
     //IF
     //PC
     wire    [NBITS-1     :0]        PcAddr          ;
-    wire    [NBITS-1     :0]        PcIn            ;
+    wire    [NBITS-1     :0]        PCInBranch      ;
+    wire    [NBITS-1     :0]        PCIn            ;
     //SumadorPC4
     wire    [NBITS-1     :0]        SumPC4          ;
     //MemoriaInstrucciones
@@ -52,8 +53,11 @@ module Top_CPU
     wire    [NBITS-1     :0]        IF_ID_Instr     ;
     //----------------------------------------------------
     //ID
+    //Sumador PC Jump
+    wire     [NBITSJUMP-1   :0]      IJump          ;
+    wire     [NBITS-1       :0]      OIJump         ;
     //Control
-    wire     [CTRLNBITS-1  :0]       InstrControl   ;
+    wire     [CTRLNBITS-1   :0]      InstrControl   ;
     wire                             RegWrite       ;
     wire                             MemToReg       ;
     wire                             Branch         ;
@@ -137,6 +141,8 @@ module Top_CPU
 
     //-----------------------------------------------------------------------
     //ID
+    //SumadorJump
+    assign IJump        =   IF_ID_Instr[NBITSJUMP-1     :0]                 ;
     //Control
     assign InstrControl =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
     //Registros
@@ -150,10 +156,7 @@ module Top_CPU
     //ALUControl
     assign InstrALUControl = ID_EX_Extension[ALUNBITS-1 :0]                 ;
     //-----------------------------------------------------------------------
-    
-    //VER COMO IMPLEMENTAR JUMP
-    //assign InstrJump    = Instr[NBITSJUMP-1    :                  0];
-    
+
     //******************************************
     //****************** IF
     //******************************************
@@ -162,14 +165,28 @@ module Top_CPU
     /////////////////////////////////////////////
     Mux_PC
     #(
-        .NBITS              (NBITS           )           
+        .NBITS              (NBITS              )           
     )
     u_Mux_PC
     (
         .i_PCSrc            (PcSrc              ),
         .i_SumadorBranch    (EX_MEM_PCBranch    ),
         .i_SumadorPC4       (SumPC4             ),
-        .o_MuxPC            (PcIn               )
+        .o_MuxPC            (PCInBranch         )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR JUMP
+    /////////////////////////////////////////////
+    Mux_PC_Jump
+    #(
+        .NBITS          (NBITS      )   
+    )
+    u_Mux_PC_Jump
+    (
+        .i_Jump         (Jump       ),
+        .i_SumadorJump  (OIJump     ),
+        .i_MuxBranch    (PCInBranch ),
+        .o_PC           (PCIn       )
     );
     ////////////////////////////////////////////
     /// PC
@@ -182,7 +199,7 @@ module Top_CPU
     (
         .i_clk              (o_clk_out1     ),
         .i_reset            (i_reset        ),
-        .i_NPC              (PcIn           ),
+        .i_NPC              (PCIn           ),
         .o_PC               (PcAddr         )
     );
     //////////////////////////////////////////////
@@ -230,8 +247,22 @@ module Top_CPU
     //****************** ID
     //******************************************
     //////////////////////////////////////////////
+    /// Sumador_PC_Jump
+    //////////////////////////////////////////////
+    Sumador_PC_Jump
+    #(
+        .NBITS      (NBITS      ),
+        .NBITSJUMP  (NBITSJUMP  )
+    )
+    u_Sumador_PC_Jump
+    (
+        .i_IJump    (IJump      ),
+        .i_PC4      (IF_ID_PC4  ),
+        .o_IJump    (OIJump     )  
+    );
+    //////////////////////////////////////////////
     /// UNIDAD DE CONTROL
-    /////////////////////////////////////////////
+    //////////////////////////////////////////////
     Control_Unidad
     #(
         .NBITS                      (CTRLNBITS   )

@@ -10,14 +10,14 @@ module Mux_PC
         output  wire    [NBITS-1      :0]   o_MuxPC                 
     );
     
-    reg [NBITS-1  :0]   to_PC   ;    
-    assign  o_MuxPC   =    to_PC   ;
+    reg [NBITS-1  :0]       MuxPC_reg   ;    
+    assign  o_MuxPC   =     MuxPC_reg   ;
     
     always @(*)
     begin
         if(i_PCSrc)
-            to_PC   <=  i_SumadorBranch ;
+            MuxPC_reg   <=  i_SumadorBranch ;
         else
-            to_PC   <=  i_SumadorPC4    ;
+            MuxPC_reg   <=  i_SumadorPC4    ;
     end   
 endmodule
