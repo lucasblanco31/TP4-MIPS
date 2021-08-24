@@ -7,6 +7,7 @@
 `define	AND	    6'b100100	//And
 `define	OR	    6'b100101	//Or
 `define NOR     6'b100111   //Nor
+`define XOR     6'b100110   //Xor
 `define	SLT	    6'b101010	//Set on less than
 `define	ADDU    6'b100001   //Add Unsigned Word
 
@@ -44,6 +45,7 @@ module Control_ALU
                         `AND :     ALUOp_Reg   <=   4'b0000    ;
                         `OR  :     ALUOp_Reg   <=   4'b0001    ;
                         `NOR :     ALUOp_Reg   <=   4'b1100    ;
+                        `XOR :     ALUOp_Reg   <=   4'b1101    ;
                         `SLT :     ALUOp_Reg   <=   4'b0111    ;
                         `ADDU:     ALUOp_Reg   <=   4'b0010    ;
                                                     
