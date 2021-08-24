@@ -4,6 +4,7 @@
 //<nombre>	<tamao>' <base>
 `define	ADD	    6'b100000	//Suma
 `define	SUB	    6'b100010	//Resta
+`define	SUBU    6'b100011	//Resta Unsigned
 `define	AND	    6'b100100	//And
 `define	OR	    6'b100101	//Or
 `define NOR     6'b100111   //Nor
@@ -42,6 +43,7 @@ module Control_ALU
                     case(i_Funct)
                         `ADD :     ALUOp_Reg   <=   4'b0010    ;
                         `SUB :     ALUOp_Reg   <=   4'b0110    ;
+                        `SUBU:     ALUOp_Reg   <=   4'b0110    ;
                         `AND :     ALUOp_Reg   <=   4'b0000    ;
                         `OR  :     ALUOp_Reg   <=   4'b0001    ;
                         `NOR :     ALUOp_Reg   <=   4'b1100    ;
