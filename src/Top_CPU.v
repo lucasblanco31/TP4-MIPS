@@ -102,6 +102,7 @@ module Top_CPU
     //ALU
     wire     [NBITS-1       :0]     ALUResult       ;
     wire                            Cero            ;
+    wire     [REGS-1        :0]     ShamtInstr      ;
     //ALUControl
     wire     [ALUNBITS-1    :0]     InstrALUControl ;
     wire     [ALUNBITS-1    :0]     OpcodeALUControl;
@@ -158,6 +159,8 @@ module Top_CPU
     //ALUControl
     assign InstrALUControl  = ID_EX_Extension[ALUNBITS-1    :0]                 ;
     assign OpcodeALUControl = ID_EX_Instr[NBITS-1           :RS+RT+INBITS]      ;
+    //ALU
+    assign ShamtInstr       = ID_EX_Instr[10                :6]                 ;
     //-----------------------------------------------------------------------
 
     //******************************************
@@ -401,16 +404,18 @@ module Top_CPU
     /////////////////////////////////////////////
     ALU
     #(
-        .NBITS              (NBITS        ),
-        .BOP                (BOP          )
+        .NBITS              (NBITS              ),
+        .RNBITS             (REGS               ),
+        .BOP                (BOP                )
     )
     u_ALU
     (
-        .i_Reg              (ID_EX_Registro1 ),
-        .i_Mux              (MuxToALU        ),
-        .i_Op               (ALUCtrl         ),
-        .o_Cero             (Cero            ),
-        .o_Result           (ALUResult       )
+        .i_Reg              (ID_EX_Registro1    ),
+        .i_Mux              (MuxToALU           ),
+        .i_Shamt            (ShamtInstr         ),
+        .i_Op               (ALUCtrl            ),
+        .o_Cero             (Cero               ),
+        .o_Result           (ALUResult          )
     );
     //////////////////////////////////////////////
     /// MULTIPLEXOR ALU

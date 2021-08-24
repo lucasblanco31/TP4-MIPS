@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="736500fs"></ZoomStartTime>
-      <ZoomEndTime time="785501fs"></ZoomEndTime>
-      <Cursor1Time time="760000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="217fs"></ZoomEndTime>
+      <Cursor1Time time="760fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="232"></NameColumnWidth>
+      <NameColumnWidth column_width="228"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
@@ -383,6 +383,10 @@
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Mux">
             <obj_property name="ElementShortName">i_Mux[31:0]</obj_property>
             <obj_property name="ObjectShortName">i_Mux[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Shamt">
+            <obj_property name="ElementShortName">i_Shamt[4:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Shamt[4:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/o_Result">
             <obj_property name="ElementShortName">o_Result[31:0]</obj_property>

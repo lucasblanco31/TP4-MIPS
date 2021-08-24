@@ -23,23 +23,25 @@
 `define AND     4'b0000       //Salida-> A and B
 `define OR      4'b0001       //Salida-> A or B
 `define ADD     4'b0010       //Salida-> A + B
+`define SLL     4'b0011       //Salida-> A<<B
 `define SUB     4'b0110       //Salida-> A - B
 `define SLT     4'b0111       //Salida-> A and B
 `define NOR     4'b1100       //Salida-> A nor B
 `define XOR     4'b1101       //Salida-> A xor B
 
-
 module ALU
     #(
-        parameter NBITS =   32  ,
-        parameter BOP   =   4      
+        parameter   NBITS   =   32  ,
+        parameter   RNBITS  =   5   ,
+        parameter   BOP     =   4      
     )
     (
-        input   wire    [NBITS-1:0]     i_Reg       ,
-        input   wire    [NBITS-1:0]     i_Mux       ,
-        input   wire    [BOP-1  :0]     i_Op        ,
-        output  wire                    o_Cero      ,
-        output  wire    [NBITS-1:0]     o_Result    
+        input   wire    [NBITS-1    :0]     i_Reg       ,
+        input   wire    [NBITS-1    :0]     i_Mux       ,
+        input   wire    [RNBITS-1   :0]     i_Shamt     ,
+        input   wire    [BOP-1      :0]     i_Op        ,
+        output  wire                        o_Cero      ,
+        output  wire    [NBITS-1    :0]     o_Result    
     );
     
     reg [NBITS-1:0]     result          ;
@@ -57,6 +59,7 @@ module ALU
                 `SLT:       result  =   i_Reg   <   i_Mux ? 1:0 ;
                 `NOR:       result  =   ~(i_Reg |   i_Mux)      ;
                 `XOR:       result  =   i_Reg   ^   i_Mux       ;
+                `SLL:       result  =   i_Mux   <<  i_Shamt     ;   
                 default:    result  =   -1                      ;
             endcase
         end
