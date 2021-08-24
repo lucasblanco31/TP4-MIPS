@@ -2,25 +2,23 @@
 
 module Mux_PC_Jump
     #(
-        parameter NBITS     =  32,
-        parameter NBITSJUMP =  26
+        parameter NBITS     =  32
     )
     (
         input   wire                            i_Jump          ,
-        input   wire    [NBITSJUMP-1    :0]     i_IJump         ,
-        input   wire    [NBITS-1        :0]     i_PC4           ,
-        input   wire    [NBITS-1        :0]     i_SumadorBranch ,
+        input   wire    [NBITS-1        :0]     i_SumadorJump   ,
+        input   wire    [NBITS-1        :0]     i_MuxBranch     ,
         output  wire    [NBITS-1        :0]     o_PC                 
     );
     
-    reg [NBITS-1  :0]   to_PC   ;    
-    assign  o_PC   =    to_PC   ;
+    reg [NBITS-1  :0]   PC_reg   ;    
+    assign  o_PC   =    PC_reg   ;
     
     always @(*)
     begin
         case(i_Jump)
-            1'b0:   to_PC   <=  i_SumadorBranch                     ;   
-            1'b1:   to_PC   <=  {i_PC4[NBITS-1:27], (i_IJump<<2)}  ;
+            1'b0:   PC_reg   <=  i_MuxBranch    ;   
+            1'b1:   PC_reg   <=  i_SumadorJump  ;
         endcase
     end   
 endmodule

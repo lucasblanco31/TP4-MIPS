@@ -14,12 +14,12 @@
 
 module Control_ALU
     #(
-        parameter   NBITS           =   6   ,
+        parameter   ANBITS          =   6   ,
         parameter   NBITSCONTROL    =   2   ,
         parameter   ALUOP           =   4   
     )
     (
-        input   wire    [NBITS-1        :0]     i_Funct ,
+        input   wire    [ANBITS-1       :0]     i_Funct ,
         input   wire    [NBITSCONTROL-1 :0]     i_ALUOp ,    
         output  wire    [ALUOP-1        :0]     o_ALUOp            
     );

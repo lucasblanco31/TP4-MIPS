@@ -30,85 +30,167 @@ module Top_CPU
     );
    
     reg         rst_clk; //reset del clock
-
-
-    //PC
-    wire     [NBITS-1     :0]        PcAddr      ;
-    wire     [NBITS-1     :0]        PcIn        ;
-    wire     [NBITS-1     :0]        SumPc4      ;
-    wire     [NBITS-1     :0]        Instr       ;
-
-    wire     [NBITS-1     :0]        SumPcBranch ;
-    wire     [NBITS-1     :0]        MuxPcBranch ;
-
-    //Instruccion
-    wire     [INBITS-1    :0]        Instr16     ;
-    wire     [NBITS-1     :0]        InstrExt    ;
-
-    //Registros
-    wire     [RS-1        :0]        Reg_rs      ;
-    wire     [RD-1        :0]        Reg_rd      ;
-    wire     [RD-1        :0]        Reg_mux_rd  ;
-    wire     [RT-1        :0]        Reg_rt      ;
-    wire     [NBITS-1     :0]        DatoLeido1  ;
-    wire     [NBITS-1     :0]        DatoLeido2  ;
-
-    
-
-    //Control
-    wire     [CTRLNBITS-1  :0]       InstrContol ;
-
-    wire                             RegWrite    ;
-    wire                             MemToReg    ;
-    wire                             Branch      ;
-    wire                             Jump        ;
-    wire                             RegDst      ;
-    wire                             ALUSrc      ;
-    wire                             MemRead     ;
-    wire                             MemWrite    ;
-    wire     [ALUCNBITS-1  :0]       ALUOp       ;
-
-    wire                             Cero        ;
-
-    //ALU Control
-    wire     [ALUNBITS-1 :  0]       InstrAluCtrl;
-    wire     [ALUOP-1    :  0]       ALUCtrl     ;
-
-    //ALU
-    wire     [NBITS-1     :0]        ACC         ;
-    wire     [NBITS-1     :0]        ALUResult   ;
-
-    //Memoria Datos
-    wire     [NBITS-1     :0]        DatoMemoria   ;
-    wire     [NBITS-1     :0]        DatoEscritura ;
-
     //Clock wizard
-    wire                            o_clk_out1 ;  
-    
+    wire                            o_clk_out1 ;
+    assign o_clk_wzd    =           o_clk_out1 ; 
+
+    //VER COMO IMPLEMENTAR JUMP
     //Mux Jump
-    wire     [NBITSJUMP-1 :  0]       InstrJump;    
+    //wire     [NBITSJUMP-1 :  0]       InstrJump;    
 
+    //-------------------------------------------------------
+    //IF
+    //PC
+    wire    [NBITS-1     :0]        PcAddr          ;
+    wire    [NBITS-1     :0]        PCInBranch      ;
+    wire    [NBITS-1     :0]        PCIn            ;
+    //SumadorPC4
+    wire    [NBITS-1     :0]        SumPC4          ;
+    //MemoriaInstrucciones
+    wire    [NBITS-1     :0]        Instr           ;
+    //IF_ID
+    wire    [NBITS-1     :0]        IF_ID_PC4       ;
+    wire    [NBITS-1     :0]        IF_ID_Instr     ;
+    //----------------------------------------------------
+    //ID
+    //Sumador PC Jump
+    wire     [NBITSJUMP-1   :0]      IJump          ;
+    wire     [NBITS-1       :0]      OIJump         ;
+    //Control
+    wire     [CTRLNBITS-1   :0]      InstrControl   ;
+    wire                             RegWrite       ;
+    wire                             MemToReg       ;
+    wire                             Branch         ;
+    wire                             Jump           ;
+    wire                             RegDst         ;
+    wire                             ALUSrc         ;
+    wire                             MemRead        ;
+    wire                             MemWrite       ;
+    wire     [ALUCNBITS-1  :0]       ALUOp          ;
+    //Registros
+    wire     [RS-1        :0]        Reg_rs         ;
+    wire     [RD-1        :0]        Reg_rd         ;
+    wire     [RT-1        :0]        Reg_rt         ;
+    wire     [NBITS-1     :0]        DatoLeido1     ;
+    wire     [NBITS-1     :0]        DatoLeido2     ;
+    //Instruccion
+    wire     [INBITS-1    :0]        Instr16        ;
+    wire     [NBITS-1     :0]        InstrExt       ;
+    //ID/EX
+    wire    [NBITS-1        :0]     ID_EX_PC4       ;
+    wire    [NBITS-1        :0]     ID_EX_Instr     ;
+    wire    [NBITS-1        :0]     ID_EX_Registro1 ;
+    wire    [NBITS-1        :0]     ID_EX_Registro2 ;
+    wire    [NBITS-1        :0]     ID_EX_Extension ;
+    wire    [REGS-1         :0]     ID_EX_Rt        ;
+    wire    [REGS-1         :0]     ID_EX_Rd        ;
+    wire                            ID_EX_ALUSrc    ;     
+    wire    [1              :0]     ID_EX_ALUOp     ;
+    wire                            ID_EX_RegDst    ;
+    wire                            ID_EX_Branch    ;
+    wire                            ID_EX_MemWrite  ;
+    wire                            ID_EX_MemRead   ;
+    wire                            ID_EX_MemToReg  ;
+    wire                            ID_EX_RegWrite  ;
+    //----------------------------------------------------
+    //EX
+    //SumadorBranch
+    wire     [NBITS-1       :0]     SumPcBranch     ;
+    //MuxALU
+    wire     [NBITS-1       :0]     MuxToALU        ;
+    //ALU
+    wire     [NBITS-1       :0]     ALUResult       ;
+    wire                            Cero            ;
+    //ALUControl
+    wire     [ALUNBITS-1    :0]     InstrALUControl ;
+    wire     [ALUOP-1       :0]     ALUCtrl         ;
+    //MultiplexorRegistro
+    wire     [RD-1          :0]     Reg_mux_rd              ;
+    //EX/MEM
+    wire    [NBITS-1        :0]     EX_MEM_PC4              ;
+    wire    [NBITS-1        :0]     EX_MEM_PCBranch         ;
+    wire    [NBITS-1        :0]     EX_MEM_Instr            ;
+    wire                            EX_MEM_Cero             ;
+    wire    [NBITS-1        :0]     EX_MEM_ALU              ;
+    wire    [NBITS-1        :0]     EX_MEM_Registro2        ;
+    wire    [REGS-1         :0]     EX_MEM_RegistroDestino  ;
+    wire                            EX_MEM_Branch           ;
+    wire                            EX_MEM_MemWrite         ;
+    wire                            EX_MEM_MemRead          ;
+    wire                            EX_MEM_MemToReg         ;
+    wire                            EX_MEM_RegWrite         ;
+    //-------------------------------------------------------
+    //MEM
+    //MultiplexorBranch
+    wire                            PcSrc                   ;
+    //MemoriaDatos
+    wire    [NBITS-1        :0]     DatoMemoria             ;
+    //MEM/WB
+    wire    [NBITS-1        :0]     MEM_WB_PC4              ;
+    wire    [NBITS-1        :0]     MEM_WB_Instruction      ;
+    wire    [NBITS-1        :0]     MEM_WB_ALU              ;
+    wire    [NBITS-1        :0]     MEM_WB_DatoMemoria      ;
+    wire    [REGS-1         :0]     MEM_WB_RegistroDestino  ;
+    wire                            MEM_WB_MemToReg         ;
+    wire                            MEM_WB_RegWrite         ;
+    //-------------------------------------------------------
+    //WB
+    //MultiplexorMemoria
+    wire    [NBITS-1        :0]     DatoEscritura           ;
+    //-------------------------------------------------------
 
-    assign o_PcSum      = SumPc4               ;
-    assign o_Instr      = Instr                ;
+    //-----------------------------------------------------------------------
+    //ID
+    //SumadorJump
+    assign IJump        =   IF_ID_Instr[NBITSJUMP-1     :0]                 ;
+    //Control
+    assign InstrControl =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
+    //Registros
+    assign Reg_rs       =   IF_ID_Instr[INBITS+RT+RS-1  :INBITS+RT]         ;
+    assign Reg_rt       =   IF_ID_Instr[INBITS+RT-1     :INBITS]            ;
+    assign Reg_rd       =   IF_ID_Instr[INBITS-1        :INBITS-RD]         ;
+    //Instruccion
+    assign Instr16      =   IF_ID_Instr[INBITS-1        :0]                 ;
+    //-----------------------------------------------------------------------
+    //EX
+    //ALUControl
+    assign InstrALUControl = ID_EX_Extension[ALUNBITS-1 :0]                 ;
+    //-----------------------------------------------------------------------
 
-    assign Reg_rs       = Instr[INBITS+RT+RS-1 :          INBITS+RT];
-    assign Reg_rt       = Instr[INBITS+RT-1    :             INBITS];
-    assign Reg_rd       = Instr[INBITS-1       :          INBITS-RD];
-    assign Instr16      = Instr[INBITS-1       :                  0];
-
-    assign InstrAluCtrl = Instr16[ALUNBITS-1   :                  0];
-
-    assign InstrContol  = Instr[NBITS-1        :    NBITS-CTRLNBITS];
-    
-    assign InstrJump    = Instr[NBITSJUMP-1    :                  0];
-
-    assign o_clk_wzd    = o_clk_out1                                ;
-
-
+    //******************************************
+    //****************** IF
+    //******************************************
     //////////////////////////////////////////////
+    /// MULTIPLEXOR BRANCH
+    /////////////////////////////////////////////
+    Mux_PC
+    #(
+        .NBITS              (NBITS              )           
+    )
+    u_Mux_PC
+    (
+        .i_PCSrc            (PcSrc              ),
+        .i_SumadorBranch    (EX_MEM_PCBranch    ),
+        .i_SumadorPC4       (SumPC4             ),
+        .o_MuxPC            (PCInBranch         )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR JUMP
+    /////////////////////////////////////////////
+    Mux_PC_Jump
+    #(
+        .NBITS          (NBITS      )   
+    )
+    u_Mux_PC_Jump
+    (
+        .i_Jump         (Jump       ),
+        .i_SumadorJump  (OIJump     ),
+        .i_MuxBranch    (PCInBranch ),
+        .o_PC           (PCIn       )
+    );
+    ////////////////////////////////////////////
     /// PC
-    /////////////////////////////////////////////       
+    ////////////////////////////////////////////
     PC
     #(
         .NBITS              (NBITS          )
@@ -117,10 +199,9 @@ module Top_CPU
     (
         .i_clk              (o_clk_out1     ),
         .i_reset            (i_reset        ),
-        .i_NPC              (PcIn           ),
+        .i_NPC              (PCIn           ),
         .o_PC               (PcAddr         )
     );
-
     //////////////////////////////////////////////
     /// SUMADOR PC
     /////////////////////////////////////////////
@@ -131,114 +212,8 @@ module Top_CPU
     u_Sumador_PC
     (
         .i_PC               (PcAddr         ),
-        .o_Mux              (SumPc4         )
+        .o_Mux              (SumPC4         )
     );
-
-    //////////////////////////////////////////////
-    /// SUMADOR BRANCH
-    /////////////////////////////////////////////
-    Sumador_Branch
-    #
-    (
-        .NBITS              (NBITS          )
-    )
-    u_Sumador_Branch
-    (
-        .i_ExtensionData    (InstrExt       ),
-        .i_SumadorPC4       (SumPc4         ),
-        .o_Mux              (SumPcBranch    )
-    );
-
-    
-    //////////////////////////////////////////////
-    /// MULTIPLEXOR BRANCH
-    /////////////////////////////////////////////
-    Mux_PC
-    #(
-        .NBITS              (NBITS           )           
-    )
-    u_Mux_PC
-    (
-        .i_Branch           (Branch         ),
-        .i_Cero             (Cero           ),
-        .i_Sumador          (SumPcBranch    ),
-        .i_SumadorPC4       (SumPc4         ),
-        .o_MuxPC            (MuxPcBranch    )
-    );
-
-    //////////////////////////////////////////////
-    /// MULTIPLEXOR JUMP
-    /////////////////////////////////////////////
-    Mux_PC_Jump
-    #(
-        .NBITS              (NBITS           ),
-        .NBITSJUMP          (NBITSJUMP       )           
-    )
-    u_Mux_PC_Jump
-    (
-        .i_Jump             (Jump           ),
-        .i_IJump            (InstrJump      ),
-        .i_PC4              (SumPc4         ),
-        .i_SumadorBranch    (MuxPcBranch    ),
-        .o_PC               (PcIn           )
-    );
-
-    //////////////////////////////////////////////
-    /// REGISTROS
-    /////////////////////////////////////////////
-    Registros
-    #(
-        .REGS               (REGS           ),
-        .NBITS              (NBITS          ),
-        .RS                 (RS             ),     
-        .RD                 (RD             ),
-        .RT                 (RT             ),
-        .CELDAS             (CELDAS_REG     )
-    )
-    u_Registros
-    (
-        .i_clk               (o_clk_out1     ),
-        .i_RegWrite          (RegWrite       ),
-        .i_RS                (Reg_rs         ),
-        .i_RD                (Reg_mux_rd     ),
-        .i_RT                (Reg_rt         ),
-        .i_DatoEscritura     (DatoEscritura  ),
-        .o_RS                (DatoLeido1     ),
-        .o_RT                (DatoLeido2     )
-
-    );
-
-    //////////////////////////////////////////////
-    /// MULTIPLEXOR DE REGISTRO
-    /////////////////////////////////////////////
-    Mux_Registro
-    #(
-        .NBITS                (REGS         )
-    )
-    u_Mux_Registro
-    (
-        .i_RegDst              (RegDst       ),
-        .i_rd                  (Reg_rd       ),
-        .i_rt                  (Reg_rt       ),
-        .o_Registro            (Reg_mux_rd   )
-    );
-
-    //////////////////////////////////////////////
-    /// EXTENSOR DE SIGNO
-    /////////////////////////////////////////////
-    Extensor_Signo
-    #(
-        .i_NBITS                 (INBITS    ),
-        .e_NBITS                 (INBITS    ),
-        .o_NBITS                 (NBITS     )
-    )
-    u_Extensor_Signo
-    (
-        .i_signal                (Instr16   ),
-        .o_ext_signal            (InstrExt  )
-    );
-
-   
     //////////////////////////////////////////////
     /// MEMORIA DE INSTRUCCIONES
     /////////////////////////////////////////////
@@ -253,25 +228,355 @@ module Top_CPU
         .i_PC               (PcAddr         ),
         .o_Instruction      (Instr          )
     );
+    //////////////////////////////////////////////
+    /// IF/ID
+    /////////////////////////////////////////////
+    Etapa_IF_ID
+    #(
+        .NBITS              (NBITS          )
+    )
+    u_Etapa_IF_ID
+    (
+        .i_clk              (o_clk_out1     ),
+        .i_PC4              (SumPC4         ),
+        .i_Instruction      (Instr          ),
+        .o_PC4              (IF_ID_PC4      ),
+        .o_Instruction      (IF_ID_Instr    )  
+    );    
+    //******************************************
+    //****************** ID
+    //******************************************
+    //////////////////////////////////////////////
+    /// Sumador_PC_Jump
+    //////////////////////////////////////////////
+    Sumador_PC_Jump
+    #(
+        .NBITS      (NBITS      ),
+        .NBITSJUMP  (NBITSJUMP  )
+    )
+    u_Sumador_PC_Jump
+    (
+        .i_IJump    (IJump      ),
+        .i_PC4      (IF_ID_PC4  ),
+        .o_IJump    (OIJump     )  
+    );
+    //////////////////////////////////////////////
+    /// UNIDAD DE CONTROL
+    //////////////////////////////////////////////
+    Control_Unidad
+    #(
+        .NBITS                      (CTRLNBITS   )
+    )
+    u_Control_Unidad
+    (
+        .i_Instruction              (InstrControl   ),
+        .o_RegDst                   (RegDst         ),
+        .o_Jump                     (Jump           ),
+        .o_Branch                   (Branch         ),
+        .o_MemRead                  (MemRead        ),
+        .o_MemToReg                 (MemToReg       ),
+        .o_ALUOp                    (ALUOp          ),
+        .o_MemWrite                 (MemWrite       ),
+        .o_ALUSrc                   (ALUSrc         ),
+        .o_RegWrite                 (RegWrite       )
 
+    );
+    //////////////////////////////////////////////
+    /// REGISTROS
+    /////////////////////////////////////////////
+    Registros
+    #(
+        .REGS               (REGS                       ),
+        .NBITS              (NBITS                      ),
+        .RS                 (RS                         ),     
+        .RD                 (RD                         ),
+        .RT                 (RT                         ),
+        .CELDAS             (CELDAS_REG                 )
+    )
+    u_Registros
+    (
+        .i_clk               (o_clk_out1                ),
+        .i_RegWrite          (MEM_WB_RegWrite           ),
+        .i_RS                (Reg_rs                    ),
+        .i_RT                (Reg_rt                    ),
+        .i_RD                (MEM_WB_RegistroDestino    ),
+        .i_DatoEscritura     (DatoEscritura             ),
+        
+        .o_RS                (DatoLeido1                ),
+        .o_RT                (DatoLeido2                )
+
+    );
+    //////////////////////////////////////////////
+    /// EXTENSOR DE SIGNO
+    /////////////////////////////////////////////
+    Extensor_Signo
+    #(
+        .i_NBITS                 (INBITS    ),
+        .e_NBITS                 (INBITS    ),
+        .o_NBITS                 (NBITS     )
+    )
+    u_Extensor_Signo
+    (
+        .i_signal                (Instr16   ),
+        .o_ext_signal            (InstrExt  )
+    );
+    //////////////////////////////////////////////
+    /// ID/EX
+    /////////////////////////////////////////////
+    Etapa_ID_EX
+    #(
+        .NBITS                      (NBITS          ),
+        .RNBITS                     (REGS           )   
+    )
+    u_Etapa_ID_EX
+    (   
+        //General
+        .i_clk                      (o_clk_out1     ),
+        .i_PC4                      (IF_ID_PC4      ),
+        .i_Instruction              (IF_ID_Instr    ),
+        
+        //ControlEX
+        .i_ALUSrc                   (ALUSrc         ),
+        .i_ALUOp                    (ALUOp          ),
+        .i_RegDst                   (RegDst         ),
+        //ControlM
+        .i_Branch                   (Branch         ),
+        .i_MemWrite                 (MemWrite       ),
+        .i_MemRead                  (MemRead        ),
+        //ControlWB
+        .i_MemToReg                 (MemToReg       ),
+        .i_RegWrite                 (RegWrite       ), 
+       
+        //Modules   
+        .i_Registro1                (DatoLeido1     ),
+        .i_Registro2                (DatoLeido2     ),
+        .i_Extension                (InstrExt       ),
+        .i_Rt                       (Reg_rt         ),
+        .i_Rd                       (Reg_rd         ),
+        
+        .o_PC4                      (ID_EX_PC4      ),
+        .o_Instruction              (ID_EX_Instr    ),
+        .o_Registro1                (ID_EX_Registro1),
+        .o_Registro2                (ID_EX_Registro2),
+        .o_Extension                (ID_EX_Extension),
+        .o_Rt                       (ID_EX_Rt       ),
+        .o_Rd                       (ID_EX_Rd       ),
+
+        //ControlEX
+        .o_ALUSrc                   (ID_EX_ALUSrc   ),
+        .o_ALUOp                    (ID_EX_ALUOp    ),
+        .o_RegDst                   (ID_EX_RegDst   ),
+        //ControlM
+        .o_Branch                   (ID_EX_Branch   ),
+        .o_MemWrite                 (ID_EX_MemWrite ),
+        .o_MemRead                  (ID_EX_MemRead  ),
+        //ControlWB
+        .o_MemToReg                 (ID_EX_MemToReg ), 
+        .o_RegWrite                 (ID_EX_RegWrite )       
+    );
+    //******************************************
+    //****************** EX
+    //******************************************
+    //////////////////////////////////////////////
+    /// SUMADOR BRANCH
+    /////////////////////////////////////////////
+    Sumador_Branch
+    #
+    (
+        .NBITS              (NBITS          )
+    )
+    u_Sumador_Branch
+    (
+        .i_ExtensionData    (ID_EX_Extension),
+        .i_SumadorPC4       (ID_EX_PC4      ),
+        .o_Mux              (SumPcBranch    )
+    );
+    //////////////////////////////////////////////
+    /// ALU
+    /////////////////////////////////////////////
+    ALU
+    #(
+        .NBITS              (NBITS        ),
+        .BOP                (BOP          )
+    )
+    u_ALU
+    (
+        .i_Reg              (ID_EX_Registro1 ),
+        .i_Mux              (MuxToALU        ),
+        .i_Op               (ALUCtrl         ),
+        .o_Cero             (Cero            ),
+        .o_Result           (ALUResult       )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR ALU
+    /////////////////////////////////////////////
+    Mux_ALU
+    #(
+        .NBITS                   (NBITS             )
+    )
+    u_Mux_ALU
+    (
+        .i_ALUSrc                 (ID_EX_ALUSrc     ),
+        .i_Registro               (ID_EX_Registro2  ),
+        .i_ExtensionData          (ID_EX_Extension  ),
+        .o_toALU                  (MuxToALU         )
+    );
+    //////////////////////////////////////////////
+    /// CONTROL ALU
+    /////////////////////////////////////////////
+    Control_ALU
+    #(
+        .ANBITS                    (ALUNBITS  ),
+        .NBITSCONTROL              (ALUCNBITS ),
+        .ALUOP                     (ALUOP     )
+    )
+    u_Control_ALU
+    (
+        .i_Funct                   (InstrALUControl ),
+        .i_ALUOp                   (ID_EX_ALUOp     ),
+        .o_ALUOp                   (ALUCtrl         )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR DE REGISTRO
+    /////////////////////////////////////////////
+    Mux_Registro
+    #(
+        .NBITS                (REGS         )
+    )
+    u_Mux_Registro
+    (
+        .i_RegDst              (ID_EX_RegDst    ),
+        .i_rt                  (ID_EX_Rt        ),
+        .i_rd                  (ID_EX_Rd        ),
+        .o_Registro            (Reg_mux_rd      )
+    );
+    //////////////////////////////////////////////
+    /// ID/EX
+    /////////////////////////////////////////////
+    Etapa_EX_MEM
+    #(
+        .NBITS  (NBITS),
+        .REGS   (REGS)
+    )
+    u_Etapa_EX_MEM
+    (
+        //General
+        .i_clk                      (o_clk_out1             ),
+        .i_PC4                      (ID_EX_PC4              ),
+        .i_PCBranch                 (SumPcBranch            ),
+        .i_Instruction              (ID_EX_Instr            ),
+        .i_Cero                     (Cero                   ),
+        .i_ALU                      (ALUResult              ),
+        .i_Registro2                (ID_EX_Registro2        ),
+        .i_RegistroDestino          (Reg_mux_rd             ),
+        
+        //ControlIM
+        .i_Branch                   (ID_EX_Branch           ),
+        .i_MemWrite                 (ID_EX_MemWrite         ),
+        .i_MemRead                  (ID_EX_MemRead          ),
+        //ControlWB
+        .i_MemToReg                 (ID_EX_MemToReg         ),
+        .i_RegWrite                 (ID_EX_RegWrite         ),
+        
+        .o_PC4                      (EX_MEM_PC4             ),
+        .o_PCBranch                 (EX_MEM_PCBranch        ),
+        .o_Instruction              (EX_MEM_Instr           ),
+        .o_Cero                     (EX_MEM_Cero            ),
+        .o_ALU                      (EX_MEM_ALU             ),
+        .o_Registro2                (EX_MEM_Registro2       ),
+        .o_RegistroDestino          (EX_MEM_RegistroDestino ),
+        
+        //ControlM
+        .o_Branch                   (EX_MEM_Branch          ),
+        .o_MemWrite                 (EX_MEM_MemWrite        ),
+        .o_MemRead                  (EX_MEM_MemRead         ),
+        //ControlWB
+        .o_MemToReg                 (EX_MEM_MemToReg        ),
+        .o_RegWrite                 (EX_MEM_RegWrite        )
+    
+    );
+    //******************************************
+    //****************** MEM
+    //******************************************
+    //////////////////////////////////////////////
+    /// AND BRANCH
+    /////////////////////////////////////////////
+    AND_Branch
+    #(
+    )
+    u_AND_Branch
+    (
+        .i_Branch   (EX_MEM_Branch  ),
+        .i_Cero     (EX_MEM_Cero    ),
+        .o_PCSrc    (PcSrc          )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR JUMP
+    /////////////////////////////////////////////
+    //Mux_PC_Jump
+    //#(
+    //    .NBITS              (NBITS           ),
+    //    .NBITSJUMP          (NBITSJUMP       )           
+    //)
+    //u_Mux_PC_Jump
+    //(
+    //    .i_Jump             (Jump           ),
+    //    .i_IJump            (InstrJump      ),
+    //    .i_PC4              (SumPc4         ),
+    //    .i_SumadorBranch    (MuxPcBranch    ),
+    //    .o_PC               (PcIn           )
+    //);
     //////////////////////////////////////////////
     /// MEMORIA DE DATOS
     /////////////////////////////////////////////
     Memoria_Datos
     #(
-        .NBITS                      (NBITS      ),
-        .CELDAS                     (CELDAS_M   )
+        .NBITS                      (NBITS              ),
+        .CELDAS                     (CELDAS_M           )
     )
     u_Memoria_Datos
     (
-        .i_clk                      (o_clk_out1 ),
-        .i_ALUDireccion             (ALUResult  ),
-        .i_DatoRegistro             (DatoLeido2 ),
-        .i_MemRead                  (MemRead    ),
-        .i_MemWrite                 (MemWrite   ),
-        .o_DatoLeido                (DatoMemoria)
+        .i_clk                      (o_clk_out1         ),
+        .i_ALUDireccion             (EX_MEM_ALU         ),
+        .i_DatoRegistro             (EX_MEM_Registro2   ),
+        .i_MemRead                  (EX_MEM_MemRead     ),
+        .i_MemWrite                 (EX_MEM_MemWrite    ),
+        .o_DatoLeido                (DatoMemoria        )
     );
-
+    //////////////////////////////////////////////
+    /// MEM/WB
+    /////////////////////////////////////////////
+    Etapa_MEM_WB
+    #(
+        .NBITS              (NBITS                  ),
+        .RNBITS             (REGS                   )
+    )
+    u_Etapa_MEM_WB
+    (
+        .i_clk              (o_clk_out1             ),
+        .i_PC4              (EX_MEM_PC4             ),
+        .i_Instruction      (EX_MEM_Instr           ),
+        .i_ALU              (EX_MEM_ALU             ),
+        .i_DatoMemoria      (DatoMemoria            ),
+        .i_RegistroDestino  (EX_MEM_RegistroDestino ),
+        
+        //ControlWB
+        .i_MemToReg         (EX_MEM_MemToReg        ),
+        .i_RegWrite         (EX_MEM_RegWrite        ),
+        
+        .o_PC4              (MEM_WB_PC4             ),
+        .o_Instruction      (MEM_WB_Instruction     ),
+        .o_ALU              (MEM_WB_ALU             ),
+        .o_DatoMemoria      (MEM_WB_DatoMemoria     ),
+        .o_RegistroDestino  (MEM_WB_RegistroDestino ),
+        
+        //ControlWB
+        .o_MemToReg         (MEM_WB_MemToReg        ),
+        .o_RegWrite         (MEM_WB_RegWrite        )
+    );        
+    //******************************************
+    //****************** WB
+    //******************************************
     //////////////////////////////////////////////
     /// MULTIPLEXOR MEMORIA
     /////////////////////////////////////////////
@@ -281,82 +586,11 @@ module Top_CPU
     )
     u_Mux_Memoria
     (
-        .i_MemToReg                 (MemToReg     ),
-        .i_MemDatos                 (DatoMemoria  ),
-        .i_ALU                      (ALUResult    ),
-        .o_Registro                 (DatoEscritura)
+        .i_MemToReg                 (MEM_WB_MemToReg    ),
+        .i_MemDatos                 (MEM_WB_DatoMemoria ),
+        .i_ALU                      (MEM_WB_ALU         ),
+        .o_Registro                 (DatoEscritura      )
     );
-
-    //////////////////////////////////////////////
-    /// MULTIPLEXOR ALU
-    /////////////////////////////////////////////
-    Mux_ALU
-    #(
-        .NBITS                   (NBITS     )
-    )
-    u_Mux_ALU
-    (
-        .i_ALUSrc                 (ALUSrc    ),
-        .i_Registro               (DatoLeido2),
-        .i_ExtensionData          (InstrExt  ),
-        .o_ACC                    (ACC       )
-    );
-
-    //////////////////////////////////////////////
-    /// CONTROL ALU
-    /////////////////////////////////////////////
-    Control_ALU
-    #(
-        .NBITS                     (ALUNBITS  ),
-        .NBITSCONTROL              (ALUCNBITS ),
-        .ALUOP                     (ALUOP     )
-    )
-    u_Control_ALU
-    (
-        .i_Funct                   (InstrAluCtrl ),
-        .i_ALUOp                   (ALUOp        ),
-        .o_ALUOp                   (ALUCtrl      )
-    );
-
-    //////////////////////////////////////////////
-    /// ALU
-    /////////////////////////////////////////////
-    ALU
-    #(
-        .NBITS                     (NBITS        ),
-        .BOP                       (BOP          )
-    )
-    u_ALU
-    (
-        .i_Reg                     (DatoLeido1   ),
-        .i_Mux                     (ACC          ),
-        .i_Op                      (ALUCtrl      ),
-        .o_Cero                    (Cero         ),
-        .o_Result                  (ALUResult    )
-    );
-
-    //////////////////////////////////////////////
-    /// UNIDAD DE CONTROL
-    /////////////////////////////////////////////
-    Control_Unidad
-    #(
-        .NBITS                      (CTRLNBITS   )
-    )
-    u_Control_Unidad
-    (
-        .i_Instruction              (InstrContol),
-        .o_RegDst                   (RegDst     ),
-        .o_Jump                     (Jump       ),
-        .o_Branch                   (Branch     ),
-        .o_MemRead                  (MemRead    ),
-        .o_MemToReg                 (MemToReg   ),
-        .o_ALUOp                    (ALUOp      ),
-        .o_MemWrite                 (MemWrite   ),
-        .o_ALUSrc                   (ALUSrc     ),
-        .o_RegWrite                 (RegWrite   )
-
-    );
-
     //////////////////////////////////////////////
     /// CLOCK WIZARD
     /////////////////////////////////////////////
@@ -366,5 +600,4 @@ module Top_CPU
         .locked             (o_locked     ),
         .clk_out1           (o_clk_out1   )
     );
-    
 endmodule
