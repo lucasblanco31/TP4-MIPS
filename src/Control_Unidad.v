@@ -37,6 +37,7 @@
 //J:    000010  |   INSTR_INDEX   
 //ADDI: 001000  |   RS      |   RT  |   IMMEDIATE
 //SLL:  000000  |   000000  |   RT  |   RD  |   sa      |   000000
+//SRL:  000000  |   000000  |   RT  |   RD  |   sa      |   000010
 
 `define LW      6'b100011
 `define SW      6'b101011

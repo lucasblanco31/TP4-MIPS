@@ -24,6 +24,7 @@
 `define OR      4'b0001       //Salida-> A or B
 `define ADD     4'b0010       //Salida-> A + B
 `define SLL     4'b0011       //Salida-> A<<B
+`define SRL     4'b0100       //Salida-> A>>B
 `define SUB     4'b0110       //Salida-> A - B
 `define SLT     4'b0111       //Salida-> A and B
 `define NOR     4'b1100       //Salida-> A nor B
@@ -59,7 +60,8 @@ module ALU
                 `SLT:       result  =   i_Reg   <   i_Mux ? 1:0 ;
                 `NOR:       result  =   ~(i_Reg |   i_Mux)      ;
                 `XOR:       result  =   i_Reg   ^   i_Mux       ;
-                `SLL:       result  =   i_Mux   <<  i_Shamt     ;   
+                `SLL:       result  =   i_Mux   <<  i_Shamt     ;
+                `SRL:       result  =   i_Mux   >>  i_Shamt     ;   
                 default:    result  =   -1                      ;
             endcase
         end
