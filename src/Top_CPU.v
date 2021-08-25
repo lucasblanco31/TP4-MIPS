@@ -538,22 +538,6 @@ module Top_CPU
         .o_PCSrc    (PcSrc          )
     );
     //////////////////////////////////////////////
-    /// MULTIPLEXOR JUMP
-    /////////////////////////////////////////////
-    //Mux_PC_Jump
-    //#(
-    //    .NBITS              (NBITS           ),
-    //    .NBITSJUMP          (NBITSJUMP       )           
-    //)
-    //u_Mux_PC_Jump
-    //(
-    //    .i_Jump             (Jump           ),
-    //    .i_IJump            (InstrJump      ),
-    //    .i_PC4              (SumPc4         ),
-    //    .i_SumadorBranch    (MuxPcBranch    ),
-    //    .o_PC               (PcIn           )
-    //);
-    //////////////////////////////////////////////
     /// MEMORIA DE DATOS
     /////////////////////////////////////////////
     Memoria_Datos
