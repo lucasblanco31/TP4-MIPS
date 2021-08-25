@@ -64,7 +64,7 @@ module Control_ALU
                         `SRL    :   ALUOp_Reg   <=   4'b0100    ;  
                         `SLLV   :   ALUOp_Reg   <=   4'b0011    ;
                         `SRLV   :   ALUOp_Reg   <=   4'b0100    ;  
-                        `SRA    :   ALUOp_Reg   <=   4'b1001    ;                         
+                        `SRA    :   ALUOp_Reg   <=   4'b0101    ;                         
                         default :   ALUOp_Reg   <=   -2         ;
                     endcase       
                 `UNOUNO :
