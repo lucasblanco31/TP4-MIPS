@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="736500fs"></ZoomStartTime>
-      <ZoomEndTime time="785501fs"></ZoomEndTime>
+      <ZoomStartTime time="743700fs"></ZoomStartTime>
+      <ZoomEndTime time="764651fs"></ZoomEndTime>
       <Cursor1Time time="760000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="232"></NameColumnWidth>
+      <NameColumnWidth column_width="224"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
@@ -368,10 +368,26 @@
             <obj_property name="ObjectShortName">o_Mux[31:0]</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject type="group" fp_name="group2647">
+         <obj_property name="label">Mux_ALU_Shamt</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Mux_ALU_Shamt/i_Registro">
+            <obj_property name="ElementShortName">i_Registro[31:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Registro[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Mux_ALU_Shamt/i_Shamt">
+            <obj_property name="ElementShortName">i_Shamt[4:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Shamt[4:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Mux_ALU_Shamt/o_toALU">
+            <obj_property name="ElementShortName">o_toALU[4:0]</obj_property>
+            <obj_property name="ObjectShortName">o_toALU[4:0]</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject type="group" fp_name="group268">
          <obj_property name="label">ALU</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Op">
             <obj_property name="ElementShortName">i_Op[3:0]</obj_property>
             <obj_property name="ObjectShortName">i_Op[3:0]</obj_property>
@@ -383,6 +399,10 @@
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Mux">
             <obj_property name="ElementShortName">i_Mux[31:0]</obj_property>
             <obj_property name="ObjectShortName">i_Mux[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Shamt">
+            <obj_property name="ElementShortName">i_Shamt[4:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Shamt[4:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/o_Result">
             <obj_property name="ElementShortName">o_Result[31:0]</obj_property>

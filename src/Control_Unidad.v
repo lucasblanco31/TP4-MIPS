@@ -19,23 +19,25 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-//LW:   100011  | base  |   RT  |   OFFSET
-//SW:   101011  |  base |   RT  |   OFFSET
-//ADD:  000000  |   RS  |   RT  |   RD  |   00000   |   100000
-//SUB:  000000  |   RS  |   RT  |   RD  |   00000   |   100010
-//SUBU: 000000  |   RS  |   RT  |   RD  |   00000   |   100011
-//AND:  000000  |   RS  |   RT  |   RD  |   00000   |   100100
-//ANDI: 001100  |   RS  |   RT  |   IMMEDIATE
-//OR:   000000  |   RS  |   RT  |   RD  |   00000   |   100101
-//ORI:  001101  |   RS  |   RT  |   IMMEDIATE
-//NOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100111
-//XOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100110
-//XORI: 001110  |   RS  |   RT  |   IMMEDIATE
-//SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
-//SLTI: 001010  |   RS  |   RT  |   IMMEDIATE
-//BEQ:  000100  |   RS  |   RT  |   OFFSET
+//LW:   100011  | base      |   RT  |   OFFSET
+//SW:   101011  |  base     |   RT  |   OFFSET
+//ADD:  000000  |   RS      |   RT  |   RD  |   00000   |   100000
+//SUB:  000000  |   RS      |   RT  |   RD  |   00000   |   100010
+//SUBU: 000000  |   RS      |   RT  |   RD  |   00000   |   100011
+//AND:  000000  |   RS      |   RT  |   RD  |   00000   |   100100
+//ANDI: 001100  |   RS      |   RT  |   IMMEDIATE
+//OR:   000000  |   RS      |   RT  |   RD  |   00000   |   100101
+//ORI:  001101  |   RS      |   RT  |   IMMEDIATE
+//NOR:  000000  |   RS      |   RT  |   RD  |   00000   |   100111
+//XOR:  000000  |   RS      |   RT  |   RD  |   00000   |   100110
+//XORI: 001110  |   RS      |   RT  |   IMMEDIATE
+//SLT:  000000  |   RS      |   RT  |   RD  |   00000   |   101010
+//SLTI: 001010  |   RS      |   RT  |   IMMEDIATE
+//BEQ:  000100  |   RS      |   RT  |   OFFSET
 //J:    000010  |   INSTR_INDEX   
-//ADDI: 001000  |   RS  |   RT  |   IMMEDIATE
+//ADDI: 001000  |   RS      |   RT  |   IMMEDIATE
+//SLL:  000000  |   000000  |   RT  |   RD  |   sa      |   000000
+//SRL:  000000  |   000000  |   RT  |   RD  |   sa      |   000010
 
 `define LW      6'b100011
 `define SW      6'b101011
@@ -64,7 +66,7 @@ module Control_Unidad
         output  wire                            o_MemWrite      ,
         output  wire                            o_ALUSrc        ,
         output  wire                            o_RegWrite      ,
-        output  wire                            o_ExtensionMode 
+        output  wire                            o_ExtensionMode  
     );
     
     reg         RegDst_Reg          ;
