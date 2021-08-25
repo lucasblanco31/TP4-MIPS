@@ -99,6 +99,8 @@ module Top_CPU
     wire     [NBITS-1       :0]     SumPcBranch     ;
     //MuxALU
     wire     [NBITS-1       :0]     MuxToALU        ;
+    //MuxShamt
+    wire     [REGS-1        :0]     Shamt           ;
     //ALU
     wire     [NBITS-1       :0]     ALUResult       ;
     wire                            Cero            ;
@@ -412,10 +414,24 @@ module Top_CPU
     (
         .i_Reg              (ID_EX_Registro1    ),
         .i_Mux              (MuxToALU           ),
-        .i_Shamt            (ShamtInstr         ),
+        .i_Shamt            (Shamt              ),
         .i_Op               (ALUCtrl            ),
         .o_Cero             (Cero               ),
         .o_Result           (ALUResult          )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR SHAMT
+    /////////////////////////////////////////////
+    Mux_ALU_Shamt
+    #(
+        .NBITS      (NBITS          ),
+        .RNBITS     (REGS           )
+    )
+    u_Mux_ALU_Shamt
+    (
+        .i_Registro (ID_EX_Registro1),
+        .i_Shamt    (ShamtInstr     ),
+        .o_toALU    (Shamt          )               
     );
     //////////////////////////////////////////////
     /// MULTIPLEXOR ALU

@@ -19,6 +19,7 @@
 `define SLLV    6'b000100   //Shift Word Left Logical Variable
 `define	SRL     6'b000010   //Shift Word Right Logical
 `define	SRLV    6'b000110   //Shift Word Right Logical Variable
+`define	SRA     6'b000011   //Shift Word Right Arithmetic
 
 `define	CERO    2'b00
 `define	CEROUNO 2'b01
@@ -61,8 +62,9 @@ module Control_ALU
                         `ADDU   :   ALUOp_Reg   <=   4'b0010    ;
                         `SLL    :   ALUOp_Reg   <=   4'b0011    ;
                         `SRL    :   ALUOp_Reg   <=   4'b0100    ;  
-                        `SLLV   :   ALUOp_Reg   <=   4'b0101    ;
-                        `SRLV   :   ALUOp_Reg   <=   4'b1000    ;                         
+                        `SLLV   :   ALUOp_Reg   <=   4'b0011    ;
+                        `SRLV   :   ALUOp_Reg   <=   4'b0100    ;  
+                        `SRA    :   ALUOp_Reg   <=   4'b1001    ;                         
                         default :   ALUOp_Reg   <=   -2         ;
                     endcase       
                 `UNOUNO :
