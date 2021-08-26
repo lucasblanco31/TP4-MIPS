@@ -73,7 +73,7 @@ module Etapa_ID_EX
     reg                     Branch_reg          ;
     reg                     MemWrite_reg        ;
     reg                     MemRead_reg         ;
-    reg                     TamanoFiltro_reg    ;
+    reg     [1          :0] TamanoFiltro_reg    ;
     
     //RegWB
     reg                     MemToReg_reg        ;

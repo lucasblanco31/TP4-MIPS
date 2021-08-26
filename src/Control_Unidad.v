@@ -22,6 +22,7 @@
 //LW:   100011  | base      |   RT  |   OFFSET
 //SW:   101011  |  base     |   RT  |   OFFSET
 //SB:   101000  |  base     |   RT  |   OFFSET
+//SH:   101001  |  base     |   RT  |   OFFSET
 //ADD:  000000  |   RS      |   RT  |   RD  |   00000   |   100000
 //SUB:  000000  |   RS      |   RT  |   RD  |   00000   |   100010
 //SUBU: 000000  |   RS      |   RT  |   RD  |   00000   |   100011
@@ -43,6 +44,7 @@
 `define LW      6'b100011
 `define SW      6'b101011
 `define SB      6'b101000
+`define SH      6'b101001
 `define BEQ     6'b000100
 `define J       6'b000010
 `define BAS     6'b000000
@@ -111,7 +113,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
 
             `ADDI:
@@ -126,7 +128,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `ANDI:
@@ -141,7 +143,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `ORI:
@@ -156,7 +158,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `SLTI:
@@ -171,7 +173,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `XORI:
@@ -186,7 +188,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `LW:
@@ -201,7 +203,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
     
             `SW:
@@ -216,7 +218,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
             
             `SB:
@@ -231,7 +233,22 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b01   ;
+                TamanoFiltro_Reg    <=  2'b01   ;
+            end
+            
+            `SH:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b0    ; 
+                MemToReg_Reg        <=  1'b0    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b1    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b0    ;
+                ExtensionMode_Reg   <=  1'b0    ;
+                TamanoFiltro_Reg    <=  2'b10   ;
             end
     
             `BEQ:
@@ -246,7 +263,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
 
             `J:
@@ -261,7 +278,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end
     
             default:
@@ -276,7 +293,7 @@ module Control_Unidad
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
-                TamanoFiltro_Reg    <=  1'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
             end  
         endcase       
     end
