@@ -24,7 +24,8 @@ module Etapa_ID_EX
         ///IControlM
         input   wire                        i_Branch        ,
         input   wire                        i_MemWrite      ,
-        input   wire                        i_MemRead       ,   
+        input   wire                        i_MemRead       ,
+        input   wire    [1          :0]     i_TamanoFiltro  ,   
         
         ///IControlWB
         input   wire                        i_MemToReg      ,
@@ -47,34 +48,36 @@ module Etapa_ID_EX
         ///OControlM
         output   wire                        o_Branch        ,
         output   wire                        o_MemWrite      ,
-        output   wire                        o_MemRead       ,   
+        output   wire                        o_MemRead       ,
+        output   wire    [1          :0]     o_TamanoFiltro  ,   
         
         ///OControlWB
         output   wire                        o_MemToReg      ,
         output   wire                        o_RegWrite      
     );
     
-    reg     [NBITS-1    :0] PC4_reg         ;
-    reg     [NBITS-1    :0] Instruction_reg ;
-    reg     [NBITS-1    :0] Registro1_reg   ;
-    reg     [NBITS-1    :0] Registro2_reg   ;
-    reg     [NBITS-1    :0] Extension_reg   ;
-    reg     [RNBITS-1   :0] Rt_reg          ;
-    reg     [RNBITS-1   :0] Rd_reg          ;
+    reg     [NBITS-1    :0] PC4_reg             ;
+    reg     [NBITS-1    :0] Instruction_reg     ;
+    reg     [NBITS-1    :0] Registro1_reg       ;
+    reg     [NBITS-1    :0] Registro2_reg       ;
+    reg     [NBITS-1    :0] Extension_reg       ;
+    reg     [RNBITS-1   :0] Rt_reg              ;
+    reg     [RNBITS-1   :0] Rd_reg              ;
     
     //RegEX
-    reg                     ALUSrc_reg      ;
-    reg     [1          :0] ALUOp_reg       ;
-    reg                     RegDst_reg      ;
+    reg                     ALUSrc_reg          ;
+    reg     [1          :0] ALUOp_reg           ;
+    reg                     RegDst_reg          ;
     
     //RegM
-    reg                     Branch_reg      ;
-    reg                     MemWrite_reg    ;
-    reg                     MemRead_reg     ;
+    reg                     Branch_reg          ;
+    reg                     MemWrite_reg        ;
+    reg                     MemRead_reg         ;
+    reg                     TamanoFiltro_reg    ;
     
     //RegWB
-    reg                     MemToReg_reg    ;
-    reg                     RegWrite_reg    ;
+    reg                     MemToReg_reg        ;
+    reg                     RegWrite_reg        ;
         
     
     assign o_PC4            =   PC4_reg         ;
@@ -94,6 +97,7 @@ module Etapa_ID_EX
     assign o_Branch         =   Branch_reg      ;
     assign o_MemWrite       =   MemWrite_reg    ;
     assign o_MemRead        =   MemRead_reg     ;
+    assign o_TamanoFiltro   =   TamanoFiltro_reg;
     
     //AssignWB
     assign o_MemToReg       =   MemToReg_reg    ;
@@ -101,26 +105,27 @@ module Etapa_ID_EX
     
     always @(negedge i_clk)
         begin 
-            PC4_reg         <=  i_PC4           ;
-            Instruction_reg <=  i_Instruction   ;
-            Registro1_reg   <=  i_Registro1     ;      
-            Registro2_reg   <=  i_Registro2     ;
-            Extension_reg   <=  i_Extension     ;
-            Rt_reg          <=  i_Rt            ;
-            Rd_reg          <=  i_Rd            ;
+            PC4_reg             <=  i_PC4           ;
+            Instruction_reg     <=  i_Instruction   ;
+            Registro1_reg       <=  i_Registro1     ;      
+            Registro2_reg       <=  i_Registro2     ;
+            Extension_reg       <=  i_Extension     ;
+            Rt_reg              <=  i_Rt            ;
+            Rd_reg              <=  i_Rd            ;
             
             //EX
-            ALUSrc_reg      <=  i_ALUSrc        ;
-            ALUOp_reg       <=  i_ALUOp         ;
-            RegDst_reg      <=  i_RegDst        ;
+            ALUSrc_reg          <=  i_ALUSrc        ;
+            ALUOp_reg           <=  i_ALUOp         ;
+            RegDst_reg          <=  i_RegDst        ;
     
             //M
-            Branch_reg      <=  i_Branch        ;
-            MemWrite_reg    <=  i_MemWrite      ;
-            MemRead_reg     <=  i_MemRead       ;
+            Branch_reg          <=  i_Branch        ;
+            MemWrite_reg        <=  i_MemWrite      ;
+            MemRead_reg         <=  i_MemRead       ;
+            TamanoFiltro_reg    <=  i_TamanoFiltro  ;
     
             //WB
-            MemToReg_reg    <=  i_MemToReg      ;
-            RegWrite_reg    <=  i_RegWrite      ;
+            MemToReg_reg        <=  i_MemToReg      ;
+            RegWrite_reg        <=  i_RegWrite      ;
         end
 endmodule

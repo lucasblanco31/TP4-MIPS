@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="743700fs"></ZoomStartTime>
-      <ZoomEndTime time="764651fs"></ZoomEndTime>
-      <Cursor1Time time="760000fs"></Cursor1Time>
+      <ZoomStartTime time="639500fs"></ZoomStartTime>
+      <ZoomEndTime time="1021501fs"></ZoomEndTime>
+      <Cursor1Time time="740000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="224"></NameColumnWidth>
+      <NameColumnWidth column_width="216"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
@@ -536,6 +536,7 @@
    <wvobject type="group" fp_name="group1348">
       <obj_property name="label">MEM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="group" fp_name="group1349">
          <obj_property name="label">AND_Branch</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -552,9 +553,27 @@
             <obj_property name="ObjectShortName">o_PCSrc</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject type="group" fp_name="group194">
+         <obj_property name="label">Filtro_Store</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Store/i_Tamano">
+            <obj_property name="ElementShortName">i_Tamano[1:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Tamano[1:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Store/i_Dato">
+            <obj_property name="ElementShortName">i_Dato[31:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Dato[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Store/o_DatoEscribir">
+            <obj_property name="ElementShortName">o_DatoEscribir[31:0]</obj_property>
+            <obj_property name="ObjectShortName">o_DatoEscribir[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject type="group" fp_name="group285">
          <obj_property name="label">Memoria_Datos</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/tb_full/u_top/u_Memoria_Datos/memory">
             <obj_property name="ElementShortName">memory[69:0][31:0]</obj_property>
             <obj_property name="ObjectShortName">memory[69:0][31:0]</obj_property>
