@@ -17,6 +17,8 @@ module Top_CPU
         parameter ALUCNBITS   = 2,
         parameter ALUOP       = 4,
         parameter BOP         = 4,
+        
+        parameter TNBITS      = 2,
 
         parameter CTRLNBITS   = 6,
         parameter REGS        = 5
@@ -41,58 +43,60 @@ module Top_CPU
     //-------------------------------------------------------
     //IF
     //PC
-    wire    [NBITS-1     :0]        PcAddr          ;
-    wire    [NBITS-1     :0]        PCInBranch      ;
-    wire    [NBITS-1     :0]        PCIn            ;
+    wire    [NBITS-1     :0]        PcAddr              ;
+    wire    [NBITS-1     :0]        PCInBranch          ;
+    wire    [NBITS-1     :0]        PCIn                ;
     //SumadorPC4
-    wire    [NBITS-1     :0]        SumPC4          ;
+    wire    [NBITS-1     :0]        SumPC4              ;
     //MemoriaInstrucciones
-    wire    [NBITS-1     :0]        Instr           ;
+    wire    [NBITS-1     :0]        Instr               ;
     //IF_ID
-    wire    [NBITS-1     :0]        IF_ID_PC4       ;
-    wire    [NBITS-1     :0]        IF_ID_Instr     ;
+    wire    [NBITS-1     :0]        IF_ID_PC4           ;
+    wire    [NBITS-1     :0]        IF_ID_Instr         ;
     //----------------------------------------------------
     //ID
     //Sumador PC Jump
-    wire     [NBITSJUMP-1   :0]     IJump            ;
-    wire     [NBITS-1       :0]     OIJump           ;
+    wire     [NBITSJUMP-1   :0]     IJump               ;
+    wire     [NBITS-1       :0]     OIJump              ;
     //Control   
-    wire     [CTRLNBITS-1   :0]     InstrControl    ;
-    wire                            RegWrite        ;
-    wire                            MemToReg        ;
-    wire                            Branch          ;
-    wire                            Jump            ;
-    wire                            RegDst          ;
-    wire                            ALUSrc          ;
-    wire                            MemRead         ;
-    wire                            MemWrite        ;
-    wire     [ALUCNBITS-1  :0]      ALUOp           ;
-    wire                            ExtensionMode   ;  
+    wire     [CTRLNBITS-1   :0]     InstrControl        ;
+    wire                            RegWrite            ;
+    wire                            MemToReg            ;
+    wire                            Branch              ;
+    wire                            Jump                ;
+    wire                            RegDst              ;
+    wire                            ALUSrc              ;
+    wire                            MemRead             ;
+    wire                            MemWrite            ;
+    wire     [ALUCNBITS-1  :0]      ALUOp               ;
+    wire                            ExtensionMode       ;
+    wire     [TNBITS-1     :0]      TamanoFiltro        ;  
     //Registros
-    wire     [RS-1        :0]        Reg_rs         ;
-    wire     [RD-1        :0]        Reg_rd         ;
-    wire     [RT-1        :0]        Reg_rt         ;
-    wire     [NBITS-1     :0]        DatoLeido1     ;
-    wire     [NBITS-1     :0]        DatoLeido2     ;
+    wire     [RS-1        :0]        Reg_rs             ;
+    wire     [RD-1        :0]        Reg_rd             ;
+    wire     [RT-1        :0]        Reg_rt             ;
+    wire     [NBITS-1     :0]        DatoLeido1         ;
+    wire     [NBITS-1     :0]        DatoLeido2         ;
     //Instruccion
-    wire     [INBITS-1    :0]        Instr16        ;
-    wire     [NBITS-1     :0]        InstrExt       ;
+    wire     [INBITS-1    :0]        Instr16            ;
+    wire     [NBITS-1     :0]        InstrExt           ;
     //ID/EX
-    wire    [NBITS-1        :0]     ID_EX_PC4       ;
-    wire    [NBITS-1        :0]     ID_EX_Instr     ;
-    wire    [NBITS-1        :0]     ID_EX_Registro1 ;
-    wire    [NBITS-1        :0]     ID_EX_Registro2 ;
-    wire    [NBITS-1        :0]     ID_EX_Extension ;
-    wire    [REGS-1         :0]     ID_EX_Rt        ;
-    wire    [REGS-1         :0]     ID_EX_Rd        ;
-    wire                            ID_EX_ALUSrc    ;     
-    wire    [1              :0]     ID_EX_ALUOp     ;
-    wire                            ID_EX_RegDst    ;
-    wire                            ID_EX_Branch    ;
-    wire                            ID_EX_MemWrite  ;
-    wire                            ID_EX_MemRead   ;
-    wire                            ID_EX_MemToReg  ;
-    wire                            ID_EX_RegWrite  ;
+    wire    [NBITS-1        :0]     ID_EX_PC4           ;
+    wire    [NBITS-1        :0]     ID_EX_Instr         ;
+    wire    [NBITS-1        :0]     ID_EX_Registro1     ;
+    wire    [NBITS-1        :0]     ID_EX_Registro2     ;
+    wire    [NBITS-1        :0]     ID_EX_Extension     ;
+    wire    [REGS-1         :0]     ID_EX_Rt            ;
+    wire    [REGS-1         :0]     ID_EX_Rd            ;
+    wire                            ID_EX_ALUSrc        ;      
+    wire    [1              :0]     ID_EX_ALUOp         ;
+    wire                            ID_EX_RegDst        ;
+    wire                            ID_EX_Branch        ;
+    wire                            ID_EX_MemWrite      ;
+    wire                            ID_EX_MemRead       ;
+    wire                            ID_EX_MemToReg      ;
+    wire                            ID_EX_RegWrite      ;
+    wire    [1              :0]     ID_EX_TamanoFiltro  ;
     //----------------------------------------------------
     //EX
     //SumadorBranch
@@ -124,10 +128,13 @@ module Top_CPU
     wire                            EX_MEM_MemRead          ;
     wire                            EX_MEM_MemToReg         ;
     wire                            EX_MEM_RegWrite         ;
+    wire    [1              :0]     EX_MEM_TamanoFiltro     ;
     //-------------------------------------------------------
     //MEM
     //MultiplexorBranch
     wire                            PcSrc                   ;
+    //FiltroStore
+    wire    [NBITS-1        :0]     DatoFiltrado            ;
     //MemoriaDatos
     wire    [NBITS-1        :0]     DatoMemoria             ;
     //MEM/WB
@@ -287,8 +294,8 @@ module Top_CPU
         .o_MemWrite                 (MemWrite       ),
         .o_ALUSrc                   (ALUSrc         ),
         .o_RegWrite                 (RegWrite       ),
-        .o_ExtensionMode            (ExtensionMode  )
-
+        .o_ExtensionMode            (ExtensionMode  ),
+        .o_TamanoFiltro             (TamanoFiltro   )
     );
     //////////////////////////////////////////////
     /// REGISTROS
@@ -341,48 +348,50 @@ module Top_CPU
     u_Etapa_ID_EX
     (   
         //General
-        .i_clk                      (o_clk_out1     ),
-        .i_PC4                      (IF_ID_PC4      ),
-        .i_Instruction              (IF_ID_Instr    ),
+        .i_clk                      (o_clk_out1         ),
+        .i_PC4                      (IF_ID_PC4          ),
+        .i_Instruction              (IF_ID_Instr        ),
         
         //ControlEX
-        .i_ALUSrc                   (ALUSrc         ),
-        .i_ALUOp                    (ALUOp          ),
-        .i_RegDst                   (RegDst         ),
+        .i_ALUSrc                   (ALUSrc             ),
+        .i_ALUOp                    (ALUOp              ),
+        .i_RegDst                   (RegDst             ),
         //ControlM
-        .i_Branch                   (Branch         ),
-        .i_MemWrite                 (MemWrite       ),
-        .i_MemRead                  (MemRead        ),
+        .i_Branch                   (Branch             ),
+        .i_MemWrite                 (MemWrite           ),
+        .i_MemRead                  (MemRead            ),
+        .i_TamanoFiltro             (TamanoFiltro       ),
         //ControlWB
-        .i_MemToReg                 (MemToReg       ),
-        .i_RegWrite                 (RegWrite       ), 
+        .i_MemToReg                 (MemToReg           ),
+        .i_RegWrite                 (RegWrite           ), 
        
         //Modules   
-        .i_Registro1                (DatoLeido1     ),
-        .i_Registro2                (DatoLeido2     ),
-        .i_Extension                (InstrExt       ),
-        .i_Rt                       (Reg_rt         ),
-        .i_Rd                       (Reg_rd         ),
+        .i_Registro1                (DatoLeido1         ),
+        .i_Registro2                (DatoLeido2         ),
+        .i_Extension                (InstrExt           ),
+        .i_Rt                       (Reg_rt             ),
+        .i_Rd                       (Reg_rd             ),
         
-        .o_PC4                      (ID_EX_PC4      ),
-        .o_Instruction              (ID_EX_Instr    ),
-        .o_Registro1                (ID_EX_Registro1),
-        .o_Registro2                (ID_EX_Registro2),
-        .o_Extension                (ID_EX_Extension),
-        .o_Rt                       (ID_EX_Rt       ),
-        .o_Rd                       (ID_EX_Rd       ),
+        .o_PC4                      (ID_EX_PC4          ),
+        .o_Instruction              (ID_EX_Instr        ),
+        .o_Registro1                (ID_EX_Registro1    ),
+        .o_Registro2                (ID_EX_Registro2    ),
+        .o_Extension                (ID_EX_Extension    ),
+        .o_Rt                       (ID_EX_Rt           ),
+        .o_Rd                       (ID_EX_Rd           ),
 
         //ControlEX
-        .o_ALUSrc                   (ID_EX_ALUSrc   ),
-        .o_ALUOp                    (ID_EX_ALUOp    ),
-        .o_RegDst                   (ID_EX_RegDst   ),
+        .o_ALUSrc                   (ID_EX_ALUSrc       ),
+        .o_ALUOp                    (ID_EX_ALUOp        ),
+        .o_RegDst                   (ID_EX_RegDst       ),
         //ControlM
-        .o_Branch                   (ID_EX_Branch   ),
-        .o_MemWrite                 (ID_EX_MemWrite ),
-        .o_MemRead                  (ID_EX_MemRead  ),
+        .o_Branch                   (ID_EX_Branch       ),
+        .o_MemWrite                 (ID_EX_MemWrite     ),
+        .o_MemRead                  (ID_EX_MemRead      ),
+        .o_TamanoFiltro             (ID_EX_TamanoFiltro ),
         //ControlWB
-        .o_MemToReg                 (ID_EX_MemToReg ), 
-        .o_RegWrite                 (ID_EX_RegWrite )       
+        .o_MemToReg                 (ID_EX_MemToReg     ), 
+        .o_RegWrite                 (ID_EX_RegWrite     )       
     );
     //******************************************
     //****************** EX
@@ -501,6 +510,7 @@ module Top_CPU
         .i_Branch                   (ID_EX_Branch           ),
         .i_MemWrite                 (ID_EX_MemWrite         ),
         .i_MemRead                  (ID_EX_MemRead          ),
+        .i_TamanoFiltro             (ID_EX_TamanoFiltro     ),
         //ControlWB
         .i_MemToReg                 (ID_EX_MemToReg         ),
         .i_RegWrite                 (ID_EX_RegWrite         ),
@@ -517,6 +527,8 @@ module Top_CPU
         .o_Branch                   (EX_MEM_Branch          ),
         .o_MemWrite                 (EX_MEM_MemWrite        ),
         .o_MemRead                  (EX_MEM_MemRead         ),
+        .o_TamanoFiltro             (EX_MEM_TamanoFiltro    ),
+        
         //ControlWB
         .o_MemToReg                 (EX_MEM_MemToReg        ),
         .o_RegWrite                 (EX_MEM_RegWrite        )
@@ -538,21 +550,19 @@ module Top_CPU
         .o_PCSrc    (PcSrc          )
     );
     //////////////////////////////////////////////
-    /// MULTIPLEXOR JUMP
+    /// FILTRO STORE
     /////////////////////////////////////////////
-    //Mux_PC_Jump
-    //#(
-    //    .NBITS              (NBITS           ),
-    //    .NBITSJUMP          (NBITSJUMP       )           
-    //)
-    //u_Mux_PC_Jump
-    //(
-    //    .i_Jump             (Jump           ),
-    //    .i_IJump            (InstrJump      ),
-    //    .i_PC4              (SumPc4         ),
-    //    .i_SumadorBranch    (MuxPcBranch    ),
-    //    .o_PC               (PcIn           )
-    //);
+    Filtro_Store
+    #(
+        .NBITS          (NBITS              ),
+        .TNBITS         (TNBITS             )
+    )
+    u_Filtro_Store
+    (
+        .i_Dato         (EX_MEM_Registro2   ),
+        .i_Tamano       (EX_MEM_TamanoFiltro),
+        .o_DatoEscribir (DatoFiltrado       )
+    );
     //////////////////////////////////////////////
     /// MEMORIA DE DATOS
     /////////////////////////////////////////////
@@ -565,7 +575,7 @@ module Top_CPU
     (
         .i_clk                      (o_clk_out1         ),
         .i_ALUDireccion             (EX_MEM_ALU         ),
-        .i_DatoRegistro             (EX_MEM_Registro2   ),
+        .i_DatoRegistro             (DatoFiltrado       ),
         .i_MemRead                  (EX_MEM_MemRead     ),
         .i_MemWrite                 (EX_MEM_MemWrite    ),
         .o_DatoLeido                (DatoMemoria        )

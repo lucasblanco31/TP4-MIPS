@@ -18,7 +18,8 @@ module Etapa_EX_MEM
         ///IControlM
         input   wire                        i_Branch            ,
         input   wire                        i_MemWrite          ,
-        input   wire                        i_MemRead           ,    
+        input   wire                        i_MemRead           , 
+        input   wire    [1          :0]     i_TamanoFiltro      ,   
         
         ///IControlWB
         input   wire                        i_MemToReg          ,
@@ -36,7 +37,8 @@ module Etapa_EX_MEM
         ///OControlM
         output   wire                        o_Branch           ,
         output   wire                        o_MemWrite         ,
-        output   wire                        o_MemRead          ,    
+        output   wire                        o_MemRead          ,
+        output   wire   [1          :0]      o_TamanoFiltro     ,     
         
         ///OControlWB
         output   wire                        o_MemToReg         ,
@@ -55,6 +57,7 @@ module Etapa_EX_MEM
     reg                     Branch_reg          ;
     reg                     MemWrite_reg        ;
     reg                     MemRead_reg         ;
+    reg     [1          :0] TamanoFiltro_reg    ;
     
     //RegWB
     reg                     MemToReg_reg        ;
@@ -72,6 +75,7 @@ module Etapa_EX_MEM
     assign o_Branch         =   Branch_reg      ;
     assign o_MemWrite       =   MemWrite_reg    ;
     assign o_MemRead        =   MemRead_reg     ;
+    assign o_TamanoFiltro   =   TamanoFiltro_reg;
     
     //AssignWB
     assign o_MemToReg       =   MemToReg_reg    ;
@@ -88,12 +92,13 @@ module Etapa_EX_MEM
             RegistroDestino_reg <=  i_RegistroDestino   ;
             
             //M
-            Branch_reg      <=  i_Branch                ;
-            MemWrite_reg    <=  i_MemWrite              ;
-            MemRead_reg     <=  i_MemRead               ;
+            Branch_reg          <=  i_Branch                ;
+            MemWrite_reg        <=  i_MemWrite              ;
+            MemRead_reg         <=  i_MemRead               ;
+            TamanoFiltro_reg    <=  i_TamanoFiltro          ;
     
             //WB
-            MemToReg_reg    <=  i_MemToReg              ;
-            RegWrite_reg    <=  i_RegWrite              ;
+            MemToReg_reg        <=  i_MemToReg              ;
+            RegWrite_reg        <=  i_RegWrite              ;
         end
 endmodule
