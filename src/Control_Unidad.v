@@ -23,6 +23,7 @@
 //LB:   100000  | base      |   RT  |   OFFSET
 //LBU:  100100  | base      |   RT  |   OFFSET
 //LH:   100001  | base      |   RT  |   OFFSET
+//LHU:  100101  | base      |   RT  |   OFFSET
 //SW:   101011  |  base     |   RT  |   OFFSET
 //SB:   101000  |  base     |   RT  |   OFFSET
 //SH:   101001  |  base     |   RT  |   OFFSET
@@ -48,6 +49,7 @@
 `define LB      6'b100000
 `define LBU     6'b100100
 `define LH      6'b100001
+`define LHU     6'b100101
 `define SW      6'b101011
 `define SB      6'b101000
 `define SH      6'b101001
@@ -281,6 +283,23 @@ module Control_Unidad
                 TamanoFiltro_Reg    <=  2'b00   ;
                 TamanoFiltroL_Reg   <=  2'b10   ;
                 ZeroExtend_Reg      <=  1'b0    ;
+            end
+    
+            `LHU:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  1'b0    ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b10   ;
+                ZeroExtend_Reg      <=  1'b1    ;
             end
     
             `SW:
