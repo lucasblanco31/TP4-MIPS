@@ -30,6 +30,9 @@ module Etapa_ID_EX
         ///IControlWB
         input   wire                        i_MemToReg      ,
         input   wire                        i_RegWrite      ,
+        input   wire    [1          :0]     i_TamanoFiltroL ,
+        input   wire                        i_ZeroExtend    ,
+        input   wire                        i_LUI           ,
         
         //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PC4           ,
@@ -41,19 +44,22 @@ module Etapa_ID_EX
         output  wire    [RNBITS-1   :0]     o_Rd            ,
         
         ///OControlEX
-        output   wire                        o_ALUSrc        ,
-        output   wire    [1          :0]     o_ALUOp         ,
-        output   wire                        o_RegDst        ,
+        output  wire                        o_ALUSrc        ,
+        output  wire    [1          :0]     o_ALUOp         ,
+        output  wire                        o_RegDst        ,
         
         ///OControlM
-        output   wire                        o_Branch        ,
-        output   wire                        o_MemWrite      ,
-        output   wire                        o_MemRead       ,
-        output   wire    [1          :0]     o_TamanoFiltro  ,   
+        output  wire                        o_Branch        ,
+        output  wire                        o_MemWrite      ,
+        output  wire                        o_MemRead       ,
+        output  wire    [1          :0]     o_TamanoFiltro  ,   
         
         ///OControlWB
-        output   wire                        o_MemToReg      ,
-        output   wire                        o_RegWrite      
+        output  wire                        o_MemToReg      ,
+        output  wire                        o_RegWrite      ,
+        output  wire   [1           :0]     o_TamanoFiltroL ,
+        output  wire                        o_ZeroExtend    ,
+        output  wire                        o_LUI
     );
     
     reg     [NBITS-1    :0] PC4_reg             ;
@@ -78,7 +84,9 @@ module Etapa_ID_EX
     //RegWB
     reg                     MemToReg_reg        ;
     reg                     RegWrite_reg        ;
-        
+    reg     [1          :0] TamanoFiltroL_reg   ;
+    reg                     ZeroExtend_reg      ;
+    reg                     LUI_reg             ;    
     
     assign o_PC4            =   PC4_reg         ;
     assign o_Instruction    =   Instruction_reg ;
@@ -100,8 +108,11 @@ module Etapa_ID_EX
     assign o_TamanoFiltro   =   TamanoFiltro_reg;
     
     //AssignWB
-    assign o_MemToReg       =   MemToReg_reg    ;
-    assign o_RegWrite       =   RegWrite_reg    ;
+    assign o_MemToReg       =   MemToReg_reg        ;
+    assign o_RegWrite       =   RegWrite_reg        ;
+    assign o_TamanoFiltroL  =   TamanoFiltroL_reg   ;
+    assign o_ZeroExtend     =   ZeroExtend_reg      ;
+    assign o_LUI            =   LUI_reg             ;
     
     always @(negedge i_clk)
         begin 
@@ -127,5 +138,8 @@ module Etapa_ID_EX
             //WB
             MemToReg_reg        <=  i_MemToReg      ;
             RegWrite_reg        <=  i_RegWrite      ;
+            TamanoFiltroL_reg   <=  i_TamanoFiltroL ;
+            ZeroExtend_reg      <=  i_ZeroExtend    ;
+            LUI_reg             <=  i_LUI           ;
         end
 endmodule

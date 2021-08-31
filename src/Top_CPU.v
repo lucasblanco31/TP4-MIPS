@@ -5,6 +5,8 @@ module Top_CPU
         parameter NBITS       = 32,
         parameter NBITSJUMP   = 26,
         parameter INBITS      = 16,
+        parameter HWORDBITS   = 16,
+        parameter BYTENBITS   = 8, 
  
         parameter CELDAS_REG  = 32,
         parameter CELDAS_M    = 10,
@@ -69,8 +71,11 @@ module Top_CPU
     wire                            MemRead             ;
     wire                            MemWrite            ;
     wire     [ALUCNBITS-1  :0]      ALUOp               ;
-    wire                            ExtensionMode       ;
+    wire     [TNBITS-1     :0]      ExtensionMode       ;
     wire     [TNBITS-1     :0]      TamanoFiltro        ;  
+    wire     [TNBITS-1     :0]      TamanoFiltroL       ;
+    wire                            ZeroExtend          ;  
+    wire                            LUI                 ;
     //Registros
     wire     [RS-1        :0]        Reg_rs             ;
     wire     [RD-1        :0]        Reg_rd             ;
@@ -97,6 +102,9 @@ module Top_CPU
     wire                            ID_EX_MemToReg      ;
     wire                            ID_EX_RegWrite      ;
     wire    [1              :0]     ID_EX_TamanoFiltro  ;
+    wire    [1              :0]     ID_EX_TamanoFiltroL ;
+    wire                            ID_EX_ZeroExtend    ;
+    wire                            ID_EX_LUI           ;
     //----------------------------------------------------
     //EX
     //SumadorBranch
@@ -123,12 +131,16 @@ module Top_CPU
     wire    [NBITS-1        :0]     EX_MEM_ALU              ;
     wire    [NBITS-1        :0]     EX_MEM_Registro2        ;
     wire    [REGS-1         :0]     EX_MEM_RegistroDestino  ;
+    wire    [NBITS-1        :0]     EX_MEM_Extension        ;
     wire                            EX_MEM_Branch           ;
     wire                            EX_MEM_MemWrite         ;
     wire                            EX_MEM_MemRead          ;
     wire                            EX_MEM_MemToReg         ;
     wire                            EX_MEM_RegWrite         ;
     wire    [1              :0]     EX_MEM_TamanoFiltro     ;
+    wire    [1              :0]     EX_MEM_TamanoFiltroL    ;
+    wire                            EX_MEM_ZeroExtend       ;
+    wire                            EX_MEM_LUI              ;
     //-------------------------------------------------------
     //MEM
     //MultiplexorBranch
@@ -143,10 +155,18 @@ module Top_CPU
     wire    [NBITS-1        :0]     MEM_WB_ALU              ;
     wire    [NBITS-1        :0]     MEM_WB_DatoMemoria      ;
     wire    [REGS-1         :0]     MEM_WB_RegistroDestino  ;
+    wire    [NBITS-1        :0]     MEM_WB_Extension        ;
     wire                            MEM_WB_MemToReg         ;
     wire                            MEM_WB_RegWrite         ;
+    wire    [1              :0]     MEM_WB_TamanoFiltroL    ;
+    wire                            MEM_WB_ZeroExtend       ;
+    wire                            MEM_WB_LUI              ;
     //-------------------------------------------------------
     //WB
+    //Filtro Load
+    wire    [NBITS-1        :0]     DatoFiltradoL           ;
+    //Multiplexor LUI
+    wire    [NBITS-1        :0]     DatoToReg               ;
     //MultiplexorMemoria
     wire    [NBITS-1        :0]     DatoEscritura           ;
     //-------------------------------------------------------
@@ -295,7 +315,10 @@ module Top_CPU
         .o_ALUSrc                   (ALUSrc         ),
         .o_RegWrite                 (RegWrite       ),
         .o_ExtensionMode            (ExtensionMode  ),
-        .o_TamanoFiltro             (TamanoFiltro   )
+        .o_TamanoFiltro             (TamanoFiltro   ),
+        .o_TamanoFiltroL            (TamanoFiltroL  ),
+        .o_ZeroExtend               (ZeroExtend     ),
+        .o_LUI                      (LUI            )
     );
     //////////////////////////////////////////////
     /// REGISTROS
@@ -363,7 +386,10 @@ module Top_CPU
         .i_TamanoFiltro             (TamanoFiltro       ),
         //ControlWB
         .i_MemToReg                 (MemToReg           ),
-        .i_RegWrite                 (RegWrite           ), 
+        .i_RegWrite                 (RegWrite           ),
+        .i_TamanoFiltroL            (TamanoFiltroL      ),
+        .i_ZeroExtend               (ZeroExtend         ),         
+        .i_LUI                      (LUI                ),
        
         //Modules   
         .i_Registro1                (DatoLeido1         ),
@@ -391,7 +417,10 @@ module Top_CPU
         .o_TamanoFiltro             (ID_EX_TamanoFiltro ),
         //ControlWB
         .o_MemToReg                 (ID_EX_MemToReg     ), 
-        .o_RegWrite                 (ID_EX_RegWrite     )       
+        .o_RegWrite                 (ID_EX_RegWrite     ),
+        .o_TamanoFiltroL            (ID_EX_TamanoFiltroL),
+        .o_ZeroExtend               (ID_EX_ZeroExtend   ),
+        .o_LUI                      (ID_EX_LUI          )      
     );
     //******************************************
     //****************** EX
@@ -505,6 +534,7 @@ module Top_CPU
         .i_ALU                      (ALUResult              ),
         .i_Registro2                (ID_EX_Registro2        ),
         .i_RegistroDestino          (Reg_mux_rd             ),
+        .i_Extension                (ID_EX_Extension        ),
         
         //ControlIM
         .i_Branch                   (ID_EX_Branch           ),
@@ -514,6 +544,9 @@ module Top_CPU
         //ControlWB
         .i_MemToReg                 (ID_EX_MemToReg         ),
         .i_RegWrite                 (ID_EX_RegWrite         ),
+        .i_TamanoFiltroL            (ID_EX_TamanoFiltroL    ),
+        .i_ZeroExtend               (ID_EX_ZeroExtend       ),
+        .i_LUI                      (ID_EX_LUI              ),
         
         .o_PC4                      (EX_MEM_PC4             ),
         .o_PCBranch                 (EX_MEM_PCBranch        ),
@@ -522,6 +555,7 @@ module Top_CPU
         .o_ALU                      (EX_MEM_ALU             ),
         .o_Registro2                (EX_MEM_Registro2       ),
         .o_RegistroDestino          (EX_MEM_RegistroDestino ),
+        .o_Extension                (EX_MEM_Extension       ),
         
         //ControlM
         .o_Branch                   (EX_MEM_Branch          ),
@@ -531,8 +565,10 @@ module Top_CPU
         
         //ControlWB
         .o_MemToReg                 (EX_MEM_MemToReg        ),
-        .o_RegWrite                 (EX_MEM_RegWrite        )
-    
+        .o_RegWrite                 (EX_MEM_RegWrite        ),
+        .o_TamanoFiltroL            (EX_MEM_TamanoFiltroL   ),
+        .o_ZeroExtend               (EX_MEM_ZeroExtend      ),
+        .o_LUI                      (EX_MEM_LUI             )
     );
     //******************************************
     //****************** MEM
@@ -596,24 +632,63 @@ module Top_CPU
         .i_ALU              (EX_MEM_ALU             ),
         .i_DatoMemoria      (DatoMemoria            ),
         .i_RegistroDestino  (EX_MEM_RegistroDestino ),
+        .i_Extension        (EX_MEM_Extension       ),
         
         //ControlWB
         .i_MemToReg         (EX_MEM_MemToReg        ),
         .i_RegWrite         (EX_MEM_RegWrite        ),
+        .i_TamanoFiltroL    (EX_MEM_TamanoFiltroL   ),
+        .i_ZeroExtend       (EX_MEM_ZeroExtend      ),
+        .i_LUI              (EX_MEM_LUI             ),
         
         .o_PC4              (MEM_WB_PC4             ),
         .o_Instruction      (MEM_WB_Instruction     ),
         .o_ALU              (MEM_WB_ALU             ),
         .o_DatoMemoria      (MEM_WB_DatoMemoria     ),
         .o_RegistroDestino  (MEM_WB_RegistroDestino ),
+        .o_Extension        (MEM_WB_Extension       ),
         
         //ControlWB
         .o_MemToReg         (MEM_WB_MemToReg        ),
-        .o_RegWrite         (MEM_WB_RegWrite        )
+        .o_RegWrite         (MEM_WB_RegWrite        ),
+        .o_TamanoFiltroL    (MEM_WB_TamanoFiltroL   ),
+        .o_ZeroExtend       (MEM_WB_ZeroExtend      ),
+        .o_LUI              (MEM_WB_LUI             )
     );        
     //******************************************
     //****************** WB
     //******************************************
+    //////////////////////////////////////////////
+    /// FILTRO LOAD
+    /////////////////////////////////////////////
+    Filtro_Load
+    #(
+        .NBITS          (NBITS                  ),
+        .HWORDBITS      (HWORDBITS              ),
+        .BYTENBITS      (BYTENBITS              ),
+        .TNBITS         (TNBITS                 )   
+    )
+    u_Filtro_Load
+    (
+        .i_Dato         (MEM_WB_DatoMemoria     ),
+        .i_Tamano       (MEM_WB_TamanoFiltroL   ),
+        .i_Cero         (MEM_WB_ZeroExtend      ),
+        .o_DatoEscribir (DatoFiltradoL          )
+    );
+    //////////////////////////////////////////////
+    /// MULTIPLEXOR LUI
+    /////////////////////////////////////////////
+    Mux_LUI
+    #(
+        .NBITS(NBITS)
+    )
+    u_Mux_LUI
+    (
+        .i_LUI          (MEM_WB_LUI         ),
+        .i_FilterLoad   (DatoFiltradoL      ),
+        .i_Extension    (MEM_WB_Extension   ),
+        .o_Registro     (DatoToReg          )
+    );
     //////////////////////////////////////////////
     /// MULTIPLEXOR MEMORIA
     /////////////////////////////////////////////
@@ -624,7 +699,7 @@ module Top_CPU
     u_Mux_Memoria
     (
         .i_MemToReg                 (MEM_WB_MemToReg    ),
-        .i_MemDatos                 (MEM_WB_DatoMemoria ),
+        .i_MemDatos                 (DatoToReg          ),
         .i_ALU                      (MEM_WB_ALU         ),
         .o_Registro                 (DatoEscritura      )
     );

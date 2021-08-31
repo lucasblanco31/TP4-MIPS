@@ -20,6 +20,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 //LW:   100011  | base      |   RT  |   OFFSET
+//LWU:  100111  | base      |   RT  |   OFFSET  
+//LB:   100000  | base      |   RT  |   OFFSET
+//LBU:  100100  | base      |   RT  |   OFFSET
+//LH:   100001  | base      |   RT  |   OFFSET
+//LHU:  100101  | base      |   RT  |   OFFSET
+//LUI:  001111  | 00000     |   RT  |   IMMEDIATE
 //SW:   101011  |  base     |   RT  |   OFFSET
 //SB:   101000  |  base     |   RT  |   OFFSET
 //SH:   101001  |  base     |   RT  |   OFFSET
@@ -42,6 +48,12 @@
 //SRL:  000000  |   000000  |   RT  |   RD  |   sa      |   000010
 
 `define LW      6'b100011
+`define LWU     6'b100111
+`define LB      6'b100000
+`define LBU     6'b100100
+`define LH      6'b100001
+`define LHU     6'b100101
+`define LUI     6'b001111
 `define SW      6'b101011
 `define SB      6'b101000
 `define SH      6'b101001
@@ -70,8 +82,11 @@ module Control_Unidad
         output  wire                            o_MemWrite      ,
         output  wire                            o_ALUSrc        ,
         output  wire                            o_RegWrite      ,
-        output  wire                            o_ExtensionMode ,
-        output  wire    [1              :0]     o_TamanoFiltro
+        output  wire    [1              :0]     o_ExtensionMode ,
+        output  wire    [1              :0]     o_TamanoFiltro  ,
+        output  wire    [1              :0]     o_TamanoFiltroL ,
+        output  wire                            o_ZeroExtend    ,
+        output  wire                            o_LUI           
     );
     
     reg         RegDst_Reg          ;
@@ -83,8 +98,11 @@ module Control_Unidad
     reg         MemWrite_Reg        ;
     reg         ALUSrc_Reg          ;
     reg         RegWrite_Reg        ;
-    reg         ExtensionMode_Reg   ;
+    reg [1:0]   ExtensionMode_Reg   ;
     reg [1:0]   TamanoFiltro_Reg    ;
+    reg [1:0]   TamanoFiltroL_Reg   ;
+    reg         ZeroExtend_Reg      ;
+    reg         LUI_Reg             ;
     
     assign  o_RegDst        =   RegDst_Reg          ;
     assign  o_Jump          =   Jump_Reg            ;
@@ -97,6 +115,9 @@ module Control_Unidad
     assign  o_RegWrite      =   RegWrite_Reg        ;
     assign  o_ExtensionMode =   ExtensionMode_Reg   ;
     assign  o_TamanoFiltro  =   TamanoFiltro_Reg    ;
+    assign  o_TamanoFiltroL =   TamanoFiltroL_Reg   ;
+    assign  o_ZeroExtend    =   ZeroExtend_Reg      ;
+    assign  o_LUI           =   LUI_Reg             ;
 
     always @(*)
     begin : Decoder
@@ -112,8 +133,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
 
             `ADDI:
@@ -127,8 +151,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `ANDI:
@@ -142,8 +169,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b01   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `ORI:
@@ -157,8 +187,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b01   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `SLTI:
@@ -172,8 +205,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `XORI:
@@ -187,8 +223,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b01   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `LW:
@@ -202,8 +241,119 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b1    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+            
+            `LWU:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+            
+            `LB:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b01   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+            
+            `LBU:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b01   ;
+                ZeroExtend_Reg      <=  1'b1    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+            
+            `LH:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b10   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+    
+            `LHU:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b10   ;
+                ZeroExtend_Reg      <=  1'b1    ;
+                LUI_Reg             <=  1'b0    ;
+            end
+            
+            `LUI:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b0    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b10   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b1    ;
             end
     
             `SW:
@@ -217,8 +367,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b1    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `SB:
@@ -232,8 +385,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b1    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b01   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
             
             `SH:
@@ -247,8 +403,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b1    ;
                 ALUSrc_Reg          <=  1'b1    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b10   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
     
             `BEQ:
@@ -262,8 +421,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
 
             `J:
@@ -277,8 +439,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end
     
             default:
@@ -292,8 +457,11 @@ module Control_Unidad
                 MemWrite_Reg        <=  1'b0    ;
                 ALUSrc_Reg          <=  1'b0    ;
                 RegWrite_Reg        <=  1'b0    ;
-                ExtensionMode_Reg   <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
             end  
         endcase       
     end
