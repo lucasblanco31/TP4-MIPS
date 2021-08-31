@@ -27,7 +27,7 @@ module Extensor_Signo
     )
     (
         input   wire    [i_NBITS-1  :0]     i_signal        ,
-        input   wire                        i_ExtensionMode ,
+        input   wire    [1          :0]     i_ExtensionMode ,
         output  wire    [o_NBITS-1  :0]     o_ext_signal
     );
     
@@ -38,8 +38,10 @@ module Extensor_Signo
     always @(*)
         begin : extension
             case(i_ExtensionMode)
-                1'b0:   result_ext_reg  <=   {{e_NBITS{i_signal[i_NBITS-1]}}, i_signal}  ;
-                1'b1:   result_ext_reg  <=   {{e_NBITS{1'b0}}, i_signal}                    ;
+                2'b00:      result_ext_reg  <=  {{e_NBITS{i_signal[i_NBITS-1]}}, i_signal}  ;
+                2'b01:      result_ext_reg  <=  {{e_NBITS{1'b0}}, i_signal}                 ;
+                2'b10:      result_ext_reg  <=  {i_signal,{e_NBITS{1'b0}}}                  ;    
+                default:    result_ext_reg  <= -1                                           ;
             endcase
         end
 endmodule
