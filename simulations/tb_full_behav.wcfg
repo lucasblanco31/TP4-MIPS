@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="682880fs"></ZoomStartTime>
-      <ZoomEndTime time="769881fs"></ZoomEndTime>
-      <Cursor1Time time="760000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2016001fs"></ZoomEndTime>
+      <Cursor1Time time="277fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="208"></NameColumnWidth>
+      <NameColumnWidth column_width="204"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
@@ -215,6 +215,14 @@
             <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
             <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
          </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Control_Unidad/o_TamanoFiltroL">
+            <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+            <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/tb_full/u_top/u_Control_Unidad/o_ZeroExtend">
+            <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+            <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group224">
          <obj_property name="label">Registro</obj_property>
@@ -350,6 +358,14 @@
       <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_TamanoFiltro">
          <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
          <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="divider863" type="divider">
@@ -540,6 +556,14 @@
          <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
          <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="divider1024" type="divider">
       <obj_property name="label">---</obj_property>
@@ -660,6 +684,14 @@
          <obj_property name="ElementShortName">o_RegWrite</obj_property>
          <obj_property name="ObjectShortName">o_RegWrite</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="divider1368" type="divider">
       <obj_property name="label">---</obj_property>
@@ -669,6 +701,27 @@
       <obj_property name="label">WB</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
+      <wvobject type="group" fp_name="group201">
+         <obj_property name="label">Filtro_Load</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Load/i_Dato">
+            <obj_property name="ElementShortName">i_Dato[31:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Dato[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Load/i_Tamano">
+            <obj_property name="ElementShortName">i_Tamano[1:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Tamano[1:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/tb_full/u_top/u_Filtro_Load/i_Cero">
+            <obj_property name="ElementShortName">i_Cero</obj_property>
+            <obj_property name="ObjectShortName">i_Cero</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Filtro_Load/o_DatoEscribir">
+            <obj_property name="ElementShortName">o_DatoEscribir[31:0]</obj_property>
+            <obj_property name="ObjectShortName">o_DatoEscribir[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject type="group" fp_name="group1370">
          <obj_property name="label">Mux_Memoria</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -698,7 +751,6 @@
    <wvobject type="group" fp_name="group1377">
       <obj_property name="label">Registros</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb_full/u_top/u_Registros/i_RegWrite">
          <obj_property name="ElementShortName">i_RegWrite</obj_property>
          <obj_property name="ObjectShortName">i_RegWrite</obj_property>

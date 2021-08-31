@@ -8,7 +8,7 @@
 module Filtro_Load
     #(
         parameter   NBITS           =   32  ,
-        parameter   WORDBITS        =   16  ,
+        parameter   HWORDBITS       =   16  ,
         parameter   BYTENBITS       =   8   ,
         parameter   TNBITS          =   2   
     )
@@ -29,12 +29,12 @@ module Filtro_Load
                                     DatoEscribir_Reg   <=   i_Dato                                                              ;
                 `CEROUNO    :
                     case(i_Cero)
-                        1'b0:      DatoEscribir_Reg   <=   {{WORDBITS+BYTENBITS{i_Dato[BYTENBITS-1]}}, i_Dato[BYTENBITS-1:0]}  ;
+                        1'b0:      DatoEscribir_Reg   <=   {{HWORDBITS+BYTENBITS{i_Dato[BYTENBITS-1]}}, i_Dato[BYTENBITS-1:0]}  ;
                         1'b1:      DatoEscribir_Reg   <=   i_Dato & 32'b00000000_00000000_00000000_11111111                    ;      
                     endcase
                 `UNOCERO    :
                     case(i_Cero)
-                        1'b0:      DatoEscribir_Reg   <=   {{WORDBITS{i_Dato[WORDBITS-1]}}, i_Dato[WORDBITS-1:0]}              ;
+                        1'b0:      DatoEscribir_Reg   <=   {{HWORDBITS{i_Dato[HWORDBITS-1]}}, i_Dato[HWORDBITS-1:0]}              ;
                         1'b1:      DatoEscribir_Reg   <=   i_Dato & 32'b00000000_00000000_11111111_11111111                    ; 
                     endcase
                 default     :   

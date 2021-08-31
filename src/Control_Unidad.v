@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 //LW:   100011  | base      |   RT  |   OFFSET
+//LB:   100000  | base      |   RT  |   OFFSET
 //SW:   101011  |  base     |   RT  |   OFFSET
 //SB:   101000  |  base     |   RT  |   OFFSET
 //SH:   101001  |  base     |   RT  |   OFFSET
@@ -42,6 +43,7 @@
 //SRL:  000000  |   000000  |   RT  |   RD  |   sa      |   000010
 
 `define LW      6'b100011
+`define LB      6'b100000
 `define SW      6'b101011
 `define SB      6'b101000
 `define SH      6'b101001
@@ -71,7 +73,9 @@ module Control_Unidad
         output  wire                            o_ALUSrc        ,
         output  wire                            o_RegWrite      ,
         output  wire                            o_ExtensionMode ,
-        output  wire    [1              :0]     o_TamanoFiltro
+        output  wire    [1              :0]     o_TamanoFiltro  ,
+        output  wire    [1              :0]     o_TamanoFiltroL ,
+        output  wire                            o_ZeroExtend    
     );
     
     reg         RegDst_Reg          ;
@@ -85,6 +89,8 @@ module Control_Unidad
     reg         RegWrite_Reg        ;
     reg         ExtensionMode_Reg   ;
     reg [1:0]   TamanoFiltro_Reg    ;
+    reg [1:0]   TamanoFiltroL_Reg   ;
+    reg         ZeroExtend_Reg      ;
     
     assign  o_RegDst        =   RegDst_Reg          ;
     assign  o_Jump          =   Jump_Reg            ;
@@ -97,6 +103,8 @@ module Control_Unidad
     assign  o_RegWrite      =   RegWrite_Reg        ;
     assign  o_ExtensionMode =   ExtensionMode_Reg   ;
     assign  o_TamanoFiltro  =   TamanoFiltro_Reg    ;
+    assign  o_TamanoFiltroL =   TamanoFiltroL_Reg   ;
+    assign  o_ZeroExtend    =   ZeroExtend_Reg      ;
 
     always @(*)
     begin : Decoder
@@ -114,6 +122,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
 
             `ADDI:
@@ -129,6 +139,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `ANDI:
@@ -144,6 +156,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `ORI:
@@ -159,6 +173,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `SLTI:
@@ -174,6 +190,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `XORI:
@@ -189,6 +207,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b1    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `LW:
@@ -204,6 +224,25 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b1    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+            end
+            
+            `LB:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                MemRead_Reg         <=  1'b1    ; 
+                MemToReg_Reg        <=  1'b1    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b1    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  1'b0    ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b01   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
     
             `SW:
@@ -219,6 +258,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `SB:
@@ -234,6 +275,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b01   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
             
             `SH:
@@ -249,6 +292,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b10   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
     
             `BEQ:
@@ -264,6 +309,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
 
             `J:
@@ -279,6 +326,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end
     
             default:
@@ -294,6 +343,8 @@ module Control_Unidad
                 RegWrite_Reg        <=  1'b0    ;
                 ExtensionMode_Reg   <=  1'b0    ;
                 TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
             end  
         endcase       
     end
