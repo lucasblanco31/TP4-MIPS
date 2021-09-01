@@ -65,6 +65,7 @@ module Top_CPU
     wire                            RegWrite            ;
     wire                            MemToReg            ;
     wire                            Branch              ;
+    wire                            NBranch             ;
     wire                            Jump                ;
     wire                            RegDst              ;
     wire                            ALUSrc              ;
@@ -97,6 +98,7 @@ module Top_CPU
     wire    [1              :0]     ID_EX_ALUOp         ;
     wire                            ID_EX_RegDst        ;
     wire                            ID_EX_Branch        ;
+    wire                            ID_EX_NBranch       ;
     wire                            ID_EX_MemWrite      ;
     wire                            ID_EX_MemRead       ;
     wire                            ID_EX_MemToReg      ;
@@ -133,6 +135,7 @@ module Top_CPU
     wire    [REGS-1         :0]     EX_MEM_RegistroDestino  ;
     wire    [NBITS-1        :0]     EX_MEM_Extension        ;
     wire                            EX_MEM_Branch           ;
+    wire                            EX_MEM_NBranch          ;
     wire                            EX_MEM_MemWrite         ;
     wire                            EX_MEM_MemRead          ;
     wire                            EX_MEM_MemToReg         ;
@@ -308,6 +311,7 @@ module Top_CPU
         .o_RegDst                   (RegDst         ),
         .o_Jump                     (Jump           ),
         .o_Branch                   (Branch         ),
+        .o_NBranch                  (NBranch        ),
         .o_MemRead                  (MemRead        ),
         .o_MemToReg                 (MemToReg       ),
         .o_ALUOp                    (ALUOp          ),
@@ -381,6 +385,7 @@ module Top_CPU
         .i_RegDst                   (RegDst             ),
         //ControlM
         .i_Branch                   (Branch             ),
+        .i_NBranch                  (NBranch            ),
         .i_MemWrite                 (MemWrite           ),
         .i_MemRead                  (MemRead            ),
         .i_TamanoFiltro             (TamanoFiltro       ),
@@ -412,6 +417,7 @@ module Top_CPU
         .o_RegDst                   (ID_EX_RegDst       ),
         //ControlM
         .o_Branch                   (ID_EX_Branch       ),
+        .o_NBranch                  (ID_EX_NBranch      ),
         .o_MemWrite                 (ID_EX_MemWrite     ),
         .o_MemRead                  (ID_EX_MemRead      ),
         .o_TamanoFiltro             (ID_EX_TamanoFiltro ),
@@ -538,6 +544,7 @@ module Top_CPU
         
         //ControlIM
         .i_Branch                   (ID_EX_Branch           ),
+        .i_NBranch                  (ID_EX_NBranch          ),
         .i_MemWrite                 (ID_EX_MemWrite         ),
         .i_MemRead                  (ID_EX_MemRead          ),
         .i_TamanoFiltro             (ID_EX_TamanoFiltro     ),
@@ -559,6 +566,7 @@ module Top_CPU
         
         //ControlM
         .o_Branch                   (EX_MEM_Branch          ),
+        .o_NBranch                  (EX_MEM_NBranch         ),
         .o_MemWrite                 (EX_MEM_MemWrite        ),
         .o_MemRead                  (EX_MEM_MemRead         ),
         .o_TamanoFiltro             (EX_MEM_TamanoFiltro    ),
@@ -582,6 +590,7 @@ module Top_CPU
     u_AND_Branch
     (
         .i_Branch   (EX_MEM_Branch  ),
+        .i_NBranch  (EX_MEM_NBranch ),
         .i_Cero     (EX_MEM_Cero    ),
         .o_PCSrc    (PcSrc          )
     );

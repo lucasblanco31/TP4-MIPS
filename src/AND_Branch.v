@@ -1,30 +1,11 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 16.07.2021 14:58:02
-// Design Name: 
-// Module Name: Sumador_Branch
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
-
 module AND_Branch
     #(
+        parameter NBITS = 32
     )
     (
         input   wire    i_Branch    ,
+        input   wire    i_NBranch   ,
         input   wire    i_Cero      ,
         output  wire    o_PCSrc                 
     );
@@ -39,7 +20,7 @@ module AND_Branch
     
     always @(*)
     begin
-        if(i_Branch && i_Cero)
+        if((i_Branch && i_Cero) || (i_NBranch && !i_Cero))
             result   <=     1'b1    ;
         else
             result   <=     1'b0    ;

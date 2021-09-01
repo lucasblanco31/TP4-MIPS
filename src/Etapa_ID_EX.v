@@ -23,6 +23,7 @@ module Etapa_ID_EX
         
         ///IControlM
         input   wire                        i_Branch        ,
+        input   wire                        i_NBranch       ,
         input   wire                        i_MemWrite      ,
         input   wire                        i_MemRead       ,
         input   wire    [1          :0]     i_TamanoFiltro  ,   
@@ -50,6 +51,7 @@ module Etapa_ID_EX
         
         ///OControlM
         output  wire                        o_Branch        ,
+        output  wire                        o_NBranch       ,
         output  wire                        o_MemWrite      ,
         output  wire                        o_MemRead       ,
         output  wire    [1          :0]     o_TamanoFiltro  ,   
@@ -77,6 +79,7 @@ module Etapa_ID_EX
     
     //RegM
     reg                     Branch_reg          ;
+    reg                     NBranch_reg         ;
     reg                     MemWrite_reg        ;
     reg                     MemRead_reg         ;
     reg     [1          :0] TamanoFiltro_reg    ;
@@ -103,6 +106,7 @@ module Etapa_ID_EX
     
     //AssignM
     assign o_Branch         =   Branch_reg      ;
+    assign o_NBranch        =   NBranch_reg     ;
     assign o_MemWrite       =   MemWrite_reg    ;
     assign o_MemRead        =   MemRead_reg     ;
     assign o_TamanoFiltro   =   TamanoFiltro_reg;
@@ -131,6 +135,7 @@ module Etapa_ID_EX
     
             //M
             Branch_reg          <=  i_Branch        ;
+            NBranch_reg         <=  i_NBranch       ;
             MemWrite_reg        <=  i_MemWrite      ;
             MemRead_reg         <=  i_MemRead       ;
             TamanoFiltro_reg    <=  i_TamanoFiltro  ;

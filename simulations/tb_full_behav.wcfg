@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="784000fs"></ZoomStartTime>
-      <ZoomEndTime time="827001fs"></ZoomEndTime>
-      <Cursor1Time time="880000fs"></Cursor1Time>
+      <ZoomStartTime time="703600fs"></ZoomStartTime>
+      <ZoomEndTime time="862001fs"></ZoomEndTime>
+      <Cursor1Time time="820000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="196"></NameColumnWidth>
+      <NameColumnWidth column_width="188"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="19" />
@@ -53,7 +53,7 @@
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
       <wvobject type="group" fp_name="group592">
-         <obj_property name="label">Mux_PC</obj_property>
+         <obj_property name="label">Mux_Branch</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/tb_full/u_top/u_Mux_PC/i_PCSrc">
@@ -182,6 +182,10 @@
          <wvobject type="logic" fp_name="/tb_full/u_top/u_Control_Unidad/o_Branch">
             <obj_property name="ElementShortName">o_Branch</obj_property>
             <obj_property name="ObjectShortName">o_Branch</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/tb_full/u_top/u_Control_Unidad/o_NBranch">
+            <obj_property name="ElementShortName">o_NBranch</obj_property>
+            <obj_property name="ObjectShortName">o_NBranch</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/tb_full/u_top/u_Control_Unidad/o_MemRead">
             <obj_property name="ElementShortName">o_MemRead</obj_property>
@@ -343,6 +347,10 @@
          <obj_property name="ElementShortName">o_Branch</obj_property>
          <obj_property name="ObjectShortName">o_Branch</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_NBranch">
+         <obj_property name="ElementShortName">o_NBranch</obj_property>
+         <obj_property name="ObjectShortName">o_NBranch</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_MemWrite">
          <obj_property name="ElementShortName">o_MemWrite</obj_property>
          <obj_property name="ObjectShortName">o_MemWrite</obj_property>
@@ -387,6 +395,7 @@
       <wvobject type="group" fp_name="group659">
          <obj_property name="label">Sumador_Branch</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/tb_full/u_top/u_Sumador_Branch/i_ExtensionData">
             <obj_property name="ElementShortName">i_ExtensionData[31:0]</obj_property>
             <obj_property name="ObjectShortName">i_ExtensionData[31:0]</obj_property>
@@ -420,6 +429,7 @@
       <wvobject type="group" fp_name="group268">
          <obj_property name="label">ALU</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Op">
             <obj_property name="ElementShortName">i_Op[3:0]</obj_property>
             <obj_property name="ObjectShortName">i_Op[3:0]</obj_property>
@@ -428,13 +438,13 @@
             <obj_property name="ElementShortName">i_Reg[31:0]</obj_property>
             <obj_property name="ObjectShortName">i_Reg[31:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Mux">
-            <obj_property name="ElementShortName">i_Mux[31:0]</obj_property>
-            <obj_property name="ObjectShortName">i_Mux[31:0]</obj_property>
-         </wvobject>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Shamt">
             <obj_property name="ElementShortName">i_Shamt[4:0]</obj_property>
             <obj_property name="ObjectShortName">i_Shamt[4:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/i_Mux">
+            <obj_property name="ElementShortName">i_Mux[31:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Mux[31:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/tb_full/u_top/u_ALU/o_Result">
             <obj_property name="ElementShortName">o_Result[31:0]</obj_property>
@@ -548,6 +558,10 @@
          <obj_property name="ElementShortName">o_Branch</obj_property>
          <obj_property name="ObjectShortName">o_Branch</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_NBranch">
+         <obj_property name="ElementShortName">o_NBranch</obj_property>
+         <obj_property name="ObjectShortName">o_NBranch</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_MemWrite">
          <obj_property name="ElementShortName">o_MemWrite</obj_property>
          <obj_property name="ObjectShortName">o_MemWrite</obj_property>
@@ -592,9 +606,14 @@
       <wvobject type="group" fp_name="group1349">
          <obj_property name="label">AND_Branch</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/i_Branch">
             <obj_property name="ElementShortName">i_Branch</obj_property>
             <obj_property name="ObjectShortName">i_Branch</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/i_NBranch">
+            <obj_property name="ElementShortName">i_NBranch</obj_property>
+            <obj_property name="ObjectShortName">i_NBranch</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/i_Cero">
             <obj_property name="ElementShortName">i_Cero</obj_property>
