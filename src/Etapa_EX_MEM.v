@@ -18,6 +18,7 @@ module Etapa_EX_MEM
         
         ///IControlM
         input   wire                        i_Branch            ,
+        input   wire                        i_NBranch           ,
         input   wire                        i_MemWrite          ,
         input   wire                        i_MemRead           , 
         input   wire    [1          :0]     i_TamanoFiltro      ,   
@@ -40,16 +41,17 @@ module Etapa_EX_MEM
         output  wire    [NBITS-1    :0]     o_Extension         ,
         
         ///OControlM
-        output  wire                        o_Branch           ,
-        output  wire                        o_MemWrite         ,
-        output  wire                        o_MemRead          ,
-        output  wire   [1          :0]      o_TamanoFiltro     ,     
+        output  wire                        o_Branch            ,
+        output  wire                        o_NBranch           ,
+        output  wire                        o_MemWrite          ,
+        output  wire                        o_MemRead           ,
+        output  wire   [1          :0]      o_TamanoFiltro      ,     
         
         ///OControlWB
-        output  wire                        o_MemToReg         ,
-        output  wire                        o_RegWrite         ,
-        output  wire   [1          :0]      o_TamanoFiltroL    ,
-        output  wire                        o_ZeroExtend       ,
+        output  wire                        o_MemToReg          ,
+        output  wire                        o_RegWrite          ,
+        output  wire   [1          :0]      o_TamanoFiltroL     ,
+        output  wire                        o_ZeroExtend        ,
         output  wire                        o_LUI
     );
     
@@ -64,6 +66,7 @@ module Etapa_EX_MEM
     
     //RegM
     reg                     Branch_reg          ;
+    reg                     NBranch_reg         ;
     reg                     MemWrite_reg        ;
     reg                     MemRead_reg         ;
     reg     [1          :0] TamanoFiltro_reg    ;
@@ -86,6 +89,7 @@ module Etapa_EX_MEM
     
     //AssignM
     assign o_Branch         =   Branch_reg          ;
+    assign o_NBranch        =   NBranch_reg         ;
     assign o_MemWrite       =   MemWrite_reg        ;
     assign o_MemRead        =   MemRead_reg         ;
     assign o_TamanoFiltro   =   TamanoFiltro_reg    ;
@@ -110,6 +114,7 @@ module Etapa_EX_MEM
             
             //M
             Branch_reg          <=  i_Branch                ;
+            NBranch_reg         <=  i_NBranch               ;
             MemWrite_reg        <=  i_MemWrite              ;
             MemRead_reg         <=  i_MemRead               ;
             TamanoFiltro_reg    <=  i_TamanoFiltro          ;
