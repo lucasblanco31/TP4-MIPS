@@ -37,10 +37,7 @@ module Top_CPU
     //Clock wizard
     wire                            o_clk_out1 ;
     assign o_clk_wzd    =           o_clk_out1 ; 
-
-    //VER COMO IMPLEMENTAR JUMP
-    //Mux Jump
-    //wire     [NBITSJUMP-1 :  0]       InstrJump;    
+ 
 
     //-------------------------------------------------------
     //IF
@@ -57,9 +54,6 @@ module Top_CPU
     wire    [NBITS-1     :0]        IF_ID_Instr         ;
     //----------------------------------------------------
     //ID
-    //Sumador PC Jump
-    wire     [NBITSJUMP-1   :0]     IJump               ;
-    wire     [NBITS-1       :0]     OIJump              ;
     //Control   
     wire     [CTRLNBITS-1   :0]     InstrControl        ;
     wire                            RegWrite            ;
@@ -94,6 +88,8 @@ module Top_CPU
     wire    [NBITS-1        :0]     ID_EX_Extension     ;
     wire    [REGS-1         :0]     ID_EX_Rt            ;
     wire    [REGS-1         :0]     ID_EX_Rd            ;
+    
+    wire                            ID_EX_Jump          ;
     wire                            ID_EX_ALUSrc        ;      
     wire    [1              :0]     ID_EX_ALUOp         ;
     wire                            ID_EX_RegDst        ;
@@ -109,6 +105,9 @@ module Top_CPU
     wire                            ID_EX_LUI           ;
     //----------------------------------------------------
     //EX
+    //Sumador PC Jump
+    wire     [NBITSJUMP-1   :0]     IJump               ;
+    wire     [NBITS-1       :0]     OIJump              ;
     //SumadorBranch
     wire     [NBITS-1       :0]     SumPcBranch     ;
     //MuxALU
@@ -176,8 +175,6 @@ module Top_CPU
 
     //-----------------------------------------------------------------------
     //ID
-    //SumadorJump
-    assign IJump            =   IF_ID_Instr[NBITSJUMP-1     :0]                 ;
     //Control
     assign InstrControl     =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
     //Registros
@@ -188,6 +185,8 @@ module Top_CPU
     assign Instr16          =   IF_ID_Instr[INBITS-1        :0]                 ;
     //-----------------------------------------------------------------------
     //EX
+    //SumadorJump
+    assign IJump            = ID_EX_Instr[NBITSJUMP-1     :0]                 ;
     //ALUControl
     assign InstrALUControl  = ID_EX_Extension[ALUNBITS-1    :0]                 ;
     assign OpcodeALUControl = ID_EX_Instr[NBITS-1           :RS+RT+INBITS]      ;
@@ -221,7 +220,7 @@ module Top_CPU
     )
     u_Mux_PC_Jump
     (
-        .i_Jump         (Jump       ),
+        .i_Jump         (ID_EX_Jump ),
         .i_SumadorJump  (OIJump     ),
         .i_MuxBranch    (PCInBranch ),
         .o_PC           (PCIn       )
@@ -284,20 +283,7 @@ module Top_CPU
     //******************************************
     //****************** ID
     //******************************************
-    //////////////////////////////////////////////
-    /// Sumador_PC_Jump
-    //////////////////////////////////////////////
-    Sumador_PC_Jump
-    #(
-        .NBITS      (NBITS      ),
-        .NBITSJUMP  (NBITSJUMP  )
-    )
-    u_Sumador_PC_Jump
-    (
-        .i_IJump    (IJump      ),
-        .i_PC4      (IF_ID_PC4  ),
-        .o_IJump    (OIJump     )  
-    );
+
     //////////////////////////////////////////////
     /// UNIDAD DE CONTROL
     //////////////////////////////////////////////
@@ -380,6 +366,7 @@ module Top_CPU
         .i_Instruction              (IF_ID_Instr        ),
         
         //ControlEX
+        .i_Jump                     (Jump               ),
         .i_ALUSrc                   (ALUSrc             ),
         .i_ALUOp                    (ALUOp              ),
         .i_RegDst                   (RegDst             ),
@@ -412,6 +399,7 @@ module Top_CPU
         .o_Rd                       (ID_EX_Rd           ),
 
         //ControlEX
+        .o_Jump                     (ID_EX_Jump         ),
         .o_ALUSrc                   (ID_EX_ALUSrc       ),
         .o_ALUOp                    (ID_EX_ALUOp        ),
         .o_RegDst                   (ID_EX_RegDst       ),
@@ -431,6 +419,20 @@ module Top_CPU
     //******************************************
     //****************** EX
     //******************************************
+    //////////////////////////////////////////////
+    /// Sumador_PC_Jump
+    //////////////////////////////////////////////
+    Sumador_PC_Jump
+    #(
+        .NBITS      (NBITS      ),
+        .NBITSJUMP  (NBITSJUMP  )
+    )
+    u_Sumador_PC_Jump
+    (
+        .i_IJump    (IJump      ),
+        .i_PC4      (ID_EX_PC4  ),
+        .o_IJump    (OIJump     )  
+    );
     //////////////////////////////////////////////
     /// SUMADOR BRANCH
     /////////////////////////////////////////////
@@ -715,7 +717,7 @@ module Top_CPU
     //////////////////////////////////////////////
     /// CLOCK WIZARD
     /////////////////////////////////////////////
-    clk_wiz_0 my_clock(
+    my_clock my_clock(
         .reset              (i_rst_clk    ),        
         .clk_in1            (i_clk        ),
         .locked             (o_locked     ),
