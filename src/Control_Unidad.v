@@ -61,6 +61,7 @@
 `define BEQ     6'b000100
 `define BNE     6'b000101
 `define J       6'b000010
+`define JAL     6'b000011
 `define BAS     6'b000000
 `define ADDI    6'b001000
 `define ANDI    6'b001100
@@ -77,6 +78,7 @@ module Control_Unidad
         
         output  wire                            o_RegDst        ,
         output  wire                            o_Jump          ,
+        output  wire                            o_JAL           ,
         output  wire                            o_Branch        ,
         output  wire                            o_NBranch       ,
         output  wire                            o_MemRead       ,
@@ -94,6 +96,7 @@ module Control_Unidad
     
     reg         RegDst_Reg          ;
     reg         Jump_Reg            ;
+    reg         JAL_Reg             ;
     reg         Branch_Reg          ;
     reg         NBranch_Reg         ;
     reg         MemRead_Reg         ;
@@ -110,6 +113,7 @@ module Control_Unidad
     
     assign  o_RegDst        =   RegDst_Reg          ;
     assign  o_Jump          =   Jump_Reg            ;
+    assign  o_JAL           =   JAL_Reg             ;
     assign  o_Branch        =   Branch_Reg          ;
     assign  o_NBranch       =   NBranch_Reg         ;
     assign  o_MemRead       =   MemRead_Reg         ;
@@ -131,6 +135,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b1    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -169,6 +174,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -188,6 +194,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -207,6 +214,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -226,6 +234,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -245,6 +254,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -264,6 +274,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -283,6 +294,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -302,6 +314,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -321,6 +334,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -340,6 +354,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -359,6 +374,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b1    ; 
@@ -378,6 +394,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -397,6 +414,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -416,6 +434,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -435,6 +454,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b1    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -454,6 +474,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b1    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -473,6 +494,7 @@ module Control_Unidad
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b1    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -487,11 +509,32 @@ module Control_Unidad
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
             end
+            
+            `JAL:
+            begin       
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b1    ;                 
+                JAL_Reg             <=  1'b1    ;
+                Branch_Reg          <=  1'b0    ;
+                NBranch_Reg         <=  1'b0    ;
+                MemRead_Reg         <=  1'b0    ; 
+                MemToReg_Reg        <=  1'b0    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b0    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+            end            
     
             default:
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 

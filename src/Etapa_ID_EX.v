@@ -9,6 +9,7 @@ module Etapa_ID_EX
         //GeneralInputs
         input   wire                        i_clk           ,
         input   wire    [NBITS-1    :0]     i_PC4           ,
+        input   wire    [NBITS-1    :0]     i_PC8           ,
         input   wire    [NBITS-1    :0]     i_Instruction   ,  
         input   wire    [NBITS-1    :0]     i_Registro1     , // dato leido 1
         input   wire    [NBITS-1    :0]     i_Registro2     , // dato leido 2
@@ -18,6 +19,7 @@ module Etapa_ID_EX
         
         ///IControlEX
         input   wire                        i_Jump          ,
+        input   wire                        i_JAL           ,
         input   wire                        i_ALUSrc        ,
         input   wire    [1          :0]     i_ALUOp         ,
         input   wire                        i_RegDst        ,
@@ -38,6 +40,7 @@ module Etapa_ID_EX
         
         //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PC4           ,
+        output  wire    [NBITS-1    :0]     o_PC8           ,
         output  wire    [NBITS-1    :0]     o_Instruction   ,
         output  wire    [NBITS-1    :0]     o_Registro1     ,
         output  wire    [NBITS-1    :0]     o_Registro2     ,
@@ -47,6 +50,7 @@ module Etapa_ID_EX
         
         ///OControlEX
         output  wire                        o_Jump          ,
+        output  wire                        o_JAL           ,
         output  wire                        o_ALUSrc        ,
         output  wire    [1          :0]     o_ALUOp         ,
         output  wire                        o_RegDst        ,
@@ -67,6 +71,7 @@ module Etapa_ID_EX
     );
     
     reg     [NBITS-1    :0] PC4_reg             ;
+    reg     [NBITS-1    :0] PC8_reg             ;
     reg     [NBITS-1    :0] Instruction_reg     ;
     reg     [NBITS-1    :0] Registro1_reg       ;
     reg     [NBITS-1    :0] Registro2_reg       ;
@@ -76,6 +81,7 @@ module Etapa_ID_EX
     
     //RegEX
     reg                     Jump_reg            ;
+    reg                     JAL_reg             ;
     reg                     ALUSrc_reg          ;
     reg     [1          :0] ALUOp_reg           ;
     reg                     RegDst_reg          ;
@@ -95,6 +101,7 @@ module Etapa_ID_EX
     reg                     LUI_reg             ;    
     
     assign o_PC4            =   PC4_reg         ;
+    assign o_PC8            =   PC8_reg         ;
     assign o_Instruction    =   Instruction_reg ;
     assign o_Registro1      =   Registro1_reg   ;
     assign o_Registro2      =   Registro2_reg   ;
@@ -103,7 +110,8 @@ module Etapa_ID_EX
     assign o_Rd             =   Rd_reg          ;
     
     //AssignEX
-    assing o_Jump           =   Jump_reg        ;
+    assign o_Jump           =   Jump_reg        ;
+    assign o_JAL            =   JAL_reg         ;
     assign o_ALUSrc         =   ALUSrc_reg      ;
     assign o_ALUOp          =   ALUOp_reg       ;
     assign o_RegDst         =   RegDst_reg      ;
@@ -125,6 +133,7 @@ module Etapa_ID_EX
     always @(negedge i_clk)
         begin 
             PC4_reg             <=  i_PC4           ;
+            PC8_reg             <=  i_PC8           ;
             Instruction_reg     <=  i_Instruction   ;
             Registro1_reg       <=  i_Registro1     ;      
             Registro2_reg       <=  i_Registro2     ;
@@ -134,6 +143,7 @@ module Etapa_ID_EX
             
             //EX
             Jump_reg            <=  i_Jump          ;
+            JAL_reg             <=  i_JAL           ;
             ALUSrc_reg          <=  i_ALUSrc        ;
             ALUOp_reg           <=  i_ALUOp         ;
             RegDst_reg          <=  i_RegDst        ;
