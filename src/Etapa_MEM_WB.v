@@ -66,7 +66,7 @@ module Etapa_MEM_WB
     assign o_ZeroExtend     =   ZeroExtend_reg          ;
     assign o_LUI            =   LUI_reg                 ;
     
-    always @(negedge i_clk)
+    always @(posedge i_clk)
         begin 
             PC4_reg             <=  i_PC4               ;
             Instruction_reg     <=  i_Instruction       ;

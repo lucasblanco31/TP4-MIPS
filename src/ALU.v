@@ -20,16 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 //Definicion de Macros
 //<nombre>, <tamano>'<base>
-`define AND     4'b0000       //Salida-> A and B
-`define OR      4'b0001       //Salida-> A or B
-`define ADD     4'b0010       //Salida-> A + B
-`define SLL     4'b0011       //Salida-> A<<B(shamt)
-`define SRL     4'b0100       //Salida-> A>>B(shamt)
-`define SRA     4'b0101       //Salida-> A>>>B
-`define SUB     4'b0110       //Salida-> A - B
-`define SLT     4'b0111       //Salida-> A and B
-`define NOR     4'b1100       //Salida-> A nor B
-`define XOR     4'b1101       //Salida-> A xor B
+`define AND     4'b0000       //0.Salida-> A and B
+`define OR      4'b0001       //1.Salida-> A or B
+`define ADD     4'b0010       //2.Salida-> A + B
+`define SLL     4'b0011       //3.Salida-> A<<B(shamt)
+`define SRL     4'b0100       //4.Salida-> A>>B(shamt)
+`define SRA     4'b0101       //5.Salida-> A>>>B
+`define SUB     4'b0110       //6.Salida-> A - B
+`define SLT     4'b0111       //7.Salida-> A and B
+`define NOR     4'b1100       //12.Salida-> A nor B
+`define XOR     4'b1101       //13.Salida-> A xor B
 
 module ALU
     #(
@@ -38,8 +38,8 @@ module ALU
         parameter   BOP     =   4      
     )
     (
-        input   wire    [NBITS-1    :0]     i_Reg       ,
-        input   wire    [NBITS-1    :0]     i_Mux       ,
+        input   wire    [NBITS-1    :0]     i_RegA      ,
+        input   wire    [NBITS-1    :0]     i_RegB      ,
         input   wire    [RNBITS-1   :0]     i_Shamt     ,
         input   wire    [BOP-1      :0]     i_Op        ,
         output  wire                        o_Cero      ,
@@ -54,17 +54,17 @@ module ALU
     always @(*)
         begin : operations
             case(i_Op)
-                `AND:       result  =   i_Reg   &   i_Mux               ;
-                `OR:        result  =   i_Reg   |   i_Mux               ;
-                `ADD:       result  =   i_Reg   +   i_Mux               ;
-                `SUB:       result  =   i_Reg   -   i_Mux               ;
-                `SLT:       result  =   i_Reg   <   i_Mux ? 1:0         ;
-                `NOR:       result  =   ~(i_Reg |   i_Mux)              ;
-                `XOR:       result  =   i_Reg   ^   i_Mux               ;
-                `SLL:       result  =   i_Mux   <<  i_Shamt             ;
-                `SRL:       result  =   i_Mux   >>  i_Shamt             ;
-                `SRA:       result  =   $signed(i_Mux)  >>> i_Shamt     ;
-                default:    result  =   -1                              ;
+                `AND:       result  =   i_RegA   &   i_RegB         ;
+                `OR:        result  =   i_RegA   |   i_RegB         ;
+                `ADD:       result  =   i_RegA   +   i_RegB         ;
+                `SUB:       result  =   i_RegA   -   i_RegB         ;
+                `SLT:       result  =   i_RegA   <   i_RegB ? 1:0   ;
+                `NOR:       result  =   ~(i_RegA |   i_RegB)        ;
+                `XOR:       result  =   i_RegA   ^   i_RegB         ;
+                `SLL:       result  =   i_RegB   <<  i_Shamt        ;
+                `SRL:       result  =   i_RegB   >>  i_Shamt        ;
+                `SRA:       result  =   $signed(i_RegB) >>> i_Shamt ;
+                default:    result  =   -1                          ;
             endcase
         end
 endmodule
