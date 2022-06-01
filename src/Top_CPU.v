@@ -2,28 +2,31 @@
 
 module Top_CPU
     #(
-        parameter NBITS       = 32,
-        parameter NBITSJUMP   = 26,
-        parameter INBITS      = 16,
-        parameter HWORDBITS   = 16,
-        parameter BYTENBITS   = 8, 
+        parameter   NBITS           = 32,
+        parameter   NBITSJUMP       = 26,
+        parameter   INBITS          = 16,
+        parameter   HWORDBITS       = 16,
+        parameter   BYTENBITS       = 8, 
  
-        parameter CELDAS_REG  = 32,
-        parameter CELDAS_M    = 10,
+        parameter   CELDAS_REG      = 32,
+        parameter   CELDAS_M        = 10,
 
-        parameter RS          = 5,
-        parameter RT          = 5,
-        parameter RD          = 5,
+        parameter   RS              = 5,
+        parameter   RT              = 5,
+        parameter   RD              = 5,
 
-        parameter ALUNBITS    = 6,
-        parameter ALUCNBITS   = 2,
-        parameter ALUOP       = 4,
-        parameter BOP         = 4,
+        parameter   ALUNBITS        = 6,
+        parameter   ALUCNBITS       = 2,
+        parameter   ALUOP           = 4,
+        parameter   BOP             = 4,
         
-        parameter TNBITS      = 2,
+        parameter   TNBITS          = 2,
 
-        parameter CTRLNBITS   = 6,
-        parameter REGS        = 5
+        parameter   CTRLNBITS       = 6,
+        parameter   REGS            = 5,
+        
+        parameter   CORTOCIRCUITO   = 3,
+        parameter   OPTIONBITS      = 4
     )
     (
         input   wire                            i_clk    ,
@@ -36,11 +39,7 @@ module Top_CPU
     reg         rst_clk; //reset del clock
     //Clock wizard
     wire                            o_clk_out1 ;
-    assign o_clk_wzd    =           o_clk_out1 ; 
-
-    //VER COMO IMPLEMENTAR JUMP
-    //Mux Jump
-    //wire     [NBITSJUMP-1 :  0]       InstrJump;    
+    assign o_clk_wzd    =           o_clk_out1 ;  
 
     //-------------------------------------------------------
     //IF
@@ -92,6 +91,7 @@ module Top_CPU
     wire    [NBITS-1        :0]     ID_EX_Registro1     ;
     wire    [NBITS-1        :0]     ID_EX_Registro2     ;
     wire    [NBITS-1        :0]     ID_EX_Extension     ;
+    wire    [REGS-1         :0]     ID_EX_Rs            ;
     wire    [REGS-1         :0]     ID_EX_Rt            ;
     wire    [REGS-1         :0]     ID_EX_Rd            ;
     wire                            ID_EX_ALUSrc        ;      
@@ -112,9 +112,9 @@ module Top_CPU
     //SumadorBranch
     wire     [NBITS-1       :0]     SumPcBranch     ;
     //MuxALU
-    wire     [NBITS-1       :0]     MuxToALU        ;
+    wire     [NBITS-1       :0]     RegistroB       ;
     //MuxShamt
-    wire     [REGS-1        :0]     Shamt           ;
+    wire     [NBITS-1       :0]     RegistroA       ;
     //ALU
     wire     [NBITS-1       :0]     ALUResult       ;
     wire                            Cero            ;
@@ -125,6 +125,9 @@ module Top_CPU
     wire     [ALUOP-1       :0]     ALUCtrl         ;
     //MultiplexorRegistro
     wire     [RD-1          :0]     Reg_mux_rd              ;
+    //UnidadCortocircuito
+    wire    [CORTOCIRCUITO-1    :0] Cortocircuito_RegistroA ;
+    wire    [CORTOCIRCUITO-1    :0] Cortocircuito_RegistroB ;
     //EX/MEM
     wire    [NBITS-1        :0]     EX_MEM_PC4              ;
     wire    [NBITS-1        :0]     EX_MEM_PCBranch         ;
@@ -400,6 +403,7 @@ module Top_CPU
         .i_Registro1                (DatoLeido1         ),
         .i_Registro2                (DatoLeido2         ),
         .i_Extension                (InstrExt           ),
+        .i_Rs                       (Reg_rs             ), 
         .i_Rt                       (Reg_rt             ),
         .i_Rd                       (Reg_rd             ),
         
@@ -408,6 +412,7 @@ module Top_CPU
         .o_Registro1                (ID_EX_Registro1    ),
         .o_Registro2                (ID_EX_Registro2    ),
         .o_Extension                (ID_EX_Extension    ),
+        .o_Rs                       (ID_EX_Rs           ),
         .o_Rt                       (ID_EX_Rt           ),
         .o_Rd                       (ID_EX_Rd           ),
 
@@ -456,40 +461,47 @@ module Top_CPU
     )
     u_ALU
     (
-        .i_Reg              (ID_EX_Registro1    ),
-        .i_Mux              (MuxToALU           ),
-        .i_Shamt            (Shamt              ),
+        .i_RegA             (RegistroA          ),
+        .i_RegB             (RegistroB          ),
+        .i_Shamt            (ShamtInstr         ),
         .i_Op               (ALUCtrl            ),
         .o_Cero             (Cero               ),
         .o_Result           (ALUResult          )
     );
     //////////////////////////////////////////////
-    /// MULTIPLEXOR SHAMT
+    /// MULTIPLEXOR SHAMT - ALU OPERANDO A
     /////////////////////////////////////////////
     Mux_ALU_Shamt
     #(
-        .NBITS      (NBITS          ),
-        .RNBITS     (REGS           )
+        .NBITS          (NBITS          ),
+        .CORTOCIRCUITO  (CORTOCIRCUITO  )
     )
     u_Mux_ALU_Shamt
     (
-        .i_Registro (ID_EX_Registro1),
-        .i_Shamt    (ShamtInstr     ),
-        .o_toALU    (Shamt          )               
+        .i_EX_UnidadCortocircuito   (Cortocircuito_RegistroA    ),
+        .i_ID_EX_Registro           (ID_EX_Registro1            ),
+        .i_EX_MEM_Registro          (EX_MEM_ALU                 ),
+        .i_MEM_WR_Registro          (DatoEscritura              ),
+        .o_toALU                    (RegistroA                  )               
     );
     //////////////////////////////////////////////
-    /// MULTIPLEXOR ALU
+    /// MULTIPLEXOR ALU OPERANDO B
     /////////////////////////////////////////////
     Mux_ALU
     #(
-        .NBITS                   (NBITS             )
+        .NBITS                      (NBITS          ),
+        .OBITS                      (OPTIONBITS     ),
+        .CORTOCIRCUITO              (CORTOCIRCUITO  )
     )
     u_Mux_ALU
     (
-        .i_ALUSrc                 (ID_EX_ALUSrc     ),
-        .i_Registro               (ID_EX_Registro2  ),
-        .i_ExtensionData          (ID_EX_Extension  ),
-        .o_toALU                  (MuxToALU         )
+        .i_ALUSrc                   (ID_EX_ALUSrc               ),
+        .i_EX_UnidadCortocircuito   (Cortocircuito_RegistroB    ),
+        .i_Registro                 (ID_EX_Registro2            ),
+        .i_ExtensionData            (ID_EX_Extension            ),
+        .i_EX_MEM_Operando          (EX_MEM_ALU                 ),
+        .i_MEM_WR_Operando          (DatoEscritura              ),
+        .o_toALU                    (RegistroB                  )
     );
     //////////////////////////////////////////////
     /// CONTROL ALU
@@ -520,6 +532,25 @@ module Top_CPU
         .i_rt                  (ID_EX_Rt        ),
         .i_rd                  (ID_EX_Rd        ),
         .o_Registro            (Reg_mux_rd      )
+    );
+    //////////////////////////////////////////////
+    /// UNIDAD DE CORTOCIRCUITO
+    /////////////////////////////////////////////
+    EX_Unidad_Cortocircuito
+    #(
+        .RNBITS     (REGS           ),
+        .MUXBITS    (CORTOCIRCUITO  )
+    )
+    u_Ex_Unidad_Cortocircuito
+    (
+        .i_EX_MEM_RegWrite  (EX_MEM_RegWrite        ), //Se escribe Registro Destino en EX/MEM
+        .i_EX_MEM_Rd        (EX_MEM_RegistroDestino ), //Registro destino en EX/MEM
+        .i_MEM_WR_RegWrite  (MEM_WB_RegWrite        ), //Se escribe Registro Destino en MEM/WB
+        .i_MEM_WR_Rd        (MEM_WB_RegistroDestino ), //Registro destino en MEM/WB
+        .i_Rs               (ID_EX_Rs               ), //Rs para comparar con Registro Destino
+        .i_Rt               (ID_EX_Rt               ), //Rt para comparar con Registro Destino
+        .o_Mux_OperandoA    (Cortocircuito_RegistroA), //Elección para RegistroA
+        .o_Mux_OperandoB    (Cortocircuito_RegistroB)  //Elección para RegistroB
     );
     //////////////////////////////////////////////
     /// ID/EX
@@ -686,7 +717,8 @@ module Top_CPU
     );
     //////////////////////////////////////////////
     /// MULTIPLEXOR LUI
-    /////////////////////////////////////////////
+    //////////////////////////////////////////////
+    
     Mux_LUI
     #(
         .NBITS(NBITS)
@@ -715,7 +747,7 @@ module Top_CPU
     //////////////////////////////////////////////
     /// CLOCK WIZARD
     /////////////////////////////////////////////
-    clk_wiz_0 my_clock(
+    clk_wiz_1 my_clock(
         .reset              (i_rst_clk    ),        
         .clk_in1            (i_clk        ),
         .locked             (o_locked     ),
