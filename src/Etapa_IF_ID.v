@@ -22,7 +22,7 @@ module Etapa_IF_ID
     assign o_PC8            =   PC8_reg         ;
     assign o_Instruction    =   Instruction_reg ;
     
-    always @(negedge i_clk)
+    always @(posedge i_clk)
         begin  
             PC4_reg         <=   i_PC4           ;
             PC8_reg         <=   i_PC8           ;
