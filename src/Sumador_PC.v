@@ -26,14 +26,21 @@ module Sumador_PC
     )
     (
         input   wire    [NBITS-1      :0]   i_PC ,
-        output  wire    [NBITS-1      :0]   o_Mux                 
+        output  wire    [NBITS-1      :0]   o_Mux,
+        output  wire    [NBITS-1      :0]   o_Mux_8                         
     );
     
-    reg [NBITS-1  :0]   result  ;    
-    assign  o_Mux   =   result  ;
+    reg [NBITS-1  :0]   result   ;    
+    reg [NBITS-1  :0]   result8  ;
     
+    
+    assign  o_Mux     =   result   ;       
+    assign  o_Mux_8   =   result8  ;
+    
+
     always @(*)
     begin
-        result   <=  i_PC + 4   ;
+        result    <=  i_PC + 4   ;
+        result8   <=  i_PC + 8   ;
     end   
 endmodule
