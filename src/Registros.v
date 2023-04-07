@@ -30,13 +30,13 @@ module Registros
     )
     (
         input   wire                    i_clk           ,
-        input   wire                    i_RegWrite      ,
-        input   wire    [RS-1       :0] i_RS            ,
-        input   wire    [RT-1       :0] i_RT            ,
-        input   wire    [RD-1       :0] i_RD            ,
-        input   wire    [NBITS-1    :0] i_DatoEscritura ,
-        output  wire    [NBITS-1    :0] o_RS            ,
-        output  wire    [NBITS-1    :0] o_RT             
+        input   wire                    i_RegWrite      , 
+        input   wire    [RS-1       :0] i_RS            , //Leer registro 1
+        input   wire    [RT-1       :0] i_RT            , //Leer registro 2
+        input   wire    [RD-1       :0] i_RD            , //Escribir registro
+        input   wire    [NBITS-1    :0] i_DatoEscritura , //Escribir dato
+        output  wire    [NBITS-1    :0] o_RS            , // Dato leido 1
+        output  wire    [NBITS-1    :0] o_RT              // Dato leido 2
     );
     
     reg     [NBITS-1    :0]     memory[CELDAS-1:0];
