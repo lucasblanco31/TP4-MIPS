@@ -22,11 +22,11 @@ module Etapa_MEM_WB
         input   wire    [1          :0]     i_TamanoFiltroL     ,
         input   wire                        i_ZeroExtend        , 
         input   wire                        i_LUI               ,
-        input   wire                        i_JAL               ,
+        input   wire                        i_JAL               ,        
         
         //GeneralOutput
         output  wire    [NBITS-1    :0]     o_PC4               ,
-        output  wire    [NBITS-1    :0]     o_PC8               ,
+        output  wire    [NBITS-1    :0]     o_PC8               ,        
         output  wire    [NBITS-1    :0]     o_Instruction       ,
         output  wire    [NBITS-1    :0]     o_ALU               ,
         output  wire    [NBITS-1    :0]     o_DatoMemoria       ,

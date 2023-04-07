@@ -155,6 +155,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -194,7 +195,7 @@ module Control_Unidad
             begin
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b0    ;
-                JAL_Reg             <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;                
                 Branch_Reg          <=  1'b0    ;
                 NBranch_Reg         <=  1'b0    ;
                 MemRead_Reg         <=  1'b0    ; 
@@ -510,7 +511,7 @@ module Control_Unidad
                 LUI_Reg             <=  1'b0    ;
             end
             
-            `JAL:
+           `JAL:
             begin       
                 RegDst_Reg          <=  1'b0    ;
                 Jump_Reg            <=  1'b1    ;                 
@@ -528,7 +529,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
-            end            
+            end                
     
             default:
             begin       

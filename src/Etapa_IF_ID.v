@@ -10,7 +10,7 @@ module Etapa_IF_ID
         input   wire    [NBITS-1    :0]     i_PC8           ,
         input   wire    [NBITS-1    :0]     i_Instruction   ,
         output  wire    [NBITS-1    :0]     o_PC4           ,
-        output  wire    [NBITS-1    :0]     o_PC8           ,  
+        output  wire    [NBITS-1    :0]     o_PC8           ,
         output  wire    [NBITS-1    :0]     o_Instruction  
     );
     

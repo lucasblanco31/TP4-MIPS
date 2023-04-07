@@ -30,10 +30,10 @@ module WB_Mux_EscribirDato
         input   wire     [NBITS-1      :0]    i_PC_8        ,
         output  wire     [NBITS-1      :0]    o_Registro                 
     );
-    
+
     reg [NBITS-1  :0]   to_Reg      ;
     assign  o_Registro   =   to_Reg ;
-    
+
     always @(*)
     begin
         case(i_JAL)
