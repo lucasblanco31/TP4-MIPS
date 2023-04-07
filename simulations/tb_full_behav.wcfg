@@ -18,7 +18,6 @@
    <column_width_setting>
       <NameColumnWidth column_width="371"></NameColumnWidth>
       <ValueColumnWidth column_width="195"></ValueColumnWidth>
-
    </column_width_setting>
    <WVObjectSize size="19" />
    <wvobject type="logic" fp_name="/tb_full/o_clk_wzd">
@@ -422,9 +421,10 @@
       <wvobject type="group" fp_name="group600">
          <obj_property name="label">UnidadCortocircuito</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/tb_full/u_top/u_Mux_ALU_Shamt/i_Registro">
-            <obj_property name="ElementShortName">i_Registro[31:0]</obj_property>
-            <obj_property name="ObjectShortName">i_Registro[31:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/tb_full/u_top/u_Ex_Unidad_Cortocircuito/i_Rs">
+            <obj_property name="ElementShortName">i_Rs[4:0]</obj_property>
+            <obj_property name="ObjectShortName">i_Rs[4:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/tb_full/u_top/u_Ex_Unidad_Cortocircuito/i_Rt">
             <obj_property name="ElementShortName">i_Rt[4:0]</obj_property>
