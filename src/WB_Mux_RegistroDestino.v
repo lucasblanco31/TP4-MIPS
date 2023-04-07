@@ -29,10 +29,10 @@ module WB_Mux_RegistroDestino
         input   wire     [REGS-1       :0]    i_RD          ,
         output  wire     [REGS-1       :0]    o_RD                 
     );
-    
+
     reg [REGS-1  :0]   to_RD      ;
     assign  o_RD   =   to_RD ;
-    
+
     always @(*)
     begin
         case(i_JAL)

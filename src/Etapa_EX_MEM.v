@@ -8,7 +8,7 @@ module Etapa_EX_MEM
     (   //GeneralInputs
         input   wire                        i_clk               ,
         input   wire    [NBITS-1    :0]     i_PC4               ,
-        input   wire    [NBITS-1    :0]     i_PC8               ,
+        input   wire    [NBITS-1    :0]     i_PC8               ,        
         input   wire    [NBITS-1    :0]     i_PCBranch          ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire                        i_Cero              ,
@@ -25,7 +25,7 @@ module Etapa_EX_MEM
         input   wire    [1          :0]     i_TamanoFiltro      ,   
         
         ///IControlWB
-        input   wire                        i_JAL               ,
+        input   wire                        i_JAL               ,        
         input   wire                        i_MemToReg          ,
         input   wire                        i_RegWrite          ,
         input   wire    [1          :0]     i_TamanoFiltroL     ,
@@ -34,7 +34,7 @@ module Etapa_EX_MEM
         
         //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PC4               ,
-        output  wire    [NBITS-1    :0]     o_PC8               ,
+        output  wire    [NBITS-1    :0]     o_PC8               ,        
         output  wire    [NBITS-1    :0]     o_PCBranch          ,
         output  wire    [NBITS-1    :0]     o_Instruction       ,
         output  wire                        o_JAL               ,
@@ -85,7 +85,7 @@ module Etapa_EX_MEM
     reg                     LUI_reg             ;
     
     assign o_PC4                =   PC4_reg             ;
-    assign o_PC4                =   PC8_reg             ;
+    assign o_PC8                =   PC8_reg             ;
     assign o_PCBranch           =   PCBranch_reg        ;
     assign o_Instruction        =   Instruction_reg     ;
     assign o_Cero               =   Cero_reg            ;
@@ -129,7 +129,7 @@ module Etapa_EX_MEM
             TamanoFiltro_reg    <=  i_TamanoFiltro          ;
     
             //WB
-            JAL_reg             <=  i_JAL                   ;
+            JAL_reg             <=  i_JAL                   ;            
             MemToReg_reg        <=  i_MemToReg              ;
             RegWrite_reg        <=  i_RegWrite              ;
             TamanoFiltroL_reg   <=  i_TamanoFiltroL         ;
