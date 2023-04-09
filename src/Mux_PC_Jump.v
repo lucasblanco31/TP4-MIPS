@@ -11,14 +11,15 @@ module Mux_PC_Jump
         output  wire    [NBITS-1        :0]     o_PC                 
     );
     
-    reg [NBITS-1  :0]   PC_reg   ;    
-    assign  o_PC   =    PC_reg   ;
+    reg             [NBITS-1  :0]          PC_reg   ;
+        
+    assign          o_PC   =    PC_reg   ;
     
     always @(*)
     begin
-        case(i_Jump)
-            1'b0:   PC_reg   <=  i_MuxBranch    ;   
-            1'b1:   PC_reg   <=  i_SumadorJump  ;
-        endcase
+        if(i_Jump)
+            PC_reg   <=  i_SumadorJump  ;
+        else
+            PC_reg   <=  i_MuxBranch    ;   
     end   
 endmodule
