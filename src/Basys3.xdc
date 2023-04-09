@@ -4,9 +4,12 @@ create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports bas
 
 set_property -dict { PACKAGE_PIN U18   IOSTANDARD LVCMOS33 } [get_ports basys_reset]
 
+<<<<<<< HEAD
 set_property CFGBVS VCCO [current_design]
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 
+=======
+>>>>>>> d6aa4f82317a3e52c94469fb00714d214472ce07
 set_property -dict { PACKAGE_PIN U16   IOSTANDARD LVCMOS33 } [get_ports { mips_status_o[0] }]
 set_property -dict { PACKAGE_PIN E19   IOSTANDARD LVCMOS33 } [get_ports { mips_status_o[1] }]
 set_property -dict { PACKAGE_PIN U19   IOSTANDARD LVCMOS33 } [get_ports { mips_status_o[2] }]
