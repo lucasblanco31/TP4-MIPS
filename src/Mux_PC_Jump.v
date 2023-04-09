@@ -11,6 +11,18 @@ module Mux_PC_Jump
         output  wire    [NBITS-1        :0]     o_PC                 
     );
     
+<<<<<<< HEAD
+    reg             [NBITS-1  :0]          PC_reg   ;
+        
+    assign          o_PC   =    PC_reg   ;
+    
+    always @(*)
+    begin
+        if(i_Jump)
+            PC_reg   <=  i_SumadorJump  ;
+        else
+            PC_reg   <=  i_MuxBranch    ;   
+=======
     reg [NBITS-1  :0]   PC_reg   ;    
     assign  o_PC   =    PC_reg   ;
     
@@ -20,5 +32,6 @@ module Mux_PC_Jump
             1'b0:   PC_reg   <=  i_MuxBranch    ;   
             1'b1:   PC_reg   <=  i_SumadorJump  ;
         endcase
+>>>>>>> d6aa4f82317a3e52c94469fb00714d214472ce07
     end   
 endmodule
