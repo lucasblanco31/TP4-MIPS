@@ -1001,13 +1001,16 @@ module Top_MIPS
     assign ID_InstrControl     =   IF_ID_Instr[NBITS-1         :NBITS-CTRLNBITS]   ;
     
     // EX
+    // ALU Control
+    assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0              ]   ;
+    assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :RS+RT+INBITS   ]   ;
     //SumadorJump
-    assign EX_Jump_i           = ID_EX_Instr[NBITSJUMP-1     :0]                 ;    
-    
+    assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;    
+    assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
-    assign ID_Reg_rs_i         =   IF_ID_Instr[INBITS+RT+RS-1  :INBITS+RT]         ;
-    assign ID_Reg_rt_i         =   IF_ID_Instr[INBITS+RT-1     :INBITS]            ;
-    //assign ID_Reg_rd_i         =   IF_ID_Instr[INBITS-1        :INBITS-RD]         ;
+    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ;
+    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ;
+    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ;
     
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr[INBITS-1        :0]                 ;        
@@ -1058,11 +1061,14 @@ module Top_MIPS
     )
     u_Mux_PC
     (
+        .i_Jump             (ID_EX_CTRL_Jump ),
         .i_PCSrc            (MEM_PcSrc_o           ),
         .i_SumadorBranch    (EX_MEM_PCBranch       ),
         .i_SumadorPC4       (IF_PC4_o              ),
-        .o_MuxPC            (IF_PCBranch_i         )
+        .i_SumadorJump      (EX_Jump_o             ), 
+        .o_PC               (IF_PC_i               ) 
     );
+
     //////////////////////////////////////////////
     /// MULTIPLEXOR JUMP
     /////////////////////////////////////////////
