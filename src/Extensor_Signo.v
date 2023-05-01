@@ -38,9 +38,9 @@ module Extensor_Signo
     always @(*)
         begin : extension
             case(i_ExtensionMode)
-                2'b00:      result_ext_reg  <=  {{e_NBITS{i_signal[i_NBITS-1]}}, i_signal}  ;1010 1010 1010 1010 -> 1111 1111 1111 1111 1010 1010 1010 1010
-                2'b01:      result_ext_reg  <=  {{e_NBITS{1'b0}}, i_signal}                 ;1010 1010 1010 1010 -> 0000 0000 0000 0000 1010 1010 1010 1010
-                2'b10:      result_ext_reg  <=  {i_signal,{e_NBITS{1'b0}}}                  ;1010 1010 1010 1010 -> 1010 1010 1010 1010 0000 0000 0000 0000   
+                2'b00:      result_ext_reg  <=  {{e_NBITS{i_signal[i_NBITS-1]}}, i_signal}  ;//1010 1010 1010 1010 -> 1111 1111 1111 1111 1010 1010 1010 1010
+                2'b01:      result_ext_reg  <=  {{e_NBITS{1'b0}}, i_signal}                 ;//1010 1010 1010 1010 -> 0000 0000 0000 0000 1010 1010 1010 1010
+                2'b10:      result_ext_reg  <=  {i_signal,{e_NBITS{1'b0}}}                  ;//1010 1010 1010 1010 -> 1010 1010 1010 1010 0000 0000 0000 0000   
                 default:    result_ext_reg  <= -1                                           ;
             endcase
         end
