@@ -184,7 +184,7 @@ module Top_CPU
     //-----------------------------------------------------------------------
     //EX
     //ALUControl
-    assign InstrALUControl  = ID_EX_Extension[ALUNBITS-1    :0]                 ;
+    assign InstrALUControl  = ID_EX_Extension[ALUNBITS-1    :0]                 ; //Agarrar la instrucción no la extensión
     assign OpcodeALUControl = ID_EX_Instr[NBITS-1           :RS+RT+INBITS]      ;
     //ALU
     assign ShamtInstr       = ID_EX_Instr[10                :6]                 ;

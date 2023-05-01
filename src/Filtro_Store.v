@@ -1,5 +1,9 @@
 `timescale 1ns / 1ps
 
+//Implementación de Filtro
+//00: palabra entera
+//01: SB -> para un byte
+//10: SH -> para media palabra
 `define	CERO    2'b00
 `define	CEROUNO 2'b01
 `define	UNOCERO 2'b10

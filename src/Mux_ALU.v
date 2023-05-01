@@ -8,12 +8,12 @@ module Mux_ALU
         
     )
     (
-        input   wire                            i_ALUSrc                        ,
-        input   wire    [CORTOCIRCUITO-1    :0] i_EX_UnidadCortocircuito        ,
-        input   wire    [NBITS-1            :0] i_Registro                      ,
-        input   wire    [NBITS-1            :0] i_ExtensionData                 ,
-        input   wire    [NBITS-1            :0] i_EX_MEM_Operando               ,
-        input   wire    [NBITS-1            :0] i_MEM_WR_Operando               ,
+        input   wire                            i_ALUSrc                        , //Usas inmediato o registro
+        input   wire    [CORTOCIRCUITO-1    :0] i_EX_UnidadCortocircuito        , //Registro ha usar x cortocircuito
+        input   wire    [NBITS-1            :0] i_Registro                      , //Dato leido Registro 2
+        input   wire    [NBITS-1            :0] i_ExtensionData                 , //Inst Extendida
+        input   wire    [NBITS-1            :0] i_EX_MEM_Operando               , //Resultado ALU EX/MEM
+        input   wire    [NBITS-1            :0] i_MEM_WR_Operando               , //Resultado ALU MEM/WR
         output  wire    [NBITS-1            :0] o_toALU                 
     );
     

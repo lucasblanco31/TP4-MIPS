@@ -55,10 +55,10 @@ module Memoria_Datos
     
     always @(posedge i_clk)
     begin
-            if (i_MemRead)
-            begin   
-                dato                    <=  memory[i_ALUDireccion];
-            end 
+        if (i_MemRead)
+        begin   
+            dato                    <=  memory[i_ALUDireccion];
+        end 
     end
     always @(negedge i_clk)
     begin

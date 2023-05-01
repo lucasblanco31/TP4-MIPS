@@ -21,4 +21,5 @@ module Mux_LUI
             1'b1:   to_Reg  <=  i_Extension     ;
         endcase
     end
+    
 endmodule

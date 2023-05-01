@@ -26,8 +26,8 @@ module Mux_Memoria
     )
     (
         input   wire                          i_MemToReg    ,
-        input   wire     [NBITS-1      :0]    i_MemDatos    ,
-        input   wire     [NBITS-1      :0]    i_ALU         ,
+        input   wire     [NBITS-1      :0]    i_MemDatos    , //Memoria de Datos -> Dato del Filtro -> Dato de LUI 
+        input   wire     [NBITS-1      :0]    i_ALU         , //Dato de la ALU
         output  wire     [NBITS-1      :0]    o_Registro                 
     );
     

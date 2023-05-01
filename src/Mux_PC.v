@@ -27,8 +27,6 @@ module Mux_PC
         else if(i_PCSrc)
             PC_reg      <=  i_SumadorBranch ;
         else
-            PC_reg      <=  i_SumadorPC4    ;
-             
-            
+            PC_reg      <=  i_SumadorPC4    ;  
     end   
 endmodule

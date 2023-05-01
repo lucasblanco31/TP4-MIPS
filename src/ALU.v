@@ -27,7 +27,7 @@
 `define SRL     4'b0100       //4.Salida-> A>>B(shamt)
 `define SRA     4'b0101       //5.Salida-> A>>>B
 `define SUB     4'b0110       //6.Salida-> A - B
-`define SLT     4'b0111       //7.Salida-> A and B
+`define SLT     4'b0111       //7.Salida-> A es menor que B
 `define NOR     4'b1100       //12.Salida-> A nor B
 `define XOR     4'b1101       //13.Salida-> A xor B
 

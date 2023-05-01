@@ -2,6 +2,7 @@
 
 //Definicion de Macros mediante directiva 'define'
 //<nombre>	<tamao>' <base>
+
 `define	ADD_C	  6'b100000	//Suma
 `define	SUB_C	  6'b100010	//Resta
 `define	SUBU_C    6'b100011	//Resta Unsigned
