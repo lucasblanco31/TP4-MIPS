@@ -18,4 +18,5 @@ module Sumador_PC_Jump
     begin
         IJump_reg   <=  {i_PC4[NBITS-1:27], (i_IJump<<2)}  ;
     end   
+    
 endmodule

@@ -45,11 +45,11 @@ module EX_Unidad_Cortocircuito
     
     always @(*)
     begin
-        if(i_EX_MEM_RegWrite && i_Rs == i_EX_MEM_Rd)
+        if(i_EX_MEM_RegWrite && (i_Rs == i_EX_MEM_Rd))
         begin
             Mux_OperandoA_Reg = 3'b001;
         end
-        else if (i_MEM_WR_RegWrite && i_Rs == i_MEM_WR_Rd)
+        else if (i_MEM_WR_RegWrite && (i_Rs == i_MEM_WR_Rd))
         begin
             Mux_OperandoA_Reg = 3'b010;
         end
@@ -60,11 +60,11 @@ module EX_Unidad_Cortocircuito
     end   
     always @(*)
     begin
-        if (i_EX_MEM_RegWrite && i_Rt == i_EX_MEM_Rd)
+        if (i_EX_MEM_RegWrite && (i_Rt == i_EX_MEM_Rd))
         begin
             Mux_OperandoB_Reg = 3'b001;
         end
-        else if (i_MEM_WR_RegWrite && i_Rt == i_MEM_WR_Rd)
+        else if (i_MEM_WR_RegWrite && (i_Rt == i_MEM_WR_Rd))
         begin
             Mux_OperandoB_Reg = 3'b010;
         end

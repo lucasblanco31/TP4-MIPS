@@ -59,11 +59,7 @@ module Etapa_MEM_WB
     reg                     LUI_reg             ;
     
     assign o_PC4                =   PC4_reg             ;
-<<<<<<< HEAD
     assign o_PC8                =   PC8_reg             ;
-=======
-    assign o_PC4                =   PC8_reg             ;
->>>>>>> d6aa4f82317a3e52c94469fb00714d214472ce07
     assign o_Instruction        =   Instruction_reg     ;
     assign o_ALU                =   ALU_reg             ;
     assign o_DatoMemoria        =   DatoMemoria_reg     ;
@@ -81,11 +77,7 @@ module Etapa_MEM_WB
     always @(posedge i_clk)
         begin 
             PC4_reg             <=  i_PC4               ;
-<<<<<<< HEAD
             PC8_reg             <=  i_PC8               ;
-=======
-            PC4_reg             <=  i_PC8               ;
->>>>>>> d6aa4f82317a3e52c94469fb00714d214472ce07
             Instruction_reg     <=  i_Instruction       ;
             ALU_reg             <=  i_ALU               ;       
             DatoMemoria_reg     <=  i_DatoMemoria       ;
@@ -100,4 +92,5 @@ module Etapa_MEM_WB
             ZeroExtend_reg      <=  i_ZeroExtend        ;
             LUI_reg             <=  i_LUI               ;
         end
+
 endmodule

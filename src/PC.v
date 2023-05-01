@@ -1,6 +1,5 @@
 `timescale 1ns / 1ps
 
-
 module PC
     #(
         parameter   NBITS       =   32  
@@ -28,7 +27,6 @@ module PC
             PC_Reg          <=      {NBITS{1'b0}}    ;
             PC_Reg_4        <=      {NBITS{3'b100}}  ;
             PC_Reg_8        <=      {NBITS{4'b1000}}  ;
-        //else if(wr_pc)
         end
         else 
             PC_Reg          <=      i_NPC           ;

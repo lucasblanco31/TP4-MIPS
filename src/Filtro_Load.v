@@ -15,7 +15,7 @@ module Filtro_Load
     (
         input   wire    [NBITS-1    :0]     i_Dato          ,
         input   wire    [TNBITS-1   :0]     i_Tamano        ,
-        input   wire                        i_Cero          ,
+        input   wire                        i_Cero          , //Zero_Extend es un flag para decir si es Unsigned
         output  wire    [NBITS-1    :0]     o_DatoEscribir            
     );
     

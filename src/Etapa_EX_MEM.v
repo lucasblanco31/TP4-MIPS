@@ -136,4 +136,5 @@ module Etapa_EX_MEM
             ZeroExtend_reg      <=  i_ZeroExtend            ;
             LUI_reg             <=  i_LUI                   ;
         end
+        
 endmodule

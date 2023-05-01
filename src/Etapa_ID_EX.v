@@ -168,4 +168,5 @@ module Etapa_ID_EX
             ZeroExtend_reg      <=  i_ZeroExtend    ;
             LUI_reg             <=  i_LUI           ;
         end
+        
 endmodule

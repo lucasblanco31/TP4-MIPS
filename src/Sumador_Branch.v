@@ -17,5 +17,6 @@ module Sumador_Branch
     always @(*)
     begin
         result   <=  (i_ExtensionData<<2) + i_SumadorPC4  ;
-    end   
+    end  
+     
 endmodule

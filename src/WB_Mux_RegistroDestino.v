@@ -37,7 +37,7 @@ module WB_Mux_RegistroDestino
     begin
         case(i_JAL)
             1'b0:   to_RD  <=  i_RD;   
-            1'b1:   to_RD  <=  5'b11111      ;
+            1'b1:   to_RD  <=  5'b11111      ; //En JAL se debe guardar el PC+8 en el registro 31
         endcase
     end 
 endmodule

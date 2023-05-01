@@ -24,5 +24,6 @@ module AND_Branch
             result   <=     1'b1    ;
         else
             result   <=     1'b0    ;
-    end   
+    end
+       
 endmodule

@@ -23,5 +23,6 @@ module Mux_ALU_Shamt
             3'b010:      to_ALU  <=  i_MEM_WR_Registro   ; 
             default :   to_ALU  <=  i_ID_EX_Registro    ;
         endcase
-       end   
+       end
+          
 endmodule
