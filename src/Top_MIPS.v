@@ -69,6 +69,7 @@ module Top_MIPS
     wire                            RIESGO_IF_ID_Write  ;
     wire                            RIESGO_Mux          ;
     wire                            RIESGO_Latch_Flush  ;
+    wire                            RIESGO_IF_ID_Flush  ;
     
     // Unidad Control
     wire     [CTRLNBITS-1   :0]     ID_InstrControl     ;
@@ -354,6 +355,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk          ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
+        .i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
         .i_PC8              (IF_PC8_o           ),
         .i_Instruction      (IF_Instr_o         ),
@@ -378,6 +380,7 @@ module Top_MIPS
     u_ID_Unidad_Riesgos
     (
         .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead ),
+        .i_ID_Unidad_Control_Jump   (RCTRL_Jump         ),
         .i_EX_MEM_Flush             (MEM_PcSrc_o        ),
         .i_ID_EX_Rt                 (ID_EX_Rt           ),
         .i_IF_ID_Rs                 (ID_Reg_rs_i        ),
@@ -385,7 +388,8 @@ module Top_MIPS
         .o_Mux_Riesgo               (RIESGO_Mux         ),
         .o_PC_Write                 (RIESGO_PC_Write    ),
         .o_IF_ID_Write              (RIESGO_IF_ID_Write ),
-        .o_Latch_Flush              (RIESGO_Latch_Flush )
+        .o_Latch_Flush              (RIESGO_Latch_Flush ),
+        .o_IF_ID_Flush              (RIESGO_IF_ID_Flush )
     );
    
     //////////////////////////////////////////////

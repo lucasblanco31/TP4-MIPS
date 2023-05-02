@@ -9,6 +9,7 @@ module Etapa_IF_ID
     (   
         input   wire                        i_clk           ,
         input   wire                        i_IF_ID_Write   ,
+        input   wire                        i_IF_ID_Flush   ,
         input   wire    [NBITS-1    :0]     i_PC4           ,
         input   wire    [NBITS-1    :0]     i_PC8           ,
         input   wire    [NBITS-1    :0]     i_Instruction   ,
@@ -26,7 +27,13 @@ module Etapa_IF_ID
     assign o_Instruction    =   Instruction_reg ;
     
     always @(posedge i_clk)
-        if(i_IF_ID_Write)
+        if(i_IF_ID_Flush)
+        begin
+            PC4_reg         <=   {NBITS{1'b0}}   ;
+            PC8_reg         <=   {NBITS{1'b0}}   ;
+            Instruction_reg <=   {NBITS{1'b0}}   ;
+        end
+        else if(i_IF_ID_Write)
         begin
             PC4_reg         <=   i_PC4           ;
             PC8_reg         <=   i_PC8           ;

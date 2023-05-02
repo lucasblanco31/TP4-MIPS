@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="67301fs"></ZoomEndTime>
-      <Cursor1Time time="75fs"></Cursor1Time>
+      <ZoomEndTime time="91301fs"></ZoomEndTime>
+      <Cursor1Time time="45000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="276"></NameColumnWidth>
-      <ValueColumnWidth column_width="76"></ValueColumnWidth>
+      <ValueColumnWidth column_width="68"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
+   <WVObjectSize size="13" />
    <wvobject type="logic" fp_name="/tb_full/basys_clk">
       <obj_property name="ElementShortName">basys_clk</obj_property>
       <obj_property name="ObjectShortName">basys_clk</obj_property>
@@ -65,6 +65,10 @@
          <obj_property name="ElementShortName">i_IF_ID_Write</obj_property>
          <obj_property name="ObjectShortName">i_IF_ID_Write</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_IF_ID_Flush">
+         <obj_property name="ElementShortName">i_IF_ID_Flush</obj_property>
+         <obj_property name="ObjectShortName">i_IF_ID_Flush</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_PC4">
          <obj_property name="ElementShortName">i_PC4[31:0]</obj_property>
          <obj_property name="ObjectShortName">i_PC4[31:0]</obj_property>
@@ -88,6 +92,15 @@
       <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/o_Instruction">
          <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
          <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group3194">
+      <obj_property name="label">Unidad de Control</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Control_Unidad/i_Instruction">
+         <obj_property name="ElementShortName">i_Instruction[5:0]</obj_property>
+         <obj_property name="ObjectShortName">i_Instruction[5:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group141">
@@ -125,6 +138,10 @@
       <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_Latch_Flush">
          <obj_property name="ElementShortName">o_Latch_Flush</obj_property>
          <obj_property name="ObjectShortName">o_Latch_Flush</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_IF_ID_Flush">
+         <obj_property name="ElementShortName">o_IF_ID_Flush</obj_property>
+         <obj_property name="ObjectShortName">o_IF_ID_Flush</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group149">
@@ -266,6 +283,15 @@
    <wvobject type="group" fp_name="group155">
       <obj_property name="label">Registros</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/i_RS">
+         <obj_property name="ElementShortName">i_RS[4:0]</obj_property>
+         <obj_property name="ObjectShortName">i_RS[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/i_RT">
+         <obj_property name="ElementShortName">i_RT[4:0]</obj_property>
+         <obj_property name="ObjectShortName">i_RT[4:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/memory[0]">
          <obj_property name="ElementShortName">[0][31:0]</obj_property>
          <obj_property name="ObjectShortName">[0][31:0]</obj_property>
@@ -282,7 +308,6 @@
    <wvobject type="group" fp_name="group654">
       <obj_property name="label">ID/EX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_PC4">
          <obj_property name="ElementShortName">o_PC4[31:0]</obj_property>
          <obj_property name="ObjectShortName">o_PC4[31:0]</obj_property>

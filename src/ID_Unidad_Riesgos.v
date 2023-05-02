@@ -6,27 +6,31 @@ module ID_Unidad_Riesgos
         parameter MUXBITS   =   3
     )
     (
-        input   wire                i_ID_EX_MemRead     ,
-        input   wire                i_EX_MEM_Flush      ,
-        input   wire [RNBITS-1  :0] i_ID_EX_Rt          ,
-        input   wire [RNBITS-1  :0] i_IF_ID_Rs          ,
-        input   wire [RNBITS-1  :0] i_IF_ID_Rt          ,
+        input   wire                i_ID_EX_MemRead             ,
+        input   wire                i_ID_Unidad_Control_Jump    ,
+        input   wire                i_EX_MEM_Flush              ,
+        input   wire [RNBITS-1  :0] i_ID_EX_Rt                  ,
+        input   wire [RNBITS-1  :0] i_IF_ID_Rs                  ,
+        input   wire [RNBITS-1  :0] i_IF_ID_Rt                  ,
         
-        output  wire                o_Mux_Riesgo        ,
-        output  wire                o_PC_Write          ,
-        output  wire                o_IF_ID_Write       ,
-        output  wire                o_Latch_Flush       
+        output  wire                o_Mux_Riesgo                ,
+        output  wire                o_PC_Write                  ,
+        output  wire                o_IF_ID_Write               ,
+        output  wire                o_Latch_Flush               ,
+        output  wire                o_IF_ID_Flush               
     );
     
     reg Reg_Mux_Riesgo  ;
     reg Reg_PC_Write    ;
     reg Reg_IF_ID_Write ;
     reg Reg_Latch_Flush ;
+    reg Reg_IF_ID_Flush ;
     
     assign  o_Mux_Riesgo    =   Reg_Mux_Riesgo  ;
     assign  o_PC_Write      =   Reg_PC_Write    ;
     assign  o_IF_ID_Write   =   Reg_IF_ID_Write ;
     assign  o_Latch_Flush   =   Reg_Latch_Flush ;
+    assign  o_IF_ID_Flush   =   Reg_IF_ID_Flush ;
     
     initial 
     begin
@@ -34,6 +38,7 @@ module ID_Unidad_Riesgos
         Reg_PC_Write       <=      1'b1;
         Reg_IF_ID_Write    <=      1'b1;
         Reg_Latch_Flush    <=      1'b0;
+        Reg_IF_ID_Flush    <=      1'b0;
     end
     
     always @(*)
@@ -46,7 +51,19 @@ module ID_Unidad_Riesgos
         begin
             Reg_Latch_Flush      <= 1'b0;
         end
-    end   
+    end
+    
+    always @(*)
+    begin
+        if(i_ID_Unidad_Control_Jump)
+        begin
+            Reg_IF_ID_Flush      <= 1'b1;
+        end
+        else
+        begin
+            Reg_IF_ID_Flush      <= 1'b0;
+        end
+    end     
     
     always @(*)
     begin
