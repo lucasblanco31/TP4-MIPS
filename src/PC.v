@@ -19,7 +19,7 @@ module PC
     assign  o_PC     =   PC_Reg     ;       
     assign  o_PC_4   =   PC_Reg + 4 ;
     assign  o_PC_8   =   PC_Reg + 8 ;        
-    
+  
     always @(negedge clk)
     begin
         if(reset) begin

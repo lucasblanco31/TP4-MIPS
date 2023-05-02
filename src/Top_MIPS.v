@@ -9,11 +9,8 @@ module MIPS
         parameter   BYTENBITS       = 8, 
  
         parameter   CELDAS_REG      = 32,
-        parameter   CELDAS_M        = 10,
-
-        parameter   RS              = 5,
-        parameter   RT              = 5,
-        parameter   RD              = 5,
+        parameter   CELDAS_M        = 16,
+        parameter   CELDAS_I        = 32,
 
         parameter   ALUNBITS        = 6,
         parameter   ALUCNBITS       = 2,
@@ -32,9 +29,11 @@ module MIPS
         input   wire                            clk    ,
         input   wire                            reset  ,
         input   wire     [REGS-1       :0]      i_mips_reg_debug,
+        input   wire     [REGS-1       :0]      i_mips_mem_debug,
         output  wire     [11           :0]      o_mips_status,
         output  wire     [NBITS-1      :0]      o_mips_pc,
-        output  wire     [NBITS-1      :0]      o_mips_reg_debug
+        output  wire     [NBITS-1      :0]      o_mips_reg_debug,
+        output  wire     [NBITS-1      :0]      o_mips_mem_debug
     );
     
     //-----------------------------------------
@@ -155,7 +154,7 @@ module MIPS
     wire     [NBITS-1       :0]     EX_SumPcBranch_o    ;
     
     //MultiplexorRegistro
-    wire     [RD-1          :0]     EX_Mux_Reg_rd_o         ;
+    wire     [REGS-1          :0]     EX_Mux_Reg_rd_o   ;
     
  
     //UnidadCortocircuito
@@ -194,7 +193,8 @@ module MIPS
     wire    [NBITS-1        :0]     MEM_DatoFiltradoS_o       ;
     
     //Memoria de datos  
-    wire    [NBITS-1        :0]     MEM_DatoMemoria_o         ;
+    wire    [NBITS-1        :0]     MEM_DatoMemoria_o         ;  
+    wire    [NBITS-1        :0]     MEM_DatoMemoriaDebug_o    ;
 
 
     ///////////////
@@ -239,16 +239,19 @@ module MIPS
     
     // EX
     // ALU Control
-    assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0              ]   ;
-    assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :RS+RT+INBITS   ]   ;
+    assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0                  ]   ;
+    assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :REGS+REGS+INBITS   ]   ;
     //SumadorJump
     assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;    
     assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
-    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ;
-    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ;
-    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ;
-    assign ID_Reg_Debug_o      =    o_mips_reg_debug                                    ;
+    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+REGS+REGS-1  :INBITS+REGS  ]   ;
+    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+REGS-1     :INBITS         ]   ;
+    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-REGS      ]   ;
+    assign ID_Reg_Debug_o      =    o_mips_reg_debug;
+    
+    //Memoria de datos
+    assign MEM_DatoMemoriaDebug_o      =    o_mips_mem_debug;   
     
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;        
@@ -312,7 +315,7 @@ module MIPS
     Memoria_Instrucciones
     #(
         .NBITS              (NBITS          ),
-        .CELDAS             (CELDAS_M       )
+        .CELDAS             (CELDAS_I       )
     )
     u_Memoria_Instrucciones
     (
@@ -738,12 +741,14 @@ module MIPS
     )
     u_Memoria_Datos
     (
-        .i_clk                      (clk                ),
-        .i_ALUDireccion             (EX_MEM_ALU         ),
-        .i_DatoRegistro             (MEM_DatoFiltradoS_o ),
-        .i_MemRead                  (EX_MEM_MemRead     ),
-        .i_MemWrite                 (EX_MEM_MemWrite    ),
-        .o_DatoLeido                (MEM_DatoMemoria_o  )
+        .i_clk                      (clk                    ),
+        .i_ALUDireccion             (EX_MEM_ALU             ),
+        .i_DebugDireccion           (i_mips_mem_debug       ),
+        .i_DatoRegistro             (MEM_DatoFiltradoS_o    ),
+        .i_MemRead                  (EX_MEM_MemRead         ),
+        .i_MemWrite                 (EX_MEM_MemWrite        ),
+        .o_DatoLeido                (MEM_DatoMemoria_o      ),
+        .o_DebugDato                (MEM_DatoMemoriaDebug_o )
     );
     //////////////////////////////////////////////
     /// MEM/WB

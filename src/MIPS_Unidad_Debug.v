@@ -2,9 +2,11 @@
 
 module MIPS_Unidad_Debug
     #(
-        parameter       DATA_BITS    = 8,
-        parameter       NBITS        = 32,
-        parameter       REGS         = 5
+        parameter       DATA_BITS           = 8,
+        parameter       NBITS               = 32,
+        parameter       REGS                = 5,
+        parameter       MEM_REG_SIZE        = 32,
+        parameter       MEM_DATA_SIZE       = 16
     )
     (
         input                                   clk,
@@ -15,13 +17,15 @@ module MIPS_Unidad_Debug
         input                                   i_mips_halt,
         input           [NBITS-1        :0]     i_mips_pc,
         input           [NBITS-1        :0]     i_mips_clk_count, 
-        input           [NBITS-1        :0]     i_mips_reg,      
+        input           [NBITS-1        :0]     i_mips_reg,  
+        input           [NBITS-1        :0]     i_mips_mem,     
         output                                  o_uart_rx_reset,
         output          [DATA_BITS-1    :0]     o_uart_tx_data,          
         output                                  o_uart_tx_ready,
         output                                  o_mips_clk,        //Funcionara como clk del mips
         output                                  o_mips_reset,
         output          [REGS-1         :0]     o_mips_reg,
+        output          [REGS-1         :0]     o_mips_mem,
         output          [3              :0]     o_debug
     );
     
@@ -36,6 +40,9 @@ module MIPS_Unidad_Debug
     localparam MIPS_STOP    =   2'b00;
     localparam MIPS_RUN     =   2'b01;
     localparam MIPS_STEP    =   2'b11;
+    
+    localparam MEM_COUNT_SIZE = $clog2(MEM_DATA_SIZE);
+    localparam REG_COUNT_SIZE = $clog2(MEM_REG_SIZE);
             
        
     reg                                         mips_clk;
@@ -45,13 +52,16 @@ module MIPS_Unidad_Debug
         
     reg                                         uart_rx_reset, uart_rx_reset_next;
     
-    reg               [DATA_BITS-1    :0]       uart_tx_data, uart_tx_data_next;
-    reg                                         uart_tx_ready, uart_tx_ready_next;
-    reg               [    NBITS-1    :0]       uart_tx_data_line, uart_tx_data_line_next;
-    reg               [          1    :0]       uart_tx_word_count, uart_tx_word_count_next;
-    reg               [          2    :0]       uart_tx_data_count, uart_tx_data_count_next;  
+    reg               [       DATA_BITS-1    :0]       uart_tx_data, uart_tx_data_next;
+    reg                                                uart_tx_ready, uart_tx_ready_next;
+    reg               [           NBITS-1    :0]       uart_tx_data_line, uart_tx_data_line_next;
+    reg               [                 1    :0]       uart_tx_word_count, uart_tx_word_count_next;
+    reg               [                 2    :0]       uart_tx_data_count, uart_tx_data_count_next; 
+       
+    reg               [  REG_COUNT_SIZE-1    :0]       uart_tx_regs_count, uart_tx_regs_count_next;     
+    reg               [  MEM_COUNT_SIZE-1    :0]       uart_tx_mem_count, uart_tx_mem_count_next;   
     
-    reg               [          1    :0]       mips_mode, mips_mode_next;
+    reg               [                 1    :0]       mips_mode, mips_mode_next;
     reg                                         mips_step, mips_step_next;
     
     reg                                         mips_reset, mips_reset_next;
@@ -68,6 +78,8 @@ module MIPS_Unidad_Debug
     
     assign o_mips_clk      = mips_clk;
     assign o_mips_reset    = mips_reset;
+    assign o_mips_reg      = uart_tx_regs_count;
+    assign o_mips_mem      = uart_tx_mem_count;
     
     
     always @ (posedge clk, posedge reset)
@@ -79,6 +91,8 @@ module MIPS_Unidad_Debug
                 uart_tx_ready           <= 0;
                 uart_tx_word_count      <= 0;
                 uart_tx_data_count      <= 0;
+                uart_tx_regs_count      <= 0;
+                uart_tx_mem_count       <= 0;
                 uart_tx_data_line       <= 0;
                 mips_mode               <= MIPS_STOP;
                 mips_step               <= 0;
@@ -92,6 +106,8 @@ module MIPS_Unidad_Debug
                 uart_tx_ready           <= uart_tx_ready_next;
                 uart_tx_word_count      <= uart_tx_word_count_next;
                 uart_tx_data_count      <= uart_tx_data_count_next;
+                uart_tx_regs_count      <= uart_tx_regs_count_next;
+                uart_tx_mem_count       <= uart_tx_mem_count_next;
                 uart_tx_data_line       <= uart_tx_data_line_next;
                 mips_mode               <= mips_mode_next;
                 mips_step               <= mips_step_next;
@@ -111,6 +127,8 @@ module MIPS_Unidad_Debug
         uart_tx_ready_next       <= uart_tx_ready;
         uart_tx_word_count_next  <= uart_tx_word_count;
         uart_tx_data_count_next  <= uart_tx_data_count;
+        uart_tx_regs_count_next  <= uart_tx_regs_count;
+        uart_tx_mem_count_next  <= uart_tx_mem_count;
         uart_tx_data_line_next   <= uart_tx_data_line;
         
         mips_mode_next      <= mips_mode;
@@ -178,28 +196,34 @@ module MIPS_Unidad_Debug
             begin
                 debug_next <= 4;
                 case(uart_tx_data_count)
-                    0: 
+                    0: // Envia contenido de PC del MIPS 
                     begin
                         uart_tx_data_line_next  <= i_mips_pc;
                         uart_tx_data_count_next <= uart_tx_data_count + 1; 
                         state_next              <= DATA_TX; 
                     end
-                    1: 
+                    1: // Envia cantidad de ciclos realizados desde el inicio
                     begin
                         uart_tx_data_line_next  <= i_mips_clk_count;
                         uart_tx_data_count_next <= uart_tx_data_count + 1; 
                         state_next              <= DATA_TX; 
                     end
-                    2: 
+                    2: // Envia contenido de los 32 registros
                     begin
-                        uart_tx_data_line_next  <= DEBUG_LINE_1;// LEER TODOS LOS REGISTROS
-                        uart_tx_data_count_next <= uart_tx_data_count + 1; 
-                        state_next              <= DATA_TX; 
+                        uart_tx_data_line_next  <= i_mips_reg;
+                        uart_tx_regs_count_next <= uart_tx_regs_count + 1;
+                        if(uart_tx_regs_count == MEM_REG_SIZE-1) begin
+                            uart_tx_data_count_next <= uart_tx_data_count + 1;
+                        end
+                        state_next              <= DATA_TX;
                     end
                     3: 
                     begin
-                        uart_tx_data_line_next  <= DEBUG_LINE_2;// LEER TODA LA MEMORIA
-                        uart_tx_data_count_next <= uart_tx_data_count + 1; 
+                        uart_tx_data_line_next <= i_mips_mem;
+                        uart_tx_mem_count_next <= uart_tx_mem_count + 1;
+                        if(uart_tx_mem_count == MEM_DATA_SIZE-1) begin
+                            uart_tx_data_count_next <= uart_tx_data_count + 1;
+                        end
                         state_next              <= DATA_TX; 
                     end
                     4: // Termino de enviar todos los datos y vuelve a IDLE o STEP
