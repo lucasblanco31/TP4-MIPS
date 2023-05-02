@@ -62,11 +62,11 @@ module Registros
             Reg_Debug   <=  memory[i_RegDebug]    ;
     end
     
-    always @(negedge clk, posedge reset)
+    always @(negedge clk)
     begin
         if( reset) 
         begin
-            for (i = 0; i < NBITS; i = i + 1) begin
+            for (i = 0; i < CELDAS; i = i + 1) begin
                 memory[i] <= i;
             end
         end    

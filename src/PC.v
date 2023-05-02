@@ -20,12 +20,7 @@ module PC
     assign  o_PC_4   =   PC_Reg + 4 ;
     assign  o_PC_8   =   PC_Reg + 8 ;        
     
-    always @(posedge reset)
-    begin
-        
-    end
-
-    always @(negedge clk, posedge reset)
+    always @(negedge clk)
     begin
         if(reset) begin
             PC_Reg          <=      0         ;
