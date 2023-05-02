@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module Top_MIPS
+module MIPS
     #(
         parameter   NBITS           = 32,
         parameter   NBITSJUMP       = 26,
@@ -29,9 +29,12 @@ module Top_MIPS
         parameter   OPTIONBITS      = 4
     )
     (
-        input   wire                            basys_clk    ,
-        input   wire                            basys_reset  ,
-        output  wire     [13           :0]      mips_status_o
+        input   wire                            clk    ,
+        input   wire                            reset  ,
+        input   wire     [REGS-1       :0]      i_mips_reg_debug,
+        output  wire     [11           :0]      o_mips_status,
+        output  wire     [NBITS-1      :0]      o_mips_pc,
+        output  wire     [NBITS-1      :0]      o_mips_reg_debug
     );
     
     //-----------------------------------------
@@ -83,12 +86,14 @@ module Top_MIPS
     wire                            CTRL_ZeroExtend     ;  
     wire                            CTRL_LUI            ;    
     //Registros
-    wire     [RS-1        :0]       ID_Reg_rs_i         ;
-    wire     [RD-1        :0]       ID_Reg_rd_i         ;
-    wire     [RT-1        :0]       ID_Reg_rt_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rs_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rd_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rt_i         ; 
     wire     [NBITS-1     :0]       ID_DatoLeido1_o     ;
     wire     [NBITS-1     :0]       ID_DatoLeido2_o     ;
+    wire     [NBITS-1     :0]       ID_Reg_Debug_o      ;
     wire     [REGS-1      :0]       ID_RegistroDestino_o;
+
     // Extensor de signo
     wire     [INBITS-1    :0]       ID_Instr16_i        ;
     wire     [NBITS-1     :0]       ID_InstrExt_o       ;
@@ -243,13 +248,14 @@ module Top_MIPS
     assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ;
     assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ;
     assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ;
+    assign ID_Reg_Debug_o      =    o_mips_reg_debug                                    ;
     
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;        
     
     // OUTPUT
     
-    assign mips_status_o = {
+    assign o_mips_status = {
     ID_EX_CTRL_ALUOp[1],
     ID_EX_CTRL_ALUOp[0],
     ID_EX_CTRL_ALUSrc,
@@ -261,10 +267,11 @@ module Top_MIPS
     ID_EX_CTRL_MemWrite,
     ID_EX_CTRL_MemRead,
     ID_EX_CTRL_MemToReg,
-    ID_EX_CTRL_RegWrite,
-    ID_EX_CTRL_ZeroExtend,
-    ID_EX_CTRL_LUI
+    ID_EX_CTRL_RegWrite
     };
+    
+    assign o_mips_pc  = IF_PC_o;
+    
     //////////////////////////////////////////////
     /// MULTIPLEXOR BRANCH/JUMP PC
     /////////////////////////////////////////////
@@ -291,8 +298,8 @@ module Top_MIPS
     )
     u_PC
     (
-        .i_clk              (basys_clk      ),
-        .i_reset            (basys_reset    ),
+        .clk                (clk            ),
+        .reset              (reset          ),
         .i_NPC              (IF_PC_i        ),
         .o_PC               (IF_PC_o        ),
         .o_PC_4             (IF_PC4_o       ),
@@ -309,7 +316,7 @@ module Top_MIPS
     )
     u_Memoria_Instrucciones
     (
-        .i_clk              (basys_clk      ),
+        .i_clk              (clk            ),
         .i_PC               (IF_PC_o        ),
         .o_Instruction      (IF_Instr_o     )
     );
@@ -326,7 +333,7 @@ module Top_MIPS
     )
     u_Etapa_IF_ID
     (
-        .i_clk              (basys_clk      ),
+        .i_clk              (clk            ),
         .i_PC4              (IF_PC4_o       ),
         .i_PC8              (IF_PC8_o       ),
         .i_Instruction      (IF_Instr_o     ),
@@ -376,23 +383,22 @@ module Top_MIPS
     #(
         .REGS               (REGS                       ),
         .NBITS              (NBITS                      ),
-        .RS                 (RS                         ),     
-        .RD                 (RD                         ),
-        .RT                 (RT                         ),
         .CELDAS             (CELDAS_REG                 )
     )
     u_Registros
     (
-        .i_clk               (basys_clk                 ),
+        .clk                 (clk                       ),
+        .reset               (reset                     ),
         .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (ID_Reg_rs_i               ),
         .i_RT                (ID_Reg_rt_i               ),
-        //.i_RD                (MEM_WB_RegistroDestino    ),
         .i_RD                (WB_RegistroDestino_o      ),
+        .i_RegDebug          (i_mips_reg_debug          ),
         .i_DatoEscritura     (WB_EscribirDato_o         ),
         
         .o_RS                (ID_DatoLeido1_o           ),
-        .o_RT                (ID_DatoLeido2_o           )
+        .o_RT                (ID_DatoLeido2_o           ),
+        .o_RegDebug          (ID_Reg_Debug_o            )
 
     );
     //////////////////////////////////////////////
@@ -425,7 +431,7 @@ module Top_MIPS
     u_Etapa_ID_EX
     (   
         //General
-        .i_clk                      (basys_clk         ),
+        .i_clk                      (clk                ),
         .i_PC4                      (IF_ID_PC4          ),
         .i_PC8                      (IF_ID_PC8          ),
         .i_Instruction              (IF_ID_Instr        ),
@@ -639,7 +645,7 @@ module Top_MIPS
     u_Etapa_EX_MEM
     (
         //General
-        .i_clk                      (basys_clk             ),
+        .i_clk                      (clk                    ),
         .i_PC4                      (ID_EX_PC4              ),
         .i_PC8                      (ID_EX_PC8              ),
         .i_PCBranch                 (EX_SumPcBranch_o       ),
@@ -732,7 +738,7 @@ module Top_MIPS
     )
     u_Memoria_Datos
     (
-        .i_clk                      (basys_clk          ),
+        .i_clk                      (clk                ),
         .i_ALUDireccion             (EX_MEM_ALU         ),
         .i_DatoRegistro             (MEM_DatoFiltradoS_o ),
         .i_MemRead                  (EX_MEM_MemRead     ),
@@ -749,7 +755,7 @@ module Top_MIPS
     )
     u_Etapa_MEM_WB
     (
-        .i_clk              (basys_clk              ),
+        .i_clk              (clk                    ),
         .i_PC4              (EX_MEM_PC4             ),
         .i_PC8              (EX_MEM_PC8             ),
         .i_Instruction      (EX_MEM_Instr           ),
