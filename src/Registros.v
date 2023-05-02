@@ -62,20 +62,14 @@ module Registros
             Reg_Debug   <=  memory[i_RegDebug]    ;
     end
     
-    
-    always @(posedge reset)
+    always @(negedge clk, posedge reset)
     begin
         if( reset) 
         begin
             for (i = 0; i < NBITS; i = i + 1) begin
                 memory[i] <= i;
             end
-        end
-    end
-        
-    
-    always @(negedge clk)
-    begin
+        end    
         if(i_RegWrite)
         begin
             memory[i_RD] <= i_DatoEscritura ;
