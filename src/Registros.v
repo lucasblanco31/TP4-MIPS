@@ -22,56 +22,59 @@ module Registros
     #(
         parameter   REGS        =   5   ,
         parameter   NBITS       =   32  ,
-        parameter   RS          =   5   ,
-        parameter   RT          =   5   ,
-        parameter   RD          =   5   ,
         parameter   CELDAS      =   32  
     )
     (
-        input   wire                    i_clk           ,
+        input   wire                    clk             ,
+        input   wire                    reset           ,
         input   wire                    i_RegWrite      , 
-        input   wire    [RS-1       :0] i_RS            , //Leer registro 1
-        input   wire    [RT-1       :0] i_RT            , //Leer registro 2
-        input   wire    [RD-1       :0] i_RD            , //Escribir registro
+        input   wire    [REGS-1     :0] i_RS            , //Leer registro 1
+        input   wire    [REGS-1     :0] i_RT            , //Leer registro 2
+        input   wire    [REGS-1     :0] i_RD            , //Escribir registro
+        input   wire    [REGS-1     :0] i_RegDebug      , //Leer registro debug
         input   wire    [NBITS-1    :0] i_DatoEscritura , //Escribir dato
         output  wire    [NBITS-1    :0] o_RS            , // Dato leido 1
-        output  wire    [NBITS-1    :0] o_RT              // Dato leido 2
+        output  wire    [NBITS-1    :0] o_RT            , // Dato leido 2
+        output  wire    [NBITS-1    :0] o_RegDebug        // Dato leido para debug      
     );
     
     reg     [NBITS-1    :0]     memory[CELDAS-1:0];
     reg     [NBITS-1    :0]     Reg_RS;
     reg     [NBITS-1    :0]     Reg_RT;
+    reg     [NBITS-1    :0]     Reg_Debug;
+    integer                     i;
     
     assign o_RS = Reg_RS;
     assign o_RT = Reg_RT;
+    assign o_RegDebug = Reg_Debug;
     
-    //TODO: PONER EN CERO TODA LA MEMORIA
     initial 
     begin
-        memory[0]       <=      32'b01;
-        memory[1]       <=      32'b1000;
-        memory[2]       <=      32'b11;
-        memory[3]       <=      32'b100;
-        memory[4]       <=      32'b101;
-        memory[5]       <=      32'b110;
-        memory[6]       <=      32'b111;
-        memory[7]       <=      32'b1000;
-        memory[8]       <=      32'b1001;
-        memory[9]       <=      32'b1010;
-        memory[10]       <=      32'b1011;
-        memory[11]       <=      32'b1100;
-        memory[12]       <=      32'b1101;
-        memory[13]       <=      32'b1110;
-        memory[14]       <=      32'b1111;
-        memory[15]       <=      32'b10000;
+        for (i = 0; i < CELDAS; i = i + 1) begin
+                memory[i] = i;
+        end
     end
-    
+      
     always @(*)
     begin
-            Reg_RS      <=  memory[i_RS]    ;
-            Reg_RT      <=  memory[i_RT]    ;
+            Reg_RS      <=  memory[i_RS      ]    ;
+            Reg_RT      <=  memory[i_RT      ]    ;
+            Reg_Debug   <=  memory[i_RegDebug]    ;
     end
-    always @(negedge i_clk)
+    
+    
+    always @(posedge reset)
+    begin
+        if( reset) 
+        begin
+            for (i = 0; i < NBITS; i = i + 1) begin
+                memory[i] <= i;
+            end
+        end
+    end
+        
+    
+    always @(negedge clk)
     begin
         if(i_RegWrite)
         begin
