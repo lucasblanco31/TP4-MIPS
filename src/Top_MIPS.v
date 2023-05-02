@@ -64,6 +64,12 @@ module Top_MIPS
     //************
     //    ID     *
     //************
+    // Unidad Riesgos
+    wire                            RIESGO_PC_Write     ;
+    wire                            RIESGO_IF_ID_Write  ;
+    wire                            RIESGO_Mux          ;
+    wire                            RIESGO_Latch_Flush  ;
+    
     // Unidad Control
     wire     [CTRLNBITS-1   :0]     ID_InstrControl     ;
     wire                            CTRL_RegWrite       ;
@@ -81,7 +87,26 @@ module Top_MIPS
     wire     [TNBITS-1     :0]      CTRL_TamanoFiltro   ;  
     wire     [TNBITS-1     :0]      CTRL_TamanoFiltroL  ;
     wire                            CTRL_ZeroExtend     ;  
-    wire                            CTRL_LUI            ;    
+    wire                            CTRL_LUI            ; 
+    
+    //Mux Unidad Riesgos
+    wire                            RCTRL_RegWrite       ;
+    wire                            RCTRL_MemToReg       ;
+    wire                            RCTRL_Branch         ;
+    wire                            RCTRL_NBranch        ;
+    wire                            RCTRL_Jump           ;
+    wire                            RCTRL_JAL            ;
+    wire                            RCTRL_RegDst         ;
+    wire                            RCTRL_ALUSrc         ;
+    wire                            RCTRL_MemRead        ;
+    wire                            RCTRL_MemWrite       ;
+    wire     [ALUCNBITS-1  :0]      RCTRL_ALUOp          ;
+    wire     [TNBITS-1     :0]      RCTRL_ExtensionMode  ;
+    wire     [TNBITS-1     :0]      RCTRL_TamanoFiltro   ;  
+    wire     [TNBITS-1     :0]      RCTRL_TamanoFiltroL  ;
+    wire                            RCTRL_ZeroExtend     ;  
+    wire                            RCTRL_LUI            ;
+       
     //Registros
     wire     [RS-1        :0]       ID_Reg_rs_i         ;
     wire     [RD-1        :0]       ID_Reg_rd_i         ;
@@ -274,7 +299,7 @@ module Top_MIPS
     )
     u_Mux_PC
     (
-        .i_Jump             (ID_EX_CTRL_Jump ),
+        .i_Jump             (ID_EX_CTRL_Jump       ),
         .i_PCSrc            (MEM_PcSrc_o           ),
         .i_SumadorBranch    (EX_MEM_PCBranch       ),
         .i_SumadorPC4       (IF_PC4_o              ),
@@ -294,6 +319,7 @@ module Top_MIPS
         .i_clk              (basys_clk      ),
         .i_reset            (basys_reset    ),
         .i_NPC              (IF_PC_i        ),
+        .i_PC_Write         (RIESGO_PC_Write),
         .o_PC               (IF_PC_o        ),
         .o_PC_4             (IF_PC4_o       ),
         .o_PC_8             (IF_PC8_o       )
@@ -322,17 +348,18 @@ module Top_MIPS
     
     Etapa_IF_ID
     #(
-        .NBITS              (NBITS          )
+        .NBITS              (NBITS              )
     )
     u_Etapa_IF_ID
     (
-        .i_clk              (basys_clk      ),
-        .i_PC4              (IF_PC4_o       ),
-        .i_PC8              (IF_PC8_o       ),
-        .i_Instruction      (IF_Instr_o     ),
-        .o_PC4              (IF_ID_PC4      ),
-        .o_PC8              (IF_ID_PC8      ),
-        .o_Instruction      (IF_ID_Instr    )  
+        .i_clk              (basys_clk          ),
+        .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
+        .i_PC4              (IF_PC4_o           ),
+        .i_PC8              (IF_PC8_o           ),
+        .i_Instruction      (IF_Instr_o         ),
+        .o_PC4              (IF_ID_PC4          ),
+        .o_PC8              (IF_ID_PC8          ),
+        .o_Instruction      (IF_ID_Instr        )  
     );    
     
     //********************************************
@@ -340,6 +367,26 @@ module Top_MIPS
     //*********ETAPA ID   ************************
     //********************************************
     //********************************************
+
+    //////////////////////////////////////////////
+    /// UNIDAD DE RIESGOS
+    //////////////////////////////////////////////
+    ID_Unidad_Riesgos
+    #(
+        .NBITS                      (NBITS   )
+    )
+    u_ID_Unidad_Riesgos
+    (
+        .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead ),
+        .i_EX_MEM_Flush             (MEM_PcSrc_o        ),
+        .i_ID_EX_Rt                 (ID_EX_Rt           ),
+        .i_IF_ID_Rs                 (ID_Reg_rs_i        ),
+        .i_IF_ID_Rt                 (ID_Reg_rt_i        ),
+        .o_Mux_Riesgo               (RIESGO_Mux         ),
+        .o_PC_Write                 (RIESGO_PC_Write    ),
+        .o_IF_ID_Write              (RIESGO_IF_ID_Write ),
+        .o_Latch_Flush              (RIESGO_Latch_Flush )
+    );
    
     //////////////////////////////////////////////
     /// UNIDAD DE CONTROL
@@ -367,6 +414,49 @@ module Top_MIPS
         .o_TamanoFiltroL            (CTRL_TamanoFiltroL  ),
         .o_ZeroExtend               (CTRL_ZeroExtend     ),
         .o_LUI                      (CTRL_LUI            )
+    );
+    
+    //////////////////////////////////////////////
+    /// MUX UNIDAD DE RIESGOS
+    //////////////////////////////////////////////
+    ID_Mux_Unidad_Riesgos
+    #(
+    )
+    u_ID_Mux_Unidad_Riesgos
+    (
+        .i_Riesgo                   (RIESGO_Mux         ),
+        .i_RegDst                   (CTRL_RegDst        ),
+        .i_Jump                     (CTRL_Jump          ),
+        .i_JAL                      (CTRL_JAL           ),
+        .i_Branch                   (CTRL_Branch        ),
+        .i_NBranch                  (CTRL_NBranch       ),
+        .i_MemRead                  (CTRL_MemRead       ),
+        .i_MemToReg                 (CTRL_MemToReg      ),
+        .i_ALUOp                    (CTRL_ALUOp         ),
+        .i_MemWrite                 (CTRL_MemWrite      ),
+        .i_ALUSrc                   (CTRL_ALUSrc        ),
+        .i_RegWrite                 (CTRL_RegWrite      ),
+        .i_ExtensionMode            (CTRL_ExtensionMode ),
+        .i_TamanoFiltro             (CTRL_TamanoFiltro  ),
+        .i_TamanoFiltroL            (CTRL_TamanoFiltroL ),
+        .i_ZeroExtend               (CTRL_ZeroExtend    ),
+        .i_LUI                      (CTRL_LUI           ),
+        .o_RegDst                   (RCTRL_RegDst        ),
+        .o_Jump                     (RCTRL_Jump          ),
+        .o_JAL                      (RCTRL_JAL           ),
+        .o_Branch                   (RCTRL_Branch        ),
+        .o_NBranch                  (RCTRL_NBranch       ),
+        .o_MemRead                  (RCTRL_MemRead       ),
+        .o_MemToReg                 (RCTRL_MemToReg      ),
+        .o_ALUOp                    (RCTRL_ALUOp         ),
+        .o_MemWrite                 (RCTRL_MemWrite      ),
+        .o_ALUSrc                   (RCTRL_ALUSrc        ),
+        .o_RegWrite                 (RCTRL_RegWrite      ),
+        .o_ExtensionMode            (RCTRL_ExtensionMode ),
+        .o_TamanoFiltro             (RCTRL_TamanoFiltro  ),
+        .o_TamanoFiltroL            (RCTRL_TamanoFiltroL ),
+        .o_ZeroExtend               (RCTRL_ZeroExtend    ),
+        .o_LUI                      (RCTRL_LUI           )
     );
 
     //////////////////////////////////////////////
@@ -425,30 +515,31 @@ module Top_MIPS
     u_Etapa_ID_EX
     (   
         //General
-        .i_clk                      (basys_clk         ),
-        .i_PC4                      (IF_ID_PC4          ),
-        .i_PC8                      (IF_ID_PC8          ),
-        .i_Instruction              (IF_ID_Instr        ),
+        .i_clk                      (basys_clk                ),
+        .i_Flush                    (RIESGO_Latch_Flush       ),
+        .i_PC4                      (IF_ID_PC4                ),
+        .i_PC8                      (IF_ID_PC8                ),
+        .i_Instruction              (IF_ID_Instr              ),
         
         //ControlEX
-        .i_Jump                     (CTRL_Jump               ),
-        .i_JAL                      (CTRL_JAL                ),
-        .i_ALUSrc                   (CTRL_ALUSrc             ),
+        .i_Jump                     (RCTRL_Jump               ),
+        .i_JAL                      (RCTRL_JAL                ),
+        .i_ALUSrc                   (RCTRL_ALUSrc             ),
         
-        .i_ALUOp                    (CTRL_ALUOp              ),
-        .i_RegDst                   (CTRL_RegDst             ),
+        .i_ALUOp                    (RCTRL_ALUOp              ),
+        .i_RegDst                   (RCTRL_RegDst             ),
         //ControlM 
-        .i_Branch                   (CTRL_Branch             ),
-        .i_NBranch                  (CTRL_NBranch            ),
-        .i_MemWrite                 (CTRL_MemWrite           ),
-        .i_MemRead                  (CTRL_MemRead            ),
-        .i_TamanoFiltro             (CTRL_TamanoFiltro       ),
+        .i_Branch                   (RCTRL_Branch             ),
+        .i_NBranch                  (RCTRL_NBranch            ),
+        .i_MemWrite                 (RCTRL_MemWrite           ),
+        .i_MemRead                  (RCTRL_MemRead            ),
+        .i_TamanoFiltro             (RCTRL_TamanoFiltro       ),
         //ControlWB
-        .i_MemToReg                 (CTRL_MemToReg           ),
-        .i_RegWrite                 (CTRL_RegWrite           ),
-        .i_TamanoFiltroL            (CTRL_TamanoFiltroL      ),
-        .i_ZeroExtend               (CTRL_ZeroExtend         ),         
-        .i_LUI                      (CTRL_LUI                ),
+        .i_MemToReg                 (RCTRL_MemToReg           ),
+        .i_RegWrite                 (RCTRL_RegWrite           ),
+        .i_TamanoFiltroL            (RCTRL_TamanoFiltroL      ),
+        .i_ZeroExtend               (RCTRL_ZeroExtend         ),         
+        .i_LUI                      (RCTRL_LUI                ),
        
         //Modules   
         .i_Registro1                (ID_DatoLeido1_o         ),
@@ -639,7 +730,8 @@ module Top_MIPS
     u_Etapa_EX_MEM
     (
         //General
-        .i_clk                      (basys_clk             ),
+        .i_clk                      (basys_clk              ),
+        .i_Flush                    (RIESGO_Latch_Flush     ),
         .i_PC4                      (ID_EX_PC4              ),
         .i_PC8                      (ID_EX_PC8              ),
         .i_PCBranch                 (EX_SumPcBranch_o       ),

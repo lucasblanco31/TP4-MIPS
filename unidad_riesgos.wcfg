@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_full_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_full" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="67301fs"></ZoomEndTime>
+      <Cursor1Time time="75fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="276"></NameColumnWidth>
+      <ValueColumnWidth column_width="76"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject type="logic" fp_name="/tb_full/basys_clk">
+      <obj_property name="ElementShortName">basys_clk</obj_property>
+      <obj_property name="ObjectShortName">basys_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_full/basys_rst">
+      <obj_property name="ElementShortName">basys_rst</obj_property>
+      <obj_property name="ObjectShortName">basys_rst</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group129">
+      <obj_property name="label">PC</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_PC/i_clk">
+         <obj_property name="ElementShortName">i_clk</obj_property>
+         <obj_property name="ObjectShortName">i_clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_PC/i_reset">
+         <obj_property name="ElementShortName">i_reset</obj_property>
+         <obj_property name="ObjectShortName">i_reset</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_PC/i_NPC">
+         <obj_property name="ElementShortName">i_NPC[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_NPC[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_PC/PC_Reg">
+         <obj_property name="ElementShortName">PC_Reg[31:0]</obj_property>
+         <obj_property name="ObjectShortName">PC_Reg[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_PC/i_PC_Write">
+         <obj_property name="ElementShortName">i_PC_Write</obj_property>
+         <obj_property name="ObjectShortName">i_PC_Write</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_PC/o_PC">
+         <obj_property name="ElementShortName">o_PC[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group132">
+      <obj_property name="label">IF/ID</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_IF_ID_Write">
+         <obj_property name="ElementShortName">i_IF_ID_Write</obj_property>
+         <obj_property name="ObjectShortName">i_IF_ID_Write</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_PC4">
+         <obj_property name="ElementShortName">i_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/o_PC4">
+         <obj_property name="ElementShortName">o_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/o_PC8">
+         <obj_property name="ElementShortName">o_PC8[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC8[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_PC8">
+         <obj_property name="ElementShortName">i_PC8[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_PC8[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_Instruction">
+         <obj_property name="ElementShortName">i_Instruction[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_Instruction[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/o_Instruction">
+         <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group141">
+      <obj_property name="label">Riesgos</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/i_ID_EX_MemRead">
+         <obj_property name="ElementShortName">i_ID_EX_MemRead</obj_property>
+         <obj_property name="ObjectShortName">i_ID_EX_MemRead</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/i_ID_EX_Rt">
+         <obj_property name="ElementShortName">i_ID_EX_Rt[4:0]</obj_property>
+         <obj_property name="ObjectShortName">i_ID_EX_Rt[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/i_IF_ID_Rs">
+         <obj_property name="ElementShortName">i_IF_ID_Rs[4:0]</obj_property>
+         <obj_property name="ObjectShortName">i_IF_ID_Rs[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/i_IF_ID_Rt">
+         <obj_property name="ElementShortName">i_IF_ID_Rt[4:0]</obj_property>
+         <obj_property name="ObjectShortName">i_IF_ID_Rt[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_Mux_Riesgo">
+         <obj_property name="ElementShortName">o_Mux_Riesgo</obj_property>
+         <obj_property name="ObjectShortName">o_Mux_Riesgo</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_PC_Write">
+         <obj_property name="ElementShortName">o_PC_Write</obj_property>
+         <obj_property name="ObjectShortName">o_PC_Write</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_IF_ID_Write">
+         <obj_property name="ElementShortName">o_IF_ID_Write</obj_property>
+         <obj_property name="ObjectShortName">o_IF_ID_Write</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Unidad_Riesgos/o_Latch_Flush">
+         <obj_property name="ElementShortName">o_Latch_Flush</obj_property>
+         <obj_property name="ObjectShortName">o_Latch_Flush</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group149">
+      <obj_property name="label">MUX_Riesgos</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_Riesgo">
+         <obj_property name="ElementShortName">i_Riesgo</obj_property>
+         <obj_property name="ObjectShortName">i_Riesgo</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_RegDst">
+         <obj_property name="ElementShortName">i_RegDst</obj_property>
+         <obj_property name="ObjectShortName">i_RegDst</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_Jump">
+         <obj_property name="ElementShortName">i_Jump</obj_property>
+         <obj_property name="ObjectShortName">i_Jump</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_JAL">
+         <obj_property name="ElementShortName">i_JAL</obj_property>
+         <obj_property name="ObjectShortName">i_JAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_Branch">
+         <obj_property name="ElementShortName">i_Branch</obj_property>
+         <obj_property name="ObjectShortName">i_Branch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_NBranch">
+         <obj_property name="ElementShortName">i_NBranch</obj_property>
+         <obj_property name="ObjectShortName">i_NBranch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_MemRead">
+         <obj_property name="ElementShortName">i_MemRead</obj_property>
+         <obj_property name="ObjectShortName">i_MemRead</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_MemToReg">
+         <obj_property name="ElementShortName">i_MemToReg</obj_property>
+         <obj_property name="ObjectShortName">i_MemToReg</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_ALUOp">
+         <obj_property name="ElementShortName">i_ALUOp[1:0]</obj_property>
+         <obj_property name="ObjectShortName">i_ALUOp[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_MemWrite">
+         <obj_property name="ElementShortName">i_MemWrite</obj_property>
+         <obj_property name="ObjectShortName">i_MemWrite</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_ALUSrc">
+         <obj_property name="ElementShortName">i_ALUSrc</obj_property>
+         <obj_property name="ObjectShortName">i_ALUSrc</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_RegWrite">
+         <obj_property name="ElementShortName">i_RegWrite</obj_property>
+         <obj_property name="ObjectShortName">i_RegWrite</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_ExtensionMode">
+         <obj_property name="ElementShortName">i_ExtensionMode[1:0]</obj_property>
+         <obj_property name="ObjectShortName">i_ExtensionMode[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_TamanoFiltro">
+         <obj_property name="ElementShortName">i_TamanoFiltro[1:0]</obj_property>
+         <obj_property name="ObjectShortName">i_TamanoFiltro[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_TamanoFiltroL">
+         <obj_property name="ElementShortName">i_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">i_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_ZeroExtend">
+         <obj_property name="ElementShortName">i_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">i_ZeroExtend</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/i_LUI">
+         <obj_property name="ElementShortName">i_LUI</obj_property>
+         <obj_property name="ObjectShortName">i_LUI</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_RegDst">
+         <obj_property name="ElementShortName">o_RegDst</obj_property>
+         <obj_property name="ObjectShortName">o_RegDst</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_Jump">
+         <obj_property name="ElementShortName">o_Jump</obj_property>
+         <obj_property name="ObjectShortName">o_Jump</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_JAL">
+         <obj_property name="ElementShortName">o_JAL</obj_property>
+         <obj_property name="ObjectShortName">o_JAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_Branch">
+         <obj_property name="ElementShortName">o_Branch</obj_property>
+         <obj_property name="ObjectShortName">o_Branch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_NBranch">
+         <obj_property name="ElementShortName">o_NBranch</obj_property>
+         <obj_property name="ObjectShortName">o_NBranch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_MemRead">
+         <obj_property name="ElementShortName">o_MemRead</obj_property>
+         <obj_property name="ObjectShortName">o_MemRead</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_MemToReg">
+         <obj_property name="ElementShortName">o_MemToReg</obj_property>
+         <obj_property name="ObjectShortName">o_MemToReg</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_ALUOp">
+         <obj_property name="ElementShortName">o_ALUOp[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_ALUOp[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_MemWrite">
+         <obj_property name="ElementShortName">o_MemWrite</obj_property>
+         <obj_property name="ObjectShortName">o_MemWrite</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_ALUSrc">
+         <obj_property name="ElementShortName">o_ALUSrc</obj_property>
+         <obj_property name="ObjectShortName">o_ALUSrc</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_RegWrite">
+         <obj_property name="ElementShortName">o_RegWrite</obj_property>
+         <obj_property name="ObjectShortName">o_RegWrite</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_ExtensionMode">
+         <obj_property name="ElementShortName">o_ExtensionMode[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_ExtensionMode[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_TamanoFiltro">
+         <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_ID_Mux_Unidad_Riesgos/o_LUI">
+         <obj_property name="ElementShortName">o_LUI</obj_property>
+         <obj_property name="ObjectShortName">o_LUI</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group155">
+      <obj_property name="label">Registros</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/memory[0]">
+         <obj_property name="ElementShortName">[0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/memory[1]">
+         <obj_property name="ElementShortName">[1][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Registros/memory[2]">
+         <obj_property name="ElementShortName">[2][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group654">
+      <obj_property name="label">ID/EX</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_PC4">
+         <obj_property name="ElementShortName">o_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_PC8">
+         <obj_property name="ElementShortName">o_PC8[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC8[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_Instruction">
+         <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_Extension">
+         <obj_property name="ElementShortName">o_Extension[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Extension[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_Jump">
+         <obj_property name="ElementShortName">o_Jump</obj_property>
+         <obj_property name="ObjectShortName">o_Jump</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_JAL">
+         <obj_property name="ElementShortName">o_JAL</obj_property>
+         <obj_property name="ObjectShortName">o_JAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_ALUSrc">
+         <obj_property name="ElementShortName">o_ALUSrc</obj_property>
+         <obj_property name="ObjectShortName">o_ALUSrc</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_ALUOp">
+         <obj_property name="ElementShortName">o_ALUOp[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_ALUOp[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_RegDst">
+         <obj_property name="ElementShortName">o_RegDst</obj_property>
+         <obj_property name="ObjectShortName">o_RegDst</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_Branch">
+         <obj_property name="ElementShortName">o_Branch</obj_property>
+         <obj_property name="ObjectShortName">o_Branch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_NBranch">
+         <obj_property name="ElementShortName">o_NBranch</obj_property>
+         <obj_property name="ObjectShortName">o_NBranch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_MemWrite">
+         <obj_property name="ElementShortName">o_MemWrite</obj_property>
+         <obj_property name="ObjectShortName">o_MemWrite</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_MemRead">
+         <obj_property name="ElementShortName">o_MemRead</obj_property>
+         <obj_property name="ObjectShortName">o_MemRead</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_TamanoFiltro">
+         <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_MemToReg">
+         <obj_property name="ElementShortName">o_MemToReg</obj_property>
+         <obj_property name="ObjectShortName">o_MemToReg</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_RegWrite">
+         <obj_property name="ElementShortName">o_RegWrite</obj_property>
+         <obj_property name="ObjectShortName">o_RegWrite</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_ID_EX/o_LUI">
+         <obj_property name="ElementShortName">o_LUI</obj_property>
+         <obj_property name="ObjectShortName">o_LUI</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group581">
+      <obj_property name="label">SumadorBranch</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Sumador_Branch/i_ExtensionData">
+         <obj_property name="ElementShortName">i_ExtensionData[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_ExtensionData[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Sumador_Branch/i_SumadorPC4">
+         <obj_property name="ElementShortName">i_SumadorPC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_SumadorPC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Sumador_Branch/o_Mux">
+         <obj_property name="ElementShortName">o_Mux[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Mux[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1090">
+      <obj_property name="label">EX/MEM</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/i_PC4">
+         <obj_property name="ElementShortName">i_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_PC4">
+         <obj_property name="ElementShortName">o_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_PC8">
+         <obj_property name="ElementShortName">o_PC8[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC8[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_PCBranch">
+         <obj_property name="ElementShortName">o_PCBranch[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PCBranch[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_Instruction">
+         <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_JAL">
+         <obj_property name="ElementShortName">o_JAL</obj_property>
+         <obj_property name="ObjectShortName">o_JAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_Cero">
+         <obj_property name="ElementShortName">o_Cero</obj_property>
+         <obj_property name="ObjectShortName">o_Cero</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_ALU">
+         <obj_property name="ElementShortName">o_ALU[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_ALU[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_Registro2">
+         <obj_property name="ElementShortName">o_Registro2[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Registro2[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_RegistroDestino">
+         <obj_property name="ElementShortName">o_RegistroDestino[4:0]</obj_property>
+         <obj_property name="ObjectShortName">o_RegistroDestino[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_Extension">
+         <obj_property name="ElementShortName">o_Extension[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Extension[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_Branch">
+         <obj_property name="ElementShortName">o_Branch</obj_property>
+         <obj_property name="ObjectShortName">o_Branch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_NBranch">
+         <obj_property name="ElementShortName">o_NBranch</obj_property>
+         <obj_property name="ObjectShortName">o_NBranch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_MemWrite">
+         <obj_property name="ElementShortName">o_MemWrite</obj_property>
+         <obj_property name="ObjectShortName">o_MemWrite</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_MemRead">
+         <obj_property name="ElementShortName">o_MemRead</obj_property>
+         <obj_property name="ObjectShortName">o_MemRead</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_TamanoFiltro">
+         <obj_property name="ElementShortName">o_TamanoFiltro[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltro[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_MemToReg">
+         <obj_property name="ElementShortName">o_MemToReg</obj_property>
+         <obj_property name="ObjectShortName">o_MemToReg</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_RegWrite">
+         <obj_property name="ElementShortName">o_RegWrite</obj_property>
+         <obj_property name="ObjectShortName">o_RegWrite</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_EX_MEM/o_LUI">
+         <obj_property name="ElementShortName">o_LUI</obj_property>
+         <obj_property name="ObjectShortName">o_LUI</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1092">
+      <obj_property name="label">ANDBranch</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/o_PCSrc">
+         <obj_property name="ElementShortName">o_PCSrc</obj_property>
+         <obj_property name="ObjectShortName">o_PCSrc</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/i_Branch">
+         <obj_property name="ElementShortName">i_Branch</obj_property>
+         <obj_property name="ObjectShortName">i_Branch</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_AND_Branch/i_Cero">
+         <obj_property name="ElementShortName">i_Cero</obj_property>
+         <obj_property name="ObjectShortName">i_Cero</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1983">
+      <obj_property name="label">MEM/WR</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_PC4">
+         <obj_property name="ElementShortName">o_PC4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC4[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_PC8">
+         <obj_property name="ElementShortName">o_PC8[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_PC8[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_Instruction">
+         <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_ALU">
+         <obj_property name="ElementShortName">o_ALU[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_ALU[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_DatoMemoria">
+         <obj_property name="ElementShortName">o_DatoMemoria[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_DatoMemoria[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_RegistroDestino">
+         <obj_property name="ElementShortName">o_RegistroDestino[4:0]</obj_property>
+         <obj_property name="ObjectShortName">o_RegistroDestino[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_Extension">
+         <obj_property name="ElementShortName">o_Extension[31:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Extension[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_JAL">
+         <obj_property name="ElementShortName">o_JAL</obj_property>
+         <obj_property name="ObjectShortName">o_JAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_MemToReg">
+         <obj_property name="ElementShortName">o_MemToReg</obj_property>
+         <obj_property name="ObjectShortName">o_MemToReg</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_RegWrite">
+         <obj_property name="ElementShortName">o_RegWrite</obj_property>
+         <obj_property name="ObjectShortName">o_RegWrite</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_TamanoFiltroL">
+         <obj_property name="ElementShortName">o_TamanoFiltroL[1:0]</obj_property>
+         <obj_property name="ObjectShortName">o_TamanoFiltroL[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_ZeroExtend">
+         <obj_property name="ElementShortName">o_ZeroExtend</obj_property>
+         <obj_property name="ObjectShortName">o_ZeroExtend</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_MEM_WB/o_LUI">
+         <obj_property name="ElementShortName">o_LUI</obj_property>
+         <obj_property name="ObjectShortName">o_LUI</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
