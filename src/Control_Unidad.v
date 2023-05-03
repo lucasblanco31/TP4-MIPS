@@ -67,6 +67,9 @@
 `define SLTI    6'b001010
 `define ORI     6'b001101
 `define XORI    6'b001110
+`define JALR    6'b001001
+`define JR      6'b001000
+
 
 module Control_Unidad
     #(
@@ -74,6 +77,7 @@ module Control_Unidad
     )
     (
         input   wire    [NBITS-1        :0]     i_Instruction   ,
+        input   wire    [NBITS-1        :0]     i_Special       ,
         
         output  wire                            o_RegDst        ,
         output  wire                            o_Jump          ,
@@ -90,7 +94,8 @@ module Control_Unidad
         output  wire    [1              :0]     o_TamanoFiltro  ,
         output  wire    [1              :0]     o_TamanoFiltroL ,
         output  wire                            o_ZeroExtend    ,
-        output  wire                            o_LUI           
+        output  wire                            o_LUI           ,
+        output  wire                            o_JALR          
     );
     
     reg         RegDst_Reg          ;
@@ -109,7 +114,8 @@ module Control_Unidad
     reg [1:0]   TamanoFiltroL_Reg   ;
     reg         ZeroExtend_Reg      ;
     reg         LUI_Reg             ;
-    
+    reg         JALR_Reg            ;
+     
     assign  o_RegDst        =   RegDst_Reg          ;
     assign  o_Jump          =   Jump_Reg            ;
     assign  o_JAL           =   JAL_Reg             ;
@@ -126,11 +132,53 @@ module Control_Unidad
     assign  o_TamanoFiltroL =   TamanoFiltroL_Reg   ;
     assign  o_ZeroExtend    =   ZeroExtend_Reg      ;
     assign  o_LUI           =   LUI_Reg             ;
+    assign  o_JALR          =   JALR_Reg            ;
 
     always @(*)
     begin : Decoder
         case(i_Instruction)
             `BAS:
+            if(i_Special == `JALR)
+            begin
+                RegDst_Reg          <=  1'b1    ;
+                Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b1    ;
+                Branch_Reg          <=  1'b0    ;
+                NBranch_Reg         <=  1'b0    ;
+                MemRead_Reg         <=  1'b0    ; 
+                MemToReg_Reg        <=  1'b0    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b0    ;
+                RegWrite_Reg        <=  1'b1    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b1    ;
+            end
+            else if (i_Special == `JR)
+            begin
+                RegDst_Reg          <=  1'b0    ;
+                Jump_Reg            <=  1'b0    ;
+                JAL_Reg             <=  1'b0    ;
+                Branch_Reg          <=  1'b0    ;
+                NBranch_Reg         <=  1'b0    ;
+                MemRead_Reg         <=  1'b0    ; 
+                MemToReg_Reg        <=  1'b0    ;
+                ALUOp_Reg           <=  2'b00   ;
+                MemWrite_Reg        <=  1'b0    ;
+                ALUSrc_Reg          <=  1'b0    ;
+                RegWrite_Reg        <=  1'b0    ;
+                ExtensionMode_Reg   <=  2'b00   ;
+                TamanoFiltro_Reg    <=  2'b00   ;
+                TamanoFiltroL_Reg   <=  2'b00   ;
+                ZeroExtend_Reg      <=  1'b0    ;
+                LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b1    ;
+            end
+            else
             begin
                 RegDst_Reg          <=  1'b1    ;
                 Jump_Reg            <=  1'b0    ;
@@ -148,6 +196,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
 
             `ADDI:
@@ -168,6 +217,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `ANDI:
@@ -188,6 +238,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `ORI:
@@ -208,6 +259,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `SLTI:
@@ -228,6 +280,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `XORI:
@@ -248,6 +301,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LW:
@@ -268,6 +322,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LWU:
@@ -288,6 +343,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LB:
@@ -308,6 +364,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b01   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LBU:
@@ -328,6 +385,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b01   ;
                 ZeroExtend_Reg      <=  1'b1    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LH:
@@ -348,6 +406,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b10   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
     
             `LHU:
@@ -368,6 +427,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b10   ;
                 ZeroExtend_Reg      <=  1'b1    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `LUI:
@@ -388,6 +448,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b1    ;
+                JALR_Reg            <=  1'b0    ;
             end
     
             `SW:
@@ -408,6 +469,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `SB:
@@ -428,6 +490,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `SH:
@@ -448,6 +511,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
     
             `BEQ:
@@ -468,6 +532,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
             `BNE:
@@ -488,6 +553,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
 
             `J:
@@ -508,6 +574,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end
             
            `JAL:
@@ -528,6 +595,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end                
     
             default:
@@ -548,6 +616,7 @@ module Control_Unidad
                 TamanoFiltroL_Reg   <=  2'b00   ;
                 ZeroExtend_Reg      <=  1'b0    ;
                 LUI_Reg             <=  1'b0    ;
+                JALR_Reg            <=  1'b0    ;
             end  
         endcase       
     end

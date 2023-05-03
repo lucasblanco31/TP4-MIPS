@@ -73,6 +73,7 @@ module Top_MIPS
     
     // Unidad Control
     wire     [CTRLNBITS-1   :0]     ID_InstrControl     ;
+    wire     [CTRLNBITS-1   :0]     ID_InstrSpecial     ;
     wire                            CTRL_RegWrite       ;
     wire                            CTRL_MemToReg       ;
     wire                            CTRL_Branch         ;
@@ -88,7 +89,8 @@ module Top_MIPS
     wire     [TNBITS-1     :0]      CTRL_TamanoFiltro   ;  
     wire     [TNBITS-1     :0]      CTRL_TamanoFiltroL  ;
     wire                            CTRL_ZeroExtend     ;  
-    wire                            CTRL_LUI            ; 
+    wire                            CTRL_LUI            ;
+    wire                            CTRL_JALR           ; 
     
     //Mux Unidad Riesgos
     wire                            RCTRL_RegWrite       ;
@@ -107,6 +109,7 @@ module Top_MIPS
     wire     [TNBITS-1     :0]      RCTRL_TamanoFiltroL  ;
     wire                            RCTRL_ZeroExtend     ;  
     wire                            RCTRL_LUI            ;
+    wire                            RCTRL_JALR           ;
        
     //Registros
     wire     [RS-1        :0]       ID_Reg_rs_i         ;
@@ -147,6 +150,7 @@ module Top_MIPS
     wire    [1              :0]     ID_EX_CTRL_TamanoFiltroL ;
     wire                            ID_EX_CTRL_ZeroExtend    ;
     wire                            ID_EX_CTRL_LUI           ;
+    wire                            ID_EX_CTRL_JALR          ;    
     
     
     //************
@@ -257,6 +261,7 @@ module Top_MIPS
     
     // ID
     assign ID_InstrControl     =    IF_ID_Instr     [NBITS-1        :NBITS-CTRLNBITS]   ;
+    assign ID_InstrSpecial     =    IF_ID_Instr     [CTRLNBITS-1    :0              ]   ;
     
     // EX
     // ALU Control
@@ -266,9 +271,9 @@ module Top_MIPS
     assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;    
     assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
-    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ;
-    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ;
-    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ;
+    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ; //INBITS+RT+RS-1=16+5+5-1=25; INBITS+RT=16+5=21; [25-21]
+    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ; //INBITS+RT-1=16+5-1=20; INBITS=16; [20-16]
+    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ; //INBITS-1=16-1=15; INBITS-RD=16-5=11; [15-11]
     
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;        
@@ -301,10 +306,12 @@ module Top_MIPS
     u_Mux_PC
     (
         .i_Jump             (ID_EX_CTRL_Jump       ),
+        .i_JALR             (ID_EX_CTRL_JALR       ),
         .i_PCSrc            (MEM_PcSrc_o           ),
         .i_SumadorBranch    (EX_MEM_PCBranch       ),
         .i_SumadorPC4       (IF_PC4_o              ),
-        .i_SumadorJump      (EX_Jump_o             ), 
+        .i_SumadorJump      (EX_Jump_o             ),
+        .i_RS               (ID_DatoLeido1_o       ), 
         .o_PC               (IF_PC_i               ) 
     );
 
@@ -355,7 +362,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk          ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
-        .i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
+        //.i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
         .i_PC8              (IF_PC8_o           ),
         .i_Instruction      (IF_Instr_o         ),
@@ -375,21 +382,24 @@ module Top_MIPS
     //////////////////////////////////////////////
     ID_Unidad_Riesgos
     #(
-        .NBITS                      (NBITS   )
+        .RNBITS                      (REGS   )
     )
     u_ID_Unidad_Riesgos
     (
-        .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead ),
-        .i_ID_Unidad_Control_Jump   (RCTRL_Jump         ),
-        .i_EX_MEM_Flush             (MEM_PcSrc_o        ),
-        .i_ID_EX_Rt                 (ID_EX_Rt           ),
-        .i_IF_ID_Rs                 (ID_Reg_rs_i        ),
-        .i_IF_ID_Rt                 (ID_Reg_rt_i        ),
-        .o_Mux_Riesgo               (RIESGO_Mux         ),
-        .o_PC_Write                 (RIESGO_PC_Write    ),
-        .o_IF_ID_Write              (RIESGO_IF_ID_Write ),
-        .o_Latch_Flush              (RIESGO_Latch_Flush ),
-        .o_IF_ID_Flush              (RIESGO_IF_ID_Flush )
+        .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead     ),
+        .i_EX_MEM_MemRead           (EX_MEM_MemRead         ),
+        .i_JALR                     (CTRL_JALR             ),
+        //.i_ID_Unidad_Control_Jump   (RCTRL_Jump             ),
+        .i_EX_MEM_Flush             (MEM_PcSrc_o            ),
+        .i_ID_EX_Rt                 (ID_EX_Rt               ),
+        .i_EX_MEM_Rt                (EX_MEM_RegistroDestino ),
+        .i_IF_ID_Rs                 (ID_Reg_rs_i            ),
+        .i_IF_ID_Rt                 (ID_Reg_rt_i            ),
+        .o_Mux_Riesgo               (RIESGO_Mux             ),
+        .o_PC_Write                 (RIESGO_PC_Write        ),
+        .o_IF_ID_Write              (RIESGO_IF_ID_Write     ),
+        .o_Latch_Flush              (RIESGO_Latch_Flush     )
+        //.o_IF_ID_Flush              (RIESGO_IF_ID_Flush     )
     );
    
     //////////////////////////////////////////////
@@ -402,6 +412,7 @@ module Top_MIPS
     u_Control_Unidad
     (
         .i_Instruction              (ID_InstrControl     ),
+        .i_Special                  (ID_InstrSpecial     ),
         .o_RegDst                   (CTRL_RegDst         ),
         .o_Jump                     (CTRL_Jump           ),
         .o_JAL                      (CTRL_JAL            ),
@@ -417,7 +428,8 @@ module Top_MIPS
         .o_TamanoFiltro             (CTRL_TamanoFiltro   ),
         .o_TamanoFiltroL            (CTRL_TamanoFiltroL  ),
         .o_ZeroExtend               (CTRL_ZeroExtend     ),
-        .o_LUI                      (CTRL_LUI            )
+        .o_LUI                      (CTRL_LUI            ),
+        .o_JALR                     (CTRL_JALR           )
     );
     
     //////////////////////////////////////////////
@@ -445,6 +457,7 @@ module Top_MIPS
         .i_TamanoFiltroL            (CTRL_TamanoFiltroL ),
         .i_ZeroExtend               (CTRL_ZeroExtend    ),
         .i_LUI                      (CTRL_LUI           ),
+        .i_JALR                     (CTRL_JALR          ),
         .o_RegDst                   (RCTRL_RegDst        ),
         .o_Jump                     (RCTRL_Jump          ),
         .o_JAL                      (RCTRL_JAL           ),
@@ -460,7 +473,8 @@ module Top_MIPS
         .o_TamanoFiltro             (RCTRL_TamanoFiltro  ),
         .o_TamanoFiltroL            (RCTRL_TamanoFiltroL ),
         .o_ZeroExtend               (RCTRL_ZeroExtend    ),
-        .o_LUI                      (RCTRL_LUI           )
+        .o_LUI                      (RCTRL_LUI           ),
+        .o_JALR                     (RCTRL_JALR          )
     );
 
     //////////////////////////////////////////////
@@ -544,6 +558,7 @@ module Top_MIPS
         .i_TamanoFiltroL            (RCTRL_TamanoFiltroL      ),
         .i_ZeroExtend               (RCTRL_ZeroExtend         ),         
         .i_LUI                      (RCTRL_LUI                ),
+        .i_JALR                     (RCTRL_JALR               ),
        
         //Modules   
         .i_Registro1                (ID_DatoLeido1_o         ),
@@ -565,6 +580,7 @@ module Top_MIPS
 
         //ControlEX
         .o_Jump                     (ID_EX_CTRL_Jump         ),
+        .o_JALR                     (ID_EX_CTRL_JALR         ),
         .o_JAL                      (ID_EX_CTRL_JAL          ),        
         .o_ALUSrc                   (ID_EX_CTRL_ALUSrc       ),
         .o_ALUOp                    (ID_EX_CTRL_ALUOp        ),

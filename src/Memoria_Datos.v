@@ -42,8 +42,8 @@ module Memoria_Datos
     begin
         memory[0]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0000 ; 
         memory[1]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0001 ; 
-        memory[2]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0010 ; 
-        memory[3]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0011 ; 
+        memory[2]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0100 ; 
+        memory[3]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0100 ; //4 
         memory[4]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0101 ;   
         memory[5]       <=      32'b1111_0000_1111_1111_1000_1111_1000_0110 ; 
         memory[6]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0111 ; 
@@ -53,14 +53,14 @@ module Memoria_Datos
         //instruction     <=      32'b0000_0000_0000_0000_0000_0000_0000_1011 ;      
     end
     
-    always @(posedge i_clk)
+    always @(negedge i_clk)
     begin
         if (i_MemRead)
         begin   
             dato                    <=  memory[i_ALUDireccion];
         end 
     end
-    always @(negedge i_clk)
+    always @(posedge i_clk)
     begin
         if(i_MemWrite)
         begin

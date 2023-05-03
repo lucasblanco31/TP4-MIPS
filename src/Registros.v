@@ -48,9 +48,9 @@ module Registros
     //TODO: PONER EN CERO TODA LA MEMORIA
     initial 
     begin
-        memory[0]       <=      32'b01;
-        memory[1]       <=      32'b01;
-        memory[2]       <=      32'b10;
+        memory[0]       <=      32'b11000;
+        memory[1]       <=      32'b100000; //32
+        memory[2]       <=      32'b10; 
         memory[3]       <=      32'b11;
         memory[4]       <=      32'b101;
         memory[5]       <=      32'b110;

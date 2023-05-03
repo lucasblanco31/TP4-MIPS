@@ -39,6 +39,8 @@ module Etapa_ID_EX
         input   wire    [1          :0]     i_TamanoFiltroL ,
         input   wire                        i_ZeroExtend    ,
         input   wire                        i_LUI           ,
+        input   wire                        i_JALR          ,
+        
         
         //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PC4           ,
@@ -70,7 +72,8 @@ module Etapa_ID_EX
         output  wire                        o_RegWrite      ,
         output  wire   [1           :0]     o_TamanoFiltroL ,
         output  wire                        o_ZeroExtend    ,
-        output  wire                        o_LUI
+        output  wire                        o_LUI           ,
+        output  wire                        o_JALR          
     );
     
     reg     [NBITS-1    :0] PC4_reg             ;
@@ -102,7 +105,8 @@ module Etapa_ID_EX
     reg                     RegWrite_reg        ;
     reg     [1          :0] TamanoFiltroL_reg   ;
     reg                     ZeroExtend_reg      ;
-    reg                     LUI_reg             ;   
+    reg                     LUI_reg             ;
+    reg                     JALR_reg            ;   
      
     
     assign o_PC4            =   PC4_reg         ;
@@ -117,6 +121,7 @@ module Etapa_ID_EX
     
     //AssignEX
     assign o_Jump           =   Jump_reg        ;
+    assign o_JALR           =   JALR_reg        ;
     assign o_JAL            =   JAL_reg         ;    
     assign o_ALUSrc         =   ALUSrc_reg      ;
     assign o_ALUOp          =   ALUOp_reg       ;
@@ -151,6 +156,7 @@ module Etapa_ID_EX
             
             //EX
             Jump_reg            <=  1'b0            ;
+            JALR_reg            <=  1'b0            ;
             JAL_reg             <=  1'b0            ;            
             ALUSrc_reg          <=  1'b0            ;
             ALUOp_reg           <=  2'b00           ;
@@ -184,6 +190,7 @@ module Etapa_ID_EX
             
             //EX
             Jump_reg            <=  i_Jump          ;
+            JALR_reg            <=  i_JALR          ;
             JAL_reg             <=  i_JAL           ;            
             ALUSrc_reg          <=  i_ALUSrc        ;
             ALUOp_reg           <=  i_ALUOp         ;

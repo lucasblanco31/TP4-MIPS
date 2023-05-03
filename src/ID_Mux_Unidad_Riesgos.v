@@ -23,6 +23,7 @@ module ID_Mux_Unidad_Riesgos
         input  wire    [1              :0]     i_TamanoFiltroL  ,
         input  wire                            i_ZeroExtend     ,
         input  wire                            i_LUI            ,
+        input  wire                            i_JALR           ,
 
         output  wire                            o_RegDst        ,
         output  wire                            o_Jump          ,
@@ -39,7 +40,8 @@ module ID_Mux_Unidad_Riesgos
         output  wire    [1              :0]     o_TamanoFiltro  ,
         output  wire    [1              :0]     o_TamanoFiltroL ,
         output  wire                            o_ZeroExtend    ,
-        output  wire                            o_LUI
+        output  wire                            o_LUI           ,
+        output  wire                            o_JALR          
     );
 
         reg                            Reg_RegDst        ;
@@ -58,6 +60,7 @@ module ID_Mux_Unidad_Riesgos
         reg    [1              :0]     Reg_TamanoFiltroL ;
         reg                            Reg_ZeroExtend    ;
         reg                            Reg_LUI           ;
+        reg                            Reg_JALR          ;
     
         assign o_RegDst         = Reg_RegDst            ;
         assign o_Jump           = Reg_Jump              ;
@@ -75,6 +78,7 @@ module ID_Mux_Unidad_Riesgos
         assign o_TamanoFiltroL  = Reg_TamanoFiltroL     ;
         assign o_ZeroExtend     = Reg_ZeroExtend        ;
         assign o_LUI            = Reg_LUI               ;
+        assign o_JALR           = Reg_JALR              ;
     
         always @(*) 
         begin
@@ -96,6 +100,7 @@ module ID_Mux_Unidad_Riesgos
                     Reg_TamanoFiltroL     <=      1'b0    ;
                     Reg_ZeroExtend        <=      1'b0    ;
                     Reg_LUI               <=      1'b0    ;
+                    Reg_JALR              <=      1'b0    ;
                 end
             else
                 begin
@@ -115,6 +120,7 @@ module ID_Mux_Unidad_Riesgos
                     Reg_TamanoFiltroL     <=      i_TamanoFiltroL   ;
                     Reg_ZeroExtend        <=      i_ZeroExtend      ;
                     Reg_LUI               <=      i_LUI             ;
+                    Reg_JALR              <=      i_JALR            ;
                 end
           end
 endmodule
