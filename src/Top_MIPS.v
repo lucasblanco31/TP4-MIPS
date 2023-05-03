@@ -37,7 +37,8 @@ module MIPS
         output  wire     [11                :0]    o_mips_status,
         output  wire     [NBITS-1           :0]    o_mips_pc,
         output  wire     [NBITS-1           :0]    o_mips_reg_debug,
-        output  wire     [NBITS-1           :0]    o_mips_mem_debug
+        output  wire     [NBITS-1           :0]    o_mips_mem_debug,
+        output  wire     [NBITS-1           :0]    o_mips_inst_debug
     );
     
     //-----------------------------------------
@@ -58,6 +59,7 @@ module MIPS
     
     //MemoriaInstrucciones
     wire    [NBITS-1     :0]        IF_Instr_o           ;
+    wire    [NBITS-1     :0]        IF_DatoInstrDebug_o  ;
     wire    [NBITS-1     :0]        IF_DatoInstrDebug_i  ;
     wire    [NBITS-1     :0]        IF_DirecInstrDebug_i ;
     
@@ -244,9 +246,10 @@ module MIPS
     assign ID_InstrControl     =    IF_ID_Instr     [NBITS-1        :NBITS-CTRLNBITS]   ;
     
     //Memoria de instrucciones
-    assign IF_DireccInstrDebug_i      =   i_mips_mem_ins_direc_debug;
+    assign IF_DirecInstrDebug_i      =   i_mips_mem_ins_direc_debug;
     assign IF_DatoInstrDebug_i        =   i_mips_mem_ins_dato_debug;
     assign IF_WriteInstrDebug_i       =   i_mips_mem_ins_write_debug;
+    assign IF_DatoInstrDebug_o        =   o_mips_inst_debug;
     
     // EX
     // ALU Control
@@ -271,8 +274,9 @@ module MIPS
     
     // OUTPUT
     
-    assign o_mips_status = {
-    ID_EX_CTRL_ALUOp[1],
+    assign o_mips_status = IF_DatoInstrDebug_i[11:0];
+    /*{
+    /*ID_EX_CTRL_ALUOp[1],
     ID_EX_CTRL_ALUOp[0],
     ID_EX_CTRL_ALUSrc,
     ID_EX_CTRL_Jump,
@@ -284,7 +288,7 @@ module MIPS
     ID_EX_CTRL_MemRead,
     ID_EX_CTRL_MemToReg,
     ID_EX_CTRL_RegWrite
-    };
+    };*/
     
     assign o_mips_pc  = IF_PC_o;
     
@@ -328,17 +332,17 @@ module MIPS
     Memoria_Instrucciones
     #(
         .NBITS              (NBITS          ),
-        .CELDAS             (CELDAS_I       ),
-        .BIT_CELDAS         (BIT_CELDAS_I   )
+        .CELDAS             (CELDAS_I       )
     )
     u_Memoria_Instrucciones
     (
         .i_clk              (clk                    ),
         .i_PC               (IF_PC_o                ),
-        .i_DirecDebug       (IF_DireccInstrDebug_i  ),
+        .i_DirecDebug       (IF_DirecInstrDebug_i  ),
         .i_DatoDebug        (IF_DatoInstrDebug_i    ),
         .i_WriteDebug       (IF_WriteInstrDebug_i   ),
-        .o_Instruction      (IF_Instr_o             )
+        .o_Instruction      (IF_Instr_o             ),
+        .o_DebugInst        (IF_DatoInstrDebug_o    )
     );
     
     //********************************************

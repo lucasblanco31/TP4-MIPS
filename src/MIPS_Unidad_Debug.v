@@ -19,7 +19,8 @@ module MIPS_Unidad_Debug
         input           [NBITS-1        :0]     i_mips_pc,
         input           [NBITS-1        :0]     i_mips_clk_count, 
         input           [NBITS-1        :0]     i_mips_reg,  
-        input           [NBITS-1        :0]     i_mips_mem,     
+        input           [NBITS-1        :0]     i_mips_mem,
+        input           [NBITS-1        :0]     i_mips_inst,     
         output                                  o_uart_rx_reset,
         output          [DATA_BITS-1    :0]     o_uart_tx_data,          
         output                                  o_uart_tx_ready,
@@ -41,6 +42,7 @@ module MIPS_Unidad_Debug
     localparam WAIT_TX      =   4'b0110;
     localparam PREPARE_TX   =   4'b0111;
     localparam PREPARE_LOAD =   4'b1000;
+    localparam WAIT_LOAD    =   4'b1001;
     
     localparam MIPS_STOP    =   2'b00;
     localparam MIPS_RUN     =   2'b01;
@@ -60,14 +62,14 @@ module MIPS_Unidad_Debug
     reg               [           NBITS-1    :0]       uart_rx_data_line, uart_rx_data_line_next;
     reg                                                uart_rx_inst_write, uart_rx_inst_write_next;     
     reg               [ INST_COUNT_SIZE-1    :0]       uart_rx_inst_count, uart_rx_inst_count_next; 
-    reg               [                 2    :0]       uart_rx_word_count, uart_rx_word_count_next;
+    reg               [                 1    :0]       uart_rx_word_count, uart_rx_word_count_next;
     
     reg               [       DATA_BITS-1    :0]       uart_tx_data, uart_tx_data_next;
     reg                                                uart_tx_ready, uart_tx_ready_next;
     reg               [           NBITS-1    :0]       uart_tx_data_line, uart_tx_data_line_next;
     reg               [                 1    :0]       uart_tx_word_count, uart_tx_word_count_next;
     reg               [                 2    :0]       uart_tx_data_count, uart_tx_data_count_next; 
-       
+    
     reg               [  REG_COUNT_SIZE-1    :0]       uart_tx_regs_count, uart_tx_regs_count_next;     
     reg               [  MEM_COUNT_SIZE-1    :0]       uart_tx_mem_count, uart_tx_mem_count_next;  
     
@@ -92,6 +94,7 @@ module MIPS_Unidad_Debug
     assign o_mips_instr_sel     = uart_rx_inst_count;
     assign o_mips_instr_dato    = uart_rx_data_line;
     assign o_mips_instr_write   = uart_rx_inst_write;
+    
     
     always @ (posedge clk, posedge reset)
         begin 
@@ -161,7 +164,7 @@ module MIPS_Unidad_Debug
         case (state)
             IDLE:
             begin
-                uart_rx_inst_write_next <= 0;
+                debug_next <= 1;
                 if (~i_uart_rx_ready) begin// Verifica si hay datos listos desde la UART
                     uart_rx_reset_next  <= 0;              
                 end else begin // Verifica el char recibido
@@ -186,6 +189,7 @@ module MIPS_Unidad_Debug
             end
             STEP: 
             begin
+                debug_next <= 2;
                 mips_reset_next     <= 0;
                 mips_mode_next      <= MIPS_STEP;
                 if( i_mips_halt ) begin
@@ -209,34 +213,38 @@ module MIPS_Unidad_Debug
             end
             PREPARE_LOAD:
             begin
+                debug_next <= 3;
                 if (~i_uart_rx_ready) begin// Verifica si hay datos listos desde la UART
                     uart_rx_reset_next  <= 0;              
                 end else begin // Verifica el char recibido
                     uart_rx_reset_next      <= 1;
-                    uart_rx_inst_write_next <= 0;
                     uart_rx_data_line_next  <= {uart_rx_data_line[23:0], i_uart_rx_data};
-                    if(uart_rx_word_count == 3) begin
-                        uart_rx_word_count_next <= 0;
-                        state_next              <= LOAD;
-                     end else begin
-                        uart_rx_word_count_next <= uart_rx_word_count + 1;
-                        state_next              <= PREPARE_LOAD;
-                     end
+                    uart_rx_word_count_next <= uart_rx_word_count + 1;
+                    state_next              <= LOAD;
                 end
             end
             LOAD:
             begin
-                uart_rx_inst_write_next <= 1; //Habilita escritura
-                // Si recibe un HALT vuelve a IDLE\
-                debug_next <= uart_rx_data_line[5:2];
+                debug_next <= 4;
+                if(uart_rx_word_count == 0) begin
+                    uart_rx_inst_write_next <= 1; //Habilita escritura en posedge de la etapa anterior
+                    state_next              <= WAIT_LOAD;
+                end else begin
+                    state_next              <= PREPARE_LOAD;
+                end
+            end    
+            WAIT_LOAD:
+            begin
+                debug_next <= 5;
+                uart_rx_inst_write_next <= 0;
                 if(uart_rx_data_line == 32'b11111111111111111111111111111111) begin
                     uart_rx_inst_count_next <= 0;
-                    state_next <= IDLE;        
+                    state_next              <= IDLE;        
                 end else begin
                     uart_rx_inst_count_next <= uart_rx_inst_count + 1; //Aumenta en 1 la direccion
                     state_next              <= PREPARE_LOAD;
                 end
-            end                         
+            end                     
             PREPARE_TX:
             begin
                 case(uart_tx_data_count)
@@ -270,7 +278,16 @@ module MIPS_Unidad_Debug
                         end
                         state_next              <= DATA_TX; 
                     end
-                    4: // Termino de enviar todos los datos y vuelve a IDLE o STEP
+                    4: 
+                    begin
+                        uart_tx_data_line_next  <= i_mips_inst;
+                        uart_rx_inst_count_next <= uart_rx_inst_count + 1;
+                        if(uart_rx_inst_count == MEM_INST_SIZE-1) begin
+                            uart_tx_data_count_next <= uart_tx_data_count + 1;
+                        end
+                        state_next              <= DATA_TX; 
+                    end
+                    5: // Termino de enviar todos los datos y vuelve a IDLE o STEP
                     begin
                         uart_tx_data_count_next  <= 0;
                         if(mips_mode  == MIPS_STEP) begin
