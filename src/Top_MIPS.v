@@ -6,8 +6,8 @@ module Top_MIPS
         parameter   NBITSJUMP       = 26,
         parameter   INBITS          = 16,
         parameter   HWORDBITS       = 16,
-        parameter   BYTENBITS       = 8, 
- 
+        parameter   BYTENBITS       = 8,
+
         parameter   CELDAS_REG      = 32,
         parameter   CELDAS_M        = 10,
 
@@ -19,12 +19,12 @@ module Top_MIPS
         parameter   ALUCNBITS       = 2,
         parameter   ALUOP           = 4,
         parameter   BOP             = 4,
-        
+
         parameter   TNBITS          = 2,
 
         parameter   CTRLNBITS       = 6,
         parameter   REGS            = 5,
-        
+
         parameter   CORTOCIRCUITO   = 3,
         parameter   OPTIONBITS      = 4
     )
@@ -33,11 +33,11 @@ module Top_MIPS
         input   wire                            basys_reset  ,
         output  wire     [13           :0]      mips_status_o
     );
-    
+
     //-----------------------------------------
     //--------WIRES----------------------------
     //-----------------------------------------
-    
+
     //************
     //    IF     *
     //************
@@ -46,21 +46,21 @@ module Top_MIPS
     wire    [NBITS-1     :0]        IF_PC_o             ;
     wire    [NBITS-1     :0]        IF_PC4_o            ;
     wire    [NBITS-1     :0]        IF_PC8_o            ;
-    
-    
+
+
     wire    [NBITS-1     :0]        IF_PCBranch_i          ;
-    
-    
+
+
     //MemoriaInstrucciones
     wire    [NBITS-1     :0]        IF_Instr_o          ;
-    
+
     //////////////
     //   IF_ID  //
     //////////////
     wire    [NBITS-1     :0]        IF_ID_PC4           ;
     wire    [NBITS-1     :0]        IF_ID_PC8           ;
     wire    [NBITS-1     :0]        IF_ID_Instr         ;
-    
+
     //************
     //    ID     *
     //************
@@ -69,9 +69,11 @@ module Top_MIPS
     wire                            RIESGO_IF_ID_Write  ;
     wire                            RIESGO_Mux          ;
     wire                            RIESGO_Latch_Flush  ;
-    
+    wire                            RIESGO_IF_ID_Flush  ;
+
     // Unidad Control
     wire     [CTRLNBITS-1   :0]     ID_InstrControl     ;
+    wire     [CTRLNBITS-1   :0]     ID_InstrSpecial     ;
     wire                            CTRL_RegWrite       ;
     wire                            CTRL_MemToReg       ;
     wire                            CTRL_Branch         ;
@@ -84,11 +86,12 @@ module Top_MIPS
     wire                            CTRL_MemWrite       ;
     wire     [ALUCNBITS-1  :0]      CTRL_ALUOp          ;
     wire     [TNBITS-1     :0]      CTRL_ExtensionMode  ;
-    wire     [TNBITS-1     :0]      CTRL_TamanoFiltro   ;  
+    wire     [TNBITS-1     :0]      CTRL_TamanoFiltro   ;
     wire     [TNBITS-1     :0]      CTRL_TamanoFiltroL  ;
-    wire                            CTRL_ZeroExtend     ;  
-    wire                            CTRL_LUI            ; 
-    
+    wire                            CTRL_ZeroExtend     ;
+    wire                            CTRL_LUI            ;
+    wire                            CTRL_JALR           ;
+
     //Mux Unidad Riesgos
     wire                            RCTRL_RegWrite       ;
     wire                            RCTRL_MemToReg       ;
@@ -102,11 +105,12 @@ module Top_MIPS
     wire                            RCTRL_MemWrite       ;
     wire     [ALUCNBITS-1  :0]      RCTRL_ALUOp          ;
     wire     [TNBITS-1     :0]      RCTRL_ExtensionMode  ;
-    wire     [TNBITS-1     :0]      RCTRL_TamanoFiltro   ;  
+    wire     [TNBITS-1     :0]      RCTRL_TamanoFiltro   ;
     wire     [TNBITS-1     :0]      RCTRL_TamanoFiltroL  ;
-    wire                            RCTRL_ZeroExtend     ;  
+    wire                            RCTRL_ZeroExtend     ;
     wire                            RCTRL_LUI            ;
-       
+    wire                            RCTRL_JALR           ;
+
     //Registros
     wire     [RS-1        :0]       ID_Reg_rs_i         ;
     wire     [RD-1        :0]       ID_Reg_rd_i         ;
@@ -117,7 +121,7 @@ module Top_MIPS
     // Extensor de signo
     wire     [INBITS-1    :0]       ID_Instr16_i        ;
     wire     [NBITS-1     :0]       ID_InstrExt_o       ;
-    
+
     //////////////
     //   ID_EX  //
     //////////////
@@ -131,9 +135,9 @@ module Top_MIPS
     wire    [REGS-1         :0]     ID_EX_Rt            ;
     wire    [REGS-1         :0]     ID_EX_Rd            ;
     //ID/EX/CONTROL
-    wire                            ID_EX_CTRL_ALUSrc        ;  
+    wire                            ID_EX_CTRL_ALUSrc        ;
     wire                            ID_EX_CTRL_Jump          ;
-    wire                            ID_EX_CTRL_JAL           ;        
+    wire                            ID_EX_CTRL_JAL           ;
     wire    [1              :0]     ID_EX_CTRL_ALUOp         ;
     wire                            ID_EX_CTRL_RegDst        ;
     wire                            ID_EX_CTRL_Branch        ;
@@ -146,11 +150,12 @@ module Top_MIPS
     wire    [1              :0]     ID_EX_CTRL_TamanoFiltroL ;
     wire                            ID_EX_CTRL_ZeroExtend    ;
     wire                            ID_EX_CTRL_LUI           ;
-    
-    
+    wire                            ID_EX_CTRL_JALR          ;
+
+
     //************
     //    EX     *
-    //************    
+    //************
     //SumadorBranch
     wire     [NBITS-1       :0]     SumPcBranch     ;
     //MuxALU
@@ -169,24 +174,24 @@ module Top_MIPS
 
     //Sumador PC Jump
     wire     [NBITSJUMP-1   :0]     EX_Jump_i           ;
-    wire     [NBITS-1       :0]     EX_Jump_o           ;   
-    
+    wire     [NBITS-1       :0]     EX_Jump_o           ;
+
     //Sumador branch
     wire     [NBITS-1       :0]     EX_SumPcBranch_o    ;
-    
+
     //MultiplexorRegistro
     wire     [RD-1          :0]     EX_Mux_Reg_rd_o         ;
-    
- 
+
+
     //UnidadCortocircuito
     wire    [CORTOCIRCUITO-1    :0] Cortocircuito_RegA ;
-    wire    [CORTOCIRCUITO-1    :0] Cortocircuito_RegB ;    
-    
+    wire    [CORTOCIRCUITO-1    :0] Cortocircuito_RegB ;
+
     ///////////////
     //   EX_MEM  //
     ///////////////
     wire    [NBITS-1        :0]     EX_MEM_PC4              ;
-    wire    [NBITS-1        :0]     EX_MEM_PC8              ;    
+    wire    [NBITS-1        :0]     EX_MEM_PC8              ;
     wire    [NBITS-1        :0]     EX_MEM_PCBranch         ;
     wire    [NBITS-1        :0]     EX_MEM_Instr            ;
     wire                            EX_MEM_Cero             ;
@@ -209,11 +214,11 @@ module Top_MIPS
     //************
 
     //MultiplexorBranch
-    wire                            MEM_PcSrc_o               ;    
+    wire                            MEM_PcSrc_o               ;
     //Filtro Store
     wire    [NBITS-1        :0]     MEM_DatoFiltradoS_o       ;
-    
-    //Memoria de datos  
+
+    //Memoria de datos
     wire    [NBITS-1        :0]     MEM_DatoMemoria_o         ;
 
 
@@ -234,46 +239,47 @@ module Top_MIPS
     wire                            MEM_WB_ZeroExtend       ;
     wire                            MEM_WB_LUI              ;
 
- 
+
     //************
     //    WB     *
     //************
     //Filtro Load
-    wire    [NBITS-1        :0]     WB_DatoFiltradoL_o       ;   
+    wire    [NBITS-1        :0]     WB_DatoFiltradoL_o       ;
     //Multiplexor LUI
     wire    [NBITS-1        :0]     WB_DatoToReg_o           ;
     //MultiplexorMemoria
     wire    [NBITS-1        :0]     WB_DatoEscritura_o       ;
-    
+
     wire    [REGS-1         :0]     WB_RegistroDestino_o     ;
     //MultiplexorEscribirDato
-    wire    [NBITS-1        :0]     WB_EscribirDato_o        ;    
-    
- 
+    wire    [NBITS-1        :0]     WB_EscribirDato_o        ;
+
+
     //-----------------------------------------
     //--------ASSIGNS--------------------------
     //-----------------------------------------
-    
+
     // ID
     assign ID_InstrControl     =    IF_ID_Instr     [NBITS-1        :NBITS-CTRLNBITS]   ;
-    
+    assign ID_InstrSpecial     =    IF_ID_Instr     [CTRLNBITS-1    :0              ]   ;
+
     // EX
     // ALU Control
     assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0              ]   ;
     assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :RS+RT+INBITS   ]   ;
     //SumadorJump
-    assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;    
+    assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;
     assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
-    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ;
-    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ;
-    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ;
-    
+    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ; //INBITS+RT+RS-1=16+5+5-1=25; INBITS+RT=16+5=21; [25-21]
+    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ; //INBITS+RT-1=16+5-1=20; INBITS=16; [20-16]
+    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ; //INBITS-1=16-1=15; INBITS-RD=16-5=11; [15-11]
+
     //Extensor
-    assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;        
-    
+    assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;
+
     // OUTPUT
-    
+
     assign mips_status_o = {
     ID_EX_CTRL_ALUOp[1],
     ID_EX_CTRL_ALUOp[0],
@@ -295,21 +301,23 @@ module Top_MIPS
     /////////////////////////////////////////////
     Mux_PC
     #(
-        .NBITS              (NBITS              )           
+        .NBITS              (NBITS              )
     )
     u_Mux_PC
     (
         .i_Jump             (ID_EX_CTRL_Jump       ),
+        .i_JALR             (ID_EX_CTRL_JALR       ),
         .i_PCSrc            (MEM_PcSrc_o           ),
         .i_SumadorBranch    (EX_MEM_PCBranch       ),
         .i_SumadorPC4       (IF_PC4_o              ),
-        .i_SumadorJump      (EX_Jump_o             ), 
-        .o_PC               (IF_PC_i               ) 
+        .i_SumadorJump      (EX_Jump_o             ),
+        .i_RS               (ID_DatoLeido1_o       ),
+        .o_PC               (IF_PC_i               )
     );
 
     //////////////////////////////////////////////
     /// PROGRAM COUNTER
-    /////////////////////////////////////////////   
+    /////////////////////////////////////////////
     PC
     #(
         .NBITS              (NBITS          )
@@ -323,8 +331,8 @@ module Top_MIPS
         .o_PC               (IF_PC_o        ),
         .o_PC_4             (IF_PC4_o       ),
         .o_PC_8             (IF_PC8_o       )
-    );   
-   
+    );
+
     //////////////////////////////////////////////
     /// MEMORIA DE INSTRUCCIONES
     /////////////////////////////////////////////
@@ -339,13 +347,13 @@ module Top_MIPS
         .i_PC               (IF_PC_o        ),
         .o_Instruction      (IF_Instr_o     )
     );
-    
+
     //********************************************
     //////////////////////////////////////////////
     ///  ETAPA IF/ID
     /////////////////////////////////////////////
     //********************************************
-    
+
     Etapa_IF_ID
     #(
         .NBITS              (NBITS              )
@@ -354,14 +362,15 @@ module Top_MIPS
     (
         .i_clk              (basys_clk          ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
+        //.i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
         .i_PC8              (IF_PC8_o           ),
         .i_Instruction      (IF_Instr_o         ),
         .o_PC4              (IF_ID_PC4          ),
         .o_PC8              (IF_ID_PC8          ),
-        .o_Instruction      (IF_ID_Instr        )  
-    );    
-    
+        .o_Instruction      (IF_ID_Instr        )
+    );
+
     //********************************************
     //********************************************
     //*********ETAPA ID   ************************
@@ -373,21 +382,26 @@ module Top_MIPS
     //////////////////////////////////////////////
     ID_Unidad_Riesgos
     #(
-        .NBITS                      (NBITS   )
+        .RNBITS                      (REGS   )
     )
     u_ID_Unidad_Riesgos
     (
-        .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead ),
-        .i_EX_MEM_Flush             (MEM_PcSrc_o        ),
-        .i_ID_EX_Rt                 (ID_EX_Rt           ),
-        .i_IF_ID_Rs                 (ID_Reg_rs_i        ),
-        .i_IF_ID_Rt                 (ID_Reg_rt_i        ),
-        .o_Mux_Riesgo               (RIESGO_Mux         ),
-        .o_PC_Write                 (RIESGO_PC_Write    ),
-        .o_IF_ID_Write              (RIESGO_IF_ID_Write ),
-        .o_Latch_Flush              (RIESGO_Latch_Flush )
+        .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead     ),
+        .i_EX_MEM_MemRead           (EX_MEM_MemRead         ),
+        .i_JALR                     (CTRL_JALR             ),
+        //.i_ID_Unidad_Control_Jump   (RCTRL_Jump             ),
+        .i_EX_MEM_Flush             (MEM_PcSrc_o            ),
+        .i_ID_EX_Rt                 (ID_EX_Rt               ),
+        .i_EX_MEM_Rt                (EX_MEM_RegistroDestino ),
+        .i_IF_ID_Rs                 (ID_Reg_rs_i            ),
+        .i_IF_ID_Rt                 (ID_Reg_rt_i            ),
+        .o_Mux_Riesgo               (RIESGO_Mux             ),
+        .o_PC_Write                 (RIESGO_PC_Write        ),
+        .o_IF_ID_Write              (RIESGO_IF_ID_Write     ),
+        .o_Latch_Flush              (RIESGO_Latch_Flush     )
+        //.o_IF_ID_Flush              (RIESGO_IF_ID_Flush     )
     );
-   
+
     //////////////////////////////////////////////
     /// UNIDAD DE CONTROL
     //////////////////////////////////////////////
@@ -398,6 +412,7 @@ module Top_MIPS
     u_Control_Unidad
     (
         .i_Instruction              (ID_InstrControl     ),
+        .i_Special                  (ID_InstrSpecial     ),
         .o_RegDst                   (CTRL_RegDst         ),
         .o_Jump                     (CTRL_Jump           ),
         .o_JAL                      (CTRL_JAL            ),
@@ -413,9 +428,10 @@ module Top_MIPS
         .o_TamanoFiltro             (CTRL_TamanoFiltro   ),
         .o_TamanoFiltroL            (CTRL_TamanoFiltroL  ),
         .o_ZeroExtend               (CTRL_ZeroExtend     ),
-        .o_LUI                      (CTRL_LUI            )
+        .o_LUI                      (CTRL_LUI            ),
+        .o_JALR                     (CTRL_JALR           )
     );
-    
+
     //////////////////////////////////////////////
     /// MUX UNIDAD DE RIESGOS
     //////////////////////////////////////////////
@@ -441,6 +457,7 @@ module Top_MIPS
         .i_TamanoFiltroL            (CTRL_TamanoFiltroL ),
         .i_ZeroExtend               (CTRL_ZeroExtend    ),
         .i_LUI                      (CTRL_LUI           ),
+        .i_JALR                     (CTRL_JALR          ),
         .o_RegDst                   (RCTRL_RegDst        ),
         .o_Jump                     (RCTRL_Jump          ),
         .o_JAL                      (RCTRL_JAL           ),
@@ -456,7 +473,8 @@ module Top_MIPS
         .o_TamanoFiltro             (RCTRL_TamanoFiltro  ),
         .o_TamanoFiltroL            (RCTRL_TamanoFiltroL ),
         .o_ZeroExtend               (RCTRL_ZeroExtend    ),
-        .o_LUI                      (RCTRL_LUI           )
+        .o_LUI                      (RCTRL_LUI           ),
+        .o_JALR                     (RCTRL_JALR          )
     );
 
     //////////////////////////////////////////////
@@ -466,7 +484,7 @@ module Top_MIPS
     #(
         .REGS               (REGS                       ),
         .NBITS              (NBITS                      ),
-        .RS                 (RS                         ),     
+        .RS                 (RS                         ),
         .RD                 (RD                         ),
         .RT                 (RT                         ),
         .CELDAS             (CELDAS_REG                 )
@@ -480,7 +498,7 @@ module Top_MIPS
         //.i_RD                (MEM_WB_RegistroDestino    ),
         .i_RD                (WB_RegistroDestino_o      ),
         .i_DatoEscritura     (WB_EscribirDato_o         ),
-        
+
         .o_RS                (ID_DatoLeido1_o           ),
         .o_RT                (ID_DatoLeido2_o           )
 
@@ -499,36 +517,36 @@ module Top_MIPS
         .i_signal               (ID_Instr16_i        ),
         .i_ExtensionMode        (CTRL_ExtensionMode  ),
         .o_ext_signal           (ID_InstrExt_o       )
-    );    
-    
+    );
+
     //********************************************
     //////////////////////////////////////////////
     /// ETAPA ID/EX
     /////////////////////////////////////////////
     //********************************************
-    
+
     Etapa_ID_EX
     #(
         .NBITS                      (NBITS          ),
-        .RNBITS                     (REGS           )   
+        .RNBITS                     (REGS           )
     )
     u_Etapa_ID_EX
-    (   
+    (
         //General
         .i_clk                      (basys_clk                ),
         .i_Flush                    (RIESGO_Latch_Flush       ),
         .i_PC4                      (IF_ID_PC4                ),
         .i_PC8                      (IF_ID_PC8                ),
         .i_Instruction              (IF_ID_Instr              ),
-        
+
         //ControlEX
         .i_Jump                     (RCTRL_Jump               ),
         .i_JAL                      (RCTRL_JAL                ),
         .i_ALUSrc                   (RCTRL_ALUSrc             ),
-        
+
         .i_ALUOp                    (RCTRL_ALUOp              ),
         .i_RegDst                   (RCTRL_RegDst             ),
-        //ControlM 
+        //ControlM
         .i_Branch                   (RCTRL_Branch             ),
         .i_NBranch                  (RCTRL_NBranch            ),
         .i_MemWrite                 (RCTRL_MemWrite           ),
@@ -538,17 +556,18 @@ module Top_MIPS
         .i_MemToReg                 (RCTRL_MemToReg           ),
         .i_RegWrite                 (RCTRL_RegWrite           ),
         .i_TamanoFiltroL            (RCTRL_TamanoFiltroL      ),
-        .i_ZeroExtend               (RCTRL_ZeroExtend         ),         
+        .i_ZeroExtend               (RCTRL_ZeroExtend         ),
         .i_LUI                      (RCTRL_LUI                ),
-       
-        //Modules   
+        .i_JALR                     (RCTRL_JALR               ),
+
+        //Modules
         .i_Registro1                (ID_DatoLeido1_o         ),
         .i_Registro2                (ID_DatoLeido2_o         ),
         .i_Extension                (ID_InstrExt_o           ),
-        .i_Rs                       (ID_Reg_rs_i             ), 
+        .i_Rs                       (ID_Reg_rs_i             ),
         .i_Rt                       (ID_Reg_rt_i             ),
         .i_Rd                       (ID_Reg_rd_i             ),
-        
+
         .o_PC4                      (ID_EX_PC4          ),
         .o_PC8                      (ID_EX_PC8          ),
         .o_Instruction              (ID_EX_Instr        ),
@@ -561,7 +580,8 @@ module Top_MIPS
 
         //ControlEX
         .o_Jump                     (ID_EX_CTRL_Jump         ),
-        .o_JAL                      (ID_EX_CTRL_JAL          ),        
+        .o_JALR                     (ID_EX_CTRL_JALR         ),
+        .o_JAL                      (ID_EX_CTRL_JAL          ),
         .o_ALUSrc                   (ID_EX_CTRL_ALUSrc       ),
         .o_ALUOp                    (ID_EX_CTRL_ALUOp        ),
         .o_RegDst                   (ID_EX_CTRL_RegDst       ),
@@ -572,19 +592,19 @@ module Top_MIPS
         .o_MemRead                  (ID_EX_CTRL_MemRead      ),
         .o_TamanoFiltro             (ID_EX_CTRL_TamanoFiltro ),
         //ControlWB
-        .o_MemToReg                 (ID_EX_CTRL_MemToReg     ), 
+        .o_MemToReg                 (ID_EX_CTRL_MemToReg     ),
         .o_RegWrite                 (ID_EX_CTRL_RegWrite     ),
         .o_TamanoFiltroL            (ID_EX_CTRL_TamanoFiltroL),
         .o_ZeroExtend               (ID_EX_CTRL_ZeroExtend   ),
-        .o_LUI                      (ID_EX_CTRL_LUI          )      
-    );    
-    
+        .o_LUI                      (ID_EX_CTRL_LUI          )
+    );
+
     //********************************************
     //********************************************
     //*********ETAPA EX   ************************
     //********************************************
     //********************************************
-        
+
     //////////////////////////////////////////////
     /// Sumador_PC_Jump
     //////////////////////////////////////////////
@@ -597,7 +617,7 @@ module Top_MIPS
     (
         .i_IJump    (EX_Jump_i  ),
         .i_PC4      (ID_EX_PC4  ),
-        .o_IJump    (EX_Jump_o  )  
+        .o_IJump    (EX_Jump_o  )
     );
     //////////////////////////////////////////////
     /// SUMADOR BRANCH
@@ -631,7 +651,7 @@ module Top_MIPS
         .o_Cero             (EX_AluCero_o           ),
         .o_Result           (EX_ALUResult_o         )
     );
-    
+
     //////////////////////////////////////////////
     /// CONTROL ALU
     /////////////////////////////////////////////
@@ -647,7 +667,7 @@ module Top_MIPS
         .i_Opcode                  (EX_AluCtrlOpcode_i     ),
         .i_ALUOp                   (ID_EX_CTRL_ALUOp       ),
         .o_ALUOp                   (EX_ALUCtrlOp_o         )
-        
+
     );
     //////////////////////////////////////////////
     /// MULTIPLEXOR SHAMT - ALU OPERANDO A
@@ -663,7 +683,7 @@ module Top_MIPS
         .i_ID_EX_Registro           (ID_EX_Registro1            ),
         .i_EX_MEM_Registro          (EX_MEM_ALU                 ),
         .i_MEM_WR_Registro          (WB_DatoEscritura_o         ),
-        .o_toALU                    (EX_AluRegA_i               )               
+        .o_toALU                    (EX_AluRegA_i               )
     );
     //////////////////////////////////////////////
     /// MULTIPLEXOR ALU OPERANDO B
@@ -698,7 +718,7 @@ module Top_MIPS
         .i_rd                  (ID_EX_Rd           ),
         .o_Registro            (EX_Mux_Reg_rd_o    )
     );
-    
+
     /// UNIDAD DE CORTOCIRCUITO
     /////////////////////////////////////////////
     EX_Unidad_Cortocircuito
@@ -718,7 +738,7 @@ module Top_MIPS
         .o_Mux_OperandoB    (Cortocircuito_RegB     )  //Elección para RegistroB
     );
     //////////////////////////////////////////////
-    /// ID/EX    
+    /// ID/EX
     //////////////////////////////////////////////
     /// ETAPA EX/MEM
     /////////////////////////////////////////////
@@ -741,7 +761,7 @@ module Top_MIPS
         .i_Registro2                (ID_EX_Registro2        ),
         .i_RegistroDestino          (EX_Mux_Reg_rd_o        ),
         .i_Extension                (ID_EX_Extension        ),
-        
+
         //ControlIM
         .i_JAL                      (ID_EX_CTRL_JAL           ),
         .i_Branch                   (ID_EX_CTRL_Branch        ),
@@ -755,7 +775,7 @@ module Top_MIPS
         .i_TamanoFiltroL            (ID_EX_CTRL_TamanoFiltroL ),
         .i_ZeroExtend               (ID_EX_CTRL_ZeroExtend    ),
         .i_LUI                      (ID_EX_CTRL_LUI           ),
-        
+
         .o_PC4                      (EX_MEM_PC4             ),
         .o_PC8                      (EX_MEM_PC8             ),
         .o_PCBranch                 (EX_MEM_PCBranch        ),
@@ -765,7 +785,7 @@ module Top_MIPS
         .o_Registro2                (EX_MEM_Registro2       ),
         .o_RegistroDestino          (EX_MEM_RegistroDestino ),
         .o_Extension                (EX_MEM_Extension       ),
-        
+
         //ControlM
         .o_JAL                      (EX_MEM_JAL             ),
         .o_Branch                   (EX_MEM_Branch          ),
@@ -773,7 +793,7 @@ module Top_MIPS
         .o_MemWrite                 (EX_MEM_MemWrite        ),
         .o_MemRead                  (EX_MEM_MemRead         ),
         .o_TamanoFiltro             (EX_MEM_TamanoFiltro    ),
-        
+
         //ControlWB
         .o_MemToReg                 (EX_MEM_MemToReg        ),
         .o_RegWrite                 (EX_MEM_RegWrite        ),
@@ -785,7 +805,7 @@ module Top_MIPS
     //********************************************
     //*********ETAPA MEM  ************************
     //********************************************
-    //********************************************     
+    //********************************************
     //////////////////////////////////////////////
     /// AND BRANCH
     /////////////////////////////////////////////
@@ -798,7 +818,7 @@ module Top_MIPS
         .i_NBranch  (EX_MEM_NBranch ),
         .i_Cero     (EX_MEM_Cero    ),
         .o_PCSrc    (MEM_PcSrc_o    )
-    ); 
+    );
     //////////////////////////////////////////////
     /// FILTRO STORE
     /////////////////////////////////////////////
@@ -812,8 +832,8 @@ module Top_MIPS
         .i_Dato         (EX_MEM_Registro2   ),
         .i_Tamano       (EX_MEM_TamanoFiltro),
         .o_DatoEscribir (MEM_DatoFiltradoS_o )
-    );  
-    
+    );
+
     //////////////////////////////////////////////
     /// MEMORIA DE DATOS
     /////////////////////////////////////////////
@@ -849,7 +869,7 @@ module Top_MIPS
         .i_DatoMemoria      (MEM_DatoMemoria_o      ),
         .i_RegistroDestino  (EX_MEM_RegistroDestino ),
         .i_Extension        (EX_MEM_Extension       ),
-        
+
         //ControlWB
         .i_MemToReg         (EX_MEM_MemToReg        ),
         .i_RegWrite         (EX_MEM_RegWrite        ),
@@ -857,7 +877,7 @@ module Top_MIPS
         .i_ZeroExtend       (EX_MEM_ZeroExtend      ),
         .i_LUI              (EX_MEM_LUI             ),
         .i_JAL              (EX_MEM_JAL             ),
-        
+
         .o_PC4              (MEM_WB_PC4             ),
         .o_PC8              (MEM_WB_PC8             ),
         .o_Instruction      (MEM_WB_Instruction     ),
@@ -865,7 +885,7 @@ module Top_MIPS
         .o_DatoMemoria      (MEM_WB_DatoMemoria     ),
         .o_RegistroDestino  (MEM_WB_RegistroDestino ),
         .o_Extension        (MEM_WB_Extension       ),
-        
+
         //ControlWB
         .o_MemToReg         (MEM_WB_MemToReg        ),
         .o_RegWrite         (MEM_WB_RegWrite        ),
@@ -873,7 +893,7 @@ module Top_MIPS
         .o_ZeroExtend       (MEM_WB_ZeroExtend      ),
         .o_LUI              (MEM_WB_LUI             ),
         .o_JAL              (MEM_WB_JAL             )
-    );                    
+    );
     //****************** WB
     //******************************************
     //////////////////////////////////////////////
@@ -884,7 +904,7 @@ module Top_MIPS
         .NBITS          (NBITS                  ),
         .HWORDBITS      (HWORDBITS              ),
         .BYTENBITS      (BYTENBITS              ),
-        .TNBITS         (TNBITS                 )   
+        .TNBITS         (TNBITS                 )
     )
     u_Filtro_Load
     (
@@ -892,11 +912,11 @@ module Top_MIPS
         .i_Tamano       (MEM_WB_TamanoFiltroL   ),
         .i_Cero         (MEM_WB_ZeroExtend      ),
         .o_DatoEscribir (WB_DatoFiltradoL_o     )
-    );    
+    );
     //////////////////////////////////////////////
     /// MULTIPLEXOR LUI
     //////////////////////////////////////////////
-    
+
     Mux_LUI
     #(
         .NBITS(NBITS)
@@ -935,7 +955,7 @@ module Top_MIPS
         .i_MemDatos         (WB_DatoEscritura_o  ),
         .i_PC_8             (MEM_WB_PC8          ),
         .o_Registro         (WB_EscribirDato_o   )
-    );    
+    );
     /////////////////////////////////////////////
     /// MULTIPLEXOR ESCRIBIR REGISTRO
     /////////////////////////////////////////////
@@ -948,6 +968,6 @@ module Top_MIPS
         .i_JAL                  (MEM_WB_JAL                 ),
         .i_RD                   (MEM_WB_RegistroDestino     ),
         .o_RD                   (WB_RegistroDestino_o       )
-    );   
+    );
 
 endmodule
