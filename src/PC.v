@@ -7,6 +7,7 @@ module PC
     )
     (
         input   wire                            i_clk           ,
+        input   wire                            i_PC_Write      ,
         input   wire                            i_reset         ,
         input   wire    [NBITS-1    :0]         i_NPC           ,
         output  wire    [NBITS-1    :0]         o_PC            ,
@@ -20,13 +21,19 @@ module PC
     assign  o_PC_4   =   PC_Reg + 4 ;
     assign  o_PC_8   =   PC_Reg + 8 ;        
        
+    always @(posedge i_clk)
+    begin
+        if(i_reset) 
+            begin
+                PC_Reg          <=      {NBITS{1'b0}}    ;
+            end
+    end
+
     always @(negedge i_clk)
     begin
-        if(i_reset) begin
-            PC_Reg          <=      {NBITS{1'b0}}    ;
-        //else if(wr_pc)
+        if(i_PC_Write)
+        begin
+                PC_Reg          <=      i_NPC           ;
         end
-        else 
-            PC_Reg          <=      i_NPC           ;
     end
 endmodule
