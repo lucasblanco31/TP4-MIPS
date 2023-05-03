@@ -3,9 +3,9 @@
 // UART receiver module
 module UART_rx_interface
     #(
-        parameter       CLK_FREQ     = 100000000,  
+        parameter       CLK_FREQ     = 50000000,  
         parameter       BAUD_RATE    = 9600, 
-        parameter       DIV_SAMPLE   = 4, //oversampling
+        parameter       DIV_SAMPLE   = 16, //oversampling
         parameter       DATA_BITS    = 8 
     )
     (
@@ -83,7 +83,7 @@ module UART_rx_interface
                 if (samplecounter == MID_SAMPLE - 1) begin   
                     shift_reg_next      <=  {i_uart_rx,shift_reg[DATA_BITS-1:1]}; // si el contador de muestras es 1, activa el shift
                 end            
-                if (samplecounter == DIV_SAMPLE - 1) begin // si el contador de muestras es 3, ya que la frecuencia de muestreo utilizada es 3
+                if (samplecounter == DIV_SAMPLE - 1) begin
                     if (bitcounter == DATA_BITS) begin // Si el contador de bits es 8 termina la recepcion
                         state_next      <= IDLE; 
                         data_ready_next <= 1;

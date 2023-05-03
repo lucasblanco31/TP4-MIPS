@@ -51,10 +51,8 @@ module Memoria_Instrucciones
         instruction  <= memory[i_PC];
     end
     
-    always @(posedge i_WriteDebug) begin
-        if (i_WriteDebug) begin
+    always @(negedge i_WriteDebug) begin
             memory[i_DirecDebug] <= i_DatoDebug; // Write the data to the specified address
-        end
     end
 endmodule
 

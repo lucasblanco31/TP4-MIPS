@@ -54,13 +54,13 @@ module MIPS_Unidad_Debug
     reg                                         mips_clk;
 
     reg               [          4    :0]       state, state_next;
-    reg               [          4    :0]       debug, debug_next;
+    reg               [          3    :0]       debug, debug_next;
         
     reg                                                uart_rx_reset, uart_rx_reset_next;
     reg               [           NBITS-1    :0]       uart_rx_data_line, uart_rx_data_line_next;
     reg                                                uart_rx_inst_write, uart_rx_inst_write_next;     
     reg               [ INST_COUNT_SIZE-1    :0]       uart_rx_inst_count, uart_rx_inst_count_next; 
-    reg               [                 1    :0]       uart_rx_word_count, uart_rx_word_count_next;
+    reg               [                 2    :0]       uart_rx_word_count, uart_rx_word_count_next;
     
     reg               [       DATA_BITS-1    :0]       uart_tx_data, uart_tx_data_next;
     reg                                                uart_tx_ready, uart_tx_ready_next;
@@ -76,8 +76,6 @@ module MIPS_Unidad_Debug
     
     reg                                                mips_reset, mips_reset_next;
     
-    localparam  DEBUG_LINE_1 = 32'b01110010011001010110011101110011;   // regs 
-    localparam  DEBUG_LINE_2 = 32'b01100100011000010111010001100001;   // data
 
     assign o_debug         = debug;
     
@@ -163,6 +161,7 @@ module MIPS_Unidad_Debug
         case (state)
             IDLE:
             begin
+                uart_rx_inst_write_next <= 0;
                 if (~i_uart_rx_ready) begin// Verifica si hay datos listos desde la UART
                     uart_rx_reset_next  <= 0;              
                 end else begin // Verifica el char recibido
@@ -176,8 +175,7 @@ module MIPS_Unidad_Debug
                 end
             end
             RUN:
-            begin            
-                debug_next <= 2;            
+            begin        
                 mips_reset_next <= 0;
                 mips_mode_next  <= MIPS_RUN;
                 if( i_mips_halt ) begin
@@ -188,7 +186,6 @@ module MIPS_Unidad_Debug
             end
             STEP: 
             begin
-                debug_next <= 3;
                 mips_reset_next     <= 0;
                 mips_mode_next      <= MIPS_STEP;
                 if( i_mips_halt ) begin
@@ -217,23 +214,25 @@ module MIPS_Unidad_Debug
                 end else begin // Verifica el char recibido
                     uart_rx_reset_next      <= 1;
                     uart_rx_inst_write_next <= 0;
-                    uart_rx_data_line_next  <= {uart_rx_data_line_next[23:0], i_uart_rx_data} << 8;
-                    uart_rx_word_count_next <= uart_rx_word_count + 1;
-                    if(uart_rx_word_count + 1 == 0) begin
+                    uart_rx_data_line_next  <= {uart_rx_data_line[23:0], i_uart_rx_data};
+                    if(uart_rx_word_count == 3) begin
+                        uart_rx_word_count_next <= 0;
                         state_next              <= LOAD;
                      end else begin
+                        uart_rx_word_count_next <= uart_rx_word_count + 1;
                         state_next              <= PREPARE_LOAD;
                      end
                 end
             end
             LOAD:
             begin
-                // Si recibe un HALT vuelve a IDLE
-                if(uart_rx_data_line == 32'b11111111_11111111_11111111_11111111) begin
+                uart_rx_inst_write_next <= 1; //Habilita escritura
+                // Si recibe un HALT vuelve a IDLE\
+                debug_next <= uart_rx_data_line[5:2];
+                if(uart_rx_data_line == 32'b11111111111111111111111111111111) begin
                     uart_rx_inst_count_next <= 0;
                     state_next <= IDLE;        
                 end else begin
-                    uart_rx_inst_write_next <= 1; //Habilita escritura
                     uart_rx_inst_count_next <= uart_rx_inst_count + 1; //Aumenta en 1 la direccion
                     state_next              <= PREPARE_LOAD;
                 end

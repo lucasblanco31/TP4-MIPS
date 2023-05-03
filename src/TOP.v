@@ -27,6 +27,7 @@ module TOP
         parameter REGS              = 5,
         parameter CLK_FREQ          = 50000000,
         parameter BAUD_RATE         = 9600,
+        parameter RX_DIV_SAMP       = 16,
         parameter CELDAS_MEM_DATOS  = 16,
         parameter CELDAS_MEM_INSTR  = 64,
         parameter CELDAS_REGISTROS  = 32
@@ -37,16 +38,18 @@ module TOP
         input   wire                                i_uart_rx,
         input   wire                                i_btn_tx,
         output  wire                                o_uart_tx,
-        output  wire        [        3  :0]         o_d_unit_state_debug,
-        output  wire        [       11  :0]         o_mips_state_debug
+        output  wire        [       11  :0]         o_mips_state_debug,
+        output  wire        [        3  :0]         o_d_unit_state_debug
     );
     
     localparam  MEM_INSTR_SIZE = $clog2(CELDAS_MEM_INSTR);
     localparam  MEM_REGS_SIZE  = $clog2(CELDAS_REGISTROS);
     
+    wire                                clk_wz;
+    
     reg     [        NBITS-1:    0]     mips_clk_count;
     wire    [        NBITS-1:    0]     mips_pc;
-    
+        
     wire    [                  NBITS-1:    0]     mips_reg_debug;
     wire    [          MEM_REGS_SIZE-1:    0]     mips_sel_reg_debug;
     
@@ -71,7 +74,17 @@ module TOP
     wire    [   DATA_BITS-1:    0]      uart_rx_data; 
     wire                                uart_rx_reset;
     
+    assign o_uart_rx_data_debug = uart_rx_data;
     
+   clk_wiz_0 clk_wiz
+   (
+    // Clock out ports
+    .clk_out1(clk_wz),     // output clk_out25MHz
+    // Status and control signals
+    .reset(basys_reset), // input reset
+    .locked(locked),       // output locked
+    .clk_in1(basys_clk)
+    );      // input clk_in1
 
     MIPS #(
         .NBITS          (NBITS),
@@ -101,7 +114,7 @@ module TOP
         .DATA_BITS  (DATA_BITS  )
     )
     u_UART_tx_interface (
-        .clk                    (basys_clk      ), 
+        .clk                    (clk_wz         ), 
         .reset                  (basys_reset    ),
         .i_ready                (uart_tx_start  ),
         .i_data                 (uart_tx_data   ),
@@ -112,12 +125,12 @@ module TOP
     UART_rx_interface #(
         .CLK_FREQ   (CLK_FREQ   ),
         .BAUD_RATE  (BAUD_RATE  ),
-        .DIV_SAMPLE (4          ),
+        .DIV_SAMPLE (RX_DIV_SAMP),
         .DATA_BITS  (DATA_BITS  )
     )
     u_UART_rx_interface 
     (
-        .clk                (basys_clk          ), 
+        .clk                (clk_wz             ), 
         .reset              (uart_rx_reset      ),
         .i_uart_rx          (i_uart_rx          ),
         .o_ready            (uart_rx_data_ready ),
@@ -130,7 +143,7 @@ module TOP
     )
     u_MIPS_Unidad_Debug
     (
-        .clk                (basys_clk                  ),
+        .clk                (clk_wz                     ),
         .reset              (basys_reset                ),
         .i_uart_rx_ready    (uart_rx_data_ready         ),
         .i_uart_rx_data     (uart_rx_data               ),
