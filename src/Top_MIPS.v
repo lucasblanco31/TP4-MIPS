@@ -274,21 +274,20 @@ module MIPS
     
     // OUTPUT
     
-    assign o_mips_status = IF_DatoInstrDebug_i[11:0];
-    /*{
-    /*ID_EX_CTRL_ALUOp[1],
-    ID_EX_CTRL_ALUOp[0],
-    ID_EX_CTRL_ALUSrc,
-    ID_EX_CTRL_Jump,
-    ID_EX_CTRL_JAL,
-    ID_EX_CTRL_RegDst,
-    ID_EX_CTRL_Branch,
-    ID_EX_CTRL_NBranch,
-    ID_EX_CTRL_MemWrite,
-    ID_EX_CTRL_MemRead,
-    ID_EX_CTRL_MemToReg,
-    ID_EX_CTRL_RegWrite
-    };*/
+    assign o_mips_status = {
+        ID_EX_CTRL_ALUOp[1],
+        ID_EX_CTRL_ALUOp[0],
+        ID_EX_CTRL_ALUSrc,
+        ID_EX_CTRL_Jump,
+        ID_EX_CTRL_JAL,
+        ID_EX_CTRL_RegDst,
+        ID_EX_CTRL_Branch,
+        ID_EX_CTRL_NBranch,
+        ID_EX_CTRL_MemWrite,
+        ID_EX_CTRL_MemRead,
+        ID_EX_CTRL_MemToReg,
+        ID_EX_CTRL_RegWrite
+    };
     
     assign o_mips_pc  = IF_PC_o;
     
