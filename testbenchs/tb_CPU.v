@@ -21,21 +21,21 @@ module tb_full();
     localparam  CTRLNBITS =    6;
     localparam  REGS      =    5;
     
-    reg     basys_clk = 0;
-    reg     basys_rst = 0 ;
+    reg     basys_clk   = 0;
+    reg     basys_reset = 0 ;
     
         
   // Apply reset
     initial begin
-        basys_rst = 1;
+        basys_reset = 1;
         #10;
-        basys_rst = 0;
+        basys_reset = 0;
      end
 
   // Clock generation
     always #5 basys_clk = ~basys_clk;
     
-    Top_MIPS
+    MIPS
     #(
         .NBITS              (NBITS          ),
         .NBITSJUMP          (NBITSJUMP      ),
@@ -52,10 +52,10 @@ module tb_full();
         .CTRLNBITS          (CTRLNBITS      ),
         .REGS               (REGS           )
     )
-    u_top
+    u_mips
     (
-        .basys_clk              (basys_clk            ),
-        .basys_reset            (basys_rst            )   
+        .clk              (basys_clk            ),
+        .reset            (basys_reset          )   
     );
        
 endmodule
