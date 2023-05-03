@@ -8,9 +8,10 @@ module MIPS
         parameter   HWORDBITS       = 16,
         parameter   BYTENBITS       = 8, 
  
-        parameter   CELDAS_REG      = 32,
-        parameter   CELDAS_M        = 16,
-        parameter   CELDAS_I        = 32,
+        parameter   CELDAS_REG      = 32, // 32 lugares
+        parameter   CELDAS_M        = 16, // 16 lugares
+        parameter   CELDAS_I        = 64, // 64 lugares
+        parameter   BIT_CELDAS_I    = 6,
 
         parameter   ALUNBITS        = 6,
         parameter   ALUCNBITS       = 2,
@@ -26,14 +27,17 @@ module MIPS
         parameter   OPTIONBITS      = 4
     )
     (
-        input   wire                            clk    ,
-        input   wire                            reset  ,
-        input   wire     [REGS-1       :0]      i_mips_reg_debug,
-        input   wire     [REGS-1       :0]      i_mips_mem_debug,
-        output  wire     [11           :0]      o_mips_status,
-        output  wire     [NBITS-1      :0]      o_mips_pc,
-        output  wire     [NBITS-1      :0]      o_mips_reg_debug,
-        output  wire     [NBITS-1      :0]      o_mips_mem_debug
+        input   wire                                clk    ,
+        input   wire                                reset  ,
+        input   wire     [REGS-1            :0]    i_mips_reg_debug,
+        input   wire     [NBITS-1           :0]    i_mips_mem_debug,
+        input   wire     [BIT_CELDAS_I-1    :0]    i_mips_mem_ins_direc_debug,
+        input   wire     [NBITS-1           :0]    i_mips_mem_ins_dato_debug,
+        input   wire                               i_mips_mem_ins_write_debug,
+        output  wire     [11                :0]    o_mips_status,
+        output  wire     [NBITS-1           :0]    o_mips_pc,
+        output  wire     [NBITS-1           :0]    o_mips_reg_debug,
+        output  wire     [NBITS-1           :0]    o_mips_mem_debug
     );
     
     //-----------------------------------------
@@ -52,9 +56,11 @@ module MIPS
     
     wire    [NBITS-1     :0]        IF_PCBranch_i          ;
     
-    
     //MemoriaInstrucciones
-    wire    [NBITS-1     :0]        IF_Instr_o          ;
+    wire    [NBITS-1     :0]        IF_Instr_o           ;
+    wire    [NBITS-1     :0]        IF_DatoInstrDebug_i  ;
+    wire    [NBITS-1     :0]        IF_DirecInstrDebug_i ;
+    
     
     //////////////
     //   IF_ID  //
@@ -237,6 +243,11 @@ module MIPS
     // ID
     assign ID_InstrControl     =    IF_ID_Instr     [NBITS-1        :NBITS-CTRLNBITS]   ;
     
+    //Memoria de instrucciones
+    assign IF_DireccInstrDebug_i      =   i_mips_mem_ins_direc_debug;
+    assign IF_DatoInstrDebug_i        =   i_mips_mem_ins_dato_debug;
+    assign IF_WriteInstrDebug_i       =   i_mips_mem_ins_write_debug;
+    
     // EX
     // ALU Control
     assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0                  ]   ;
@@ -252,6 +263,8 @@ module MIPS
     
     //Memoria de datos
     assign MEM_DatoMemoriaDebug_o      =    o_mips_mem_debug;   
+    
+    
     
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;        
@@ -315,13 +328,17 @@ module MIPS
     Memoria_Instrucciones
     #(
         .NBITS              (NBITS          ),
-        .CELDAS             (CELDAS_I       )
+        .CELDAS             (CELDAS_I       ),
+        .BIT_CELDAS         (BIT_CELDAS_I   )
     )
     u_Memoria_Instrucciones
     (
-        .i_clk              (clk            ),
-        .i_PC               (IF_PC_o        ),
-        .o_Instruction      (IF_Instr_o     )
+        .i_clk              (clk                    ),
+        .i_PC               (IF_PC_o                ),
+        .i_DirecDebug       (IF_DireccInstrDebug_i  ),
+        .i_DatoDebug        (IF_DatoInstrDebug_i    ),
+        .i_WriteDebug       (IF_WriteInstrDebug_i   ),
+        .o_Instruction      (IF_Instr_o             )
     );
     
     //********************************************
