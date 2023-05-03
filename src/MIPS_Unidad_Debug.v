@@ -6,7 +6,8 @@ module MIPS_Unidad_Debug
         parameter       NBITS               = 32,
         parameter       REGS                = 5,
         parameter       MEM_REG_SIZE        = 32,
-        parameter       MEM_DATA_SIZE       = 16
+        parameter       MEM_DATA_SIZE       = 16,
+        parameter       MEM_INST_SIZE       = 64
     )
     (
         input                                   clk,
@@ -25,32 +26,41 @@ module MIPS_Unidad_Debug
         output                                  o_mips_clk,        //Funcionara como clk del mips
         output                                  o_mips_reset,
         output          [REGS-1         :0]     o_mips_reg,
-        output          [REGS-1         :0]     o_mips_mem,
+        output          [NBITS-1        :0]     o_mips_mem,
+        output          [6-1            :0]     o_mips_instr_sel,
+        output          [NBITS-1        :0]     o_mips_instr_dato,
+        output                                  o_mips_instr_write,
         output          [3              :0]     o_debug
     );
     
-    localparam IDLE         =   3'b000;
-    localparam RUN          =   3'b010; //Char: 'r'
-    localparam STEP         =   3'b001; //Char: 's'
-    localparam LOAD         =   3'b011; //Char: 'l'
-    localparam DATA_TX      =   3'b100;
-    localparam WAIT_TX      =   3'b110;
-    localparam PREPARE_TX   =   3'b111;
+    localparam IDLE         =   4'b0000;
+    localparam RUN          =   4'b0010; //Char: 'r'
+    localparam STEP         =   4'b0001; //Char: 's'
+    localparam LOAD         =   4'b0011; //Char: 'l'
+    localparam DATA_TX      =   4'b0100;
+    localparam WAIT_TX      =   4'b0110;
+    localparam PREPARE_TX   =   4'b0111;
+    localparam PREPARE_LOAD =   4'b1000;
     
     localparam MIPS_STOP    =   2'b00;
     localparam MIPS_RUN     =   2'b01;
     localparam MIPS_STEP    =   2'b11;
     
-    localparam MEM_COUNT_SIZE = $clog2(MEM_DATA_SIZE);
-    localparam REG_COUNT_SIZE = $clog2(MEM_REG_SIZE);
+    localparam MEM_COUNT_SIZE  = $clog2(MEM_DATA_SIZE);
+    localparam REG_COUNT_SIZE  = $clog2(MEM_REG_SIZE);
+    localparam INST_COUNT_SIZE = $clog2(MEM_INST_SIZE);
             
        
     reg                                         mips_clk;
 
-    reg               [          3    :0]       state, state_next;
+    reg               [          4    :0]       state, state_next;
     reg               [          4    :0]       debug, debug_next;
         
-    reg                                         uart_rx_reset, uart_rx_reset_next;
+    reg                                                uart_rx_reset, uart_rx_reset_next;
+    reg               [           NBITS-1    :0]       uart_rx_data_line, uart_rx_data_line_next;
+    reg                                                uart_rx_inst_write, uart_rx_inst_write_next;     
+    reg               [ INST_COUNT_SIZE-1    :0]       uart_rx_inst_count, uart_rx_inst_count_next; 
+    reg               [                 1    :0]       uart_rx_word_count, uart_rx_word_count_next;
     
     reg               [       DATA_BITS-1    :0]       uart_tx_data, uart_tx_data_next;
     reg                                                uart_tx_ready, uart_tx_ready_next;
@@ -59,12 +69,12 @@ module MIPS_Unidad_Debug
     reg               [                 2    :0]       uart_tx_data_count, uart_tx_data_count_next; 
        
     reg               [  REG_COUNT_SIZE-1    :0]       uart_tx_regs_count, uart_tx_regs_count_next;     
-    reg               [  MEM_COUNT_SIZE-1    :0]       uart_tx_mem_count, uart_tx_mem_count_next;   
+    reg               [  MEM_COUNT_SIZE-1    :0]       uart_tx_mem_count, uart_tx_mem_count_next;  
     
     reg               [                 1    :0]       mips_mode, mips_mode_next;
-    reg                                         mips_step, mips_step_next;
+    reg                                                mips_step, mips_step_next;
     
-    reg                                         mips_reset, mips_reset_next;
+    reg                                                mips_reset, mips_reset_next;
     
     localparam  DEBUG_LINE_1 = 32'b01110010011001010110011101110011;   // regs 
     localparam  DEBUG_LINE_2 = 32'b01100100011000010111010001100001;   // data
@@ -81,12 +91,19 @@ module MIPS_Unidad_Debug
     assign o_mips_reg      = uart_tx_regs_count;
     assign o_mips_mem      = uart_tx_mem_count;
     
+    assign o_mips_instr_sel     = uart_rx_inst_count;
+    assign o_mips_instr_dato    = uart_rx_data_line;
+    assign o_mips_instr_write   = uart_rx_inst_write;
     
     always @ (posedge clk, posedge reset)
         begin 
             if (reset)begin      
                 state                   <= IDLE; 
                 uart_rx_reset           <= 1;
+                uart_rx_data_line       <= 0;
+                uart_rx_word_count      <= 0;
+                uart_rx_inst_count      <= 0;
+                uart_rx_inst_write      <= 0;
                 uart_tx_data            <= 0;
                 uart_tx_ready           <= 0;
                 uart_tx_word_count      <= 0;
@@ -102,6 +119,10 @@ module MIPS_Unidad_Debug
                 debug                   <= debug_next;
                 state                   <= state_next;   
                 uart_rx_reset           <= uart_rx_reset_next;
+                uart_rx_data_line       <= uart_rx_data_line_next;
+                uart_rx_word_count      <= uart_rx_word_count_next;
+                uart_rx_inst_count      <= uart_rx_inst_count_next;
+                uart_rx_inst_write      <= uart_rx_inst_write_next;
                 uart_tx_data            <= uart_tx_data_next;
                 uart_tx_ready           <= uart_tx_ready_next;
                 uart_tx_word_count      <= uart_tx_word_count_next;
@@ -121,14 +142,18 @@ module MIPS_Unidad_Debug
         state_next          <= state;
         debug_next          <= debug;
         
-        uart_rx_reset_next  <= uart_rx_reset;
+        uart_rx_reset_next        <= uart_rx_reset;
+        uart_rx_data_line_next    <= uart_rx_data_line;
+        uart_rx_word_count_next   <= uart_rx_word_count;
+        uart_rx_inst_count_next   <= uart_rx_inst_count;
+        uart_rx_inst_write_next   <= uart_rx_inst_write;
         
         uart_tx_data_next        <= uart_tx_data;
         uart_tx_ready_next       <= uart_tx_ready;
         uart_tx_word_count_next  <= uart_tx_word_count;
         uart_tx_data_count_next  <= uart_tx_data_count;
         uart_tx_regs_count_next  <= uart_tx_regs_count;
-        uart_tx_mem_count_next  <= uart_tx_mem_count;
+        uart_tx_mem_count_next   <= uart_tx_mem_count;
         uart_tx_data_line_next   <= uart_tx_data_line;
         
         mips_mode_next      <= mips_mode;
@@ -137,8 +162,7 @@ module MIPS_Unidad_Debug
         
         case (state)
             IDLE:
-            begin 
-                debug_next <= 1;
+            begin
                 if (~i_uart_rx_ready) begin// Verifica si hay datos listos desde la UART
                     uart_rx_reset_next  <= 0;              
                 end else begin // Verifica el char recibido
@@ -146,7 +170,7 @@ module MIPS_Unidad_Debug
                     case(i_uart_rx_data)
                         8'b01110010:    state_next          <= RUN;
                         8'b01110011:    state_next          <= STEP;
-                        8'b01101100:    state_next          <= LOAD;
+                        8'b01101100:    state_next          <= PREPARE_LOAD;
                         default:        state_next          <= IDLE;
                     endcase                     
                 end
@@ -186,15 +210,36 @@ module MIPS_Unidad_Debug
                     end
                 end
             end
+            PREPARE_LOAD:
+            begin
+                if (~i_uart_rx_ready) begin// Verifica si hay datos listos desde la UART
+                    uart_rx_reset_next  <= 0;              
+                end else begin // Verifica el char recibido
+                    uart_rx_reset_next      <= 1;
+                    uart_rx_inst_write_next <= 0;
+                    uart_rx_data_line_next  <= {uart_rx_data_line_next[23:0], i_uart_rx_data} << 8;
+                    uart_rx_word_count_next <= uart_rx_word_count + 1;
+                    if(uart_rx_word_count + 1 == 0) begin
+                        state_next              <= LOAD;
+                     end else begin
+                        state_next              <= PREPARE_LOAD;
+                     end
+                end
+            end
             LOAD:
             begin
-                // CARGA REGISTROS y Vuelve a IDLE. 
-                state_next           <= IDLE;
-                // Prende LED de READY TO RUN
+                // Si recibe un HALT vuelve a IDLE
+                if(uart_rx_data_line == 32'b11111111_11111111_11111111_11111111) begin
+                    uart_rx_inst_count_next <= 0;
+                    state_next <= IDLE;        
+                end else begin
+                    uart_rx_inst_write_next <= 1; //Habilita escritura
+                    uart_rx_inst_count_next <= uart_rx_inst_count + 1; //Aumenta en 1 la direccion
+                    state_next              <= PREPARE_LOAD;
+                end
             end                         
             PREPARE_TX:
             begin
-                debug_next <= 4;
                 case(uart_tx_data_count)
                     0: // Envia contenido de PC del MIPS 
                     begin
