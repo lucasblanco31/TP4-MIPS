@@ -21,18 +21,18 @@
 
 module Memoria_Datos
     #(
-        parameter NBITS     = 32    ,
-        parameter CELDAS    = 16
+        parameter NBITS      = 32    ,
+        parameter CELDAS     = 16    
     )
     (
-        input   wire                        i_clk               ,
-        input   wire    [NBITS-1    :0]     i_ALUDireccion      ,
-        input   wire    [NBITS-1    :0]     i_DebugDireccion    ,
-        input   wire    [NBITS-1    :0]     i_DatoRegistro      ,
-        input   wire                        i_MemWrite          ,
-        input   wire                        i_MemRead           ,
-        output  wire    [NBITS-1    :0]     o_DatoLeido         ,
-        output  wire    [NBITS-1    :0]     o_DebugDato     
+        input   wire                                i_clk               ,
+        input   wire    [NBITS-1            :0]     i_ALUDireccion      ,
+        input   wire    [NBITS-1            :0]     i_DebugDireccion    ,
+        input   wire    [NBITS-1            :0]     i_DatoRegistro      ,
+        input   wire                                i_MemWrite          ,
+        input   wire                                i_MemRead           ,
+        output  wire    [NBITS-1    :0]             o_DatoLeido         ,
+        output  wire    [NBITS-1    :0]             o_DebugDato     
     );
     
     reg     [NBITS-1  :0]     memory[CELDAS-1:0];
@@ -49,11 +49,7 @@ module Memoria_Datos
         for (i = 1; i <= CELDAS; i = i + 1) begin
                 memory[i] = i*2;
         end 
-    end
-    
-    initial
-    begin
-        debug_dato              <=  memory[0];
+        debug_dato  =  0;
     end
     
     always @(posedge i_clk)
