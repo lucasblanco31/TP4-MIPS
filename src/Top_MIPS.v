@@ -31,7 +31,8 @@ module Top_MIPS
     (
         input   wire                            basys_clk    ,
         input   wire                            basys_reset  ,
-        output  wire     [13           :0]      mips_status_o
+        output  wire     [13           :0]      mips_status_o,
+        output  wire                            mips_halt
     );
 
     //-----------------------------------------
@@ -91,6 +92,7 @@ module Top_MIPS
     wire                            CTRL_ZeroExtend     ;
     wire                            CTRL_LUI            ;
     wire                            CTRL_JALR           ;
+    wire                            CTRL_HALT           ;
 
     //Mux Unidad Riesgos
     wire                            RCTRL_RegWrite       ;
@@ -110,6 +112,11 @@ module Top_MIPS
     wire                            RCTRL_ZeroExtend     ;
     wire                            RCTRL_LUI            ;
     wire                            RCTRL_JALR           ;
+    wire                            RCTRL_HALT           ;
+    
+    //Sumador PC Jump
+    wire     [NBITSJUMP-1   :0]     ID_Jump_i           ;
+    wire     [NBITS-1       :0]     ID_Jump_o           ;
 
     //Registros
     wire     [RS-1        :0]       ID_Reg_rs_i         ;
@@ -134,6 +141,7 @@ module Top_MIPS
     wire    [REGS-1         :0]     ID_EX_Rs            ;
     wire    [REGS-1         :0]     ID_EX_Rt            ;
     wire    [REGS-1         :0]     ID_EX_Rd            ;
+    wire    [NBITS-1        :0]     ID_EX_DJump         ;
     //ID/EX/CONTROL
     wire                            ID_EX_CTRL_ALUSrc        ;
     wire                            ID_EX_CTRL_Jump          ;
@@ -151,6 +159,7 @@ module Top_MIPS
     wire                            ID_EX_CTRL_ZeroExtend    ;
     wire                            ID_EX_CTRL_LUI           ;
     wire                            ID_EX_CTRL_JALR          ;
+    wire                            ID_EX_CTRL_HALT          ;
 
 
     //************
@@ -170,11 +179,12 @@ module Top_MIPS
     wire     [ALUNBITS-1    :0]     EX_AluCtrlInstr_i   ;
     wire     [ALUNBITS-1    :0]     EX_AluCtrlOpcode_i  ;
     wire     [ALUOP-1       :0]     EX_ALUCtrlOp_o      ;
+    wire                            EX_UShamt           ;
 
 
     //Sumador PC Jump
-    wire     [NBITSJUMP-1   :0]     EX_Jump_i           ;
-    wire     [NBITS-1       :0]     EX_Jump_o           ;
+    //wire     [NBITSJUMP-1   :0]     EX_Jump_i           ;
+    //wire     [NBITS-1       :0]     EX_Jump_o           ;
 
     //Sumador branch
     wire     [NBITS-1       :0]     EX_SumPcBranch_o    ;
@@ -209,6 +219,7 @@ module Top_MIPS
     wire    [1              :0]     EX_MEM_TamanoFiltroL    ;
     wire                            EX_MEM_ZeroExtend       ;
     wire                            EX_MEM_LUI              ;
+    wire                            EX_MEM_HALT             ;
     //************
     //    MEM    *
     //************
@@ -238,6 +249,7 @@ module Top_MIPS
     wire    [1              :0]     MEM_WB_TamanoFiltroL    ;
     wire                            MEM_WB_ZeroExtend       ;
     wire                            MEM_WB_LUI              ;
+    wire                            MEM_WB_HALT             ;
 
 
     //************
@@ -262,13 +274,14 @@ module Top_MIPS
     // ID
     assign ID_InstrControl     =    IF_ID_Instr     [NBITS-1        :NBITS-CTRLNBITS]   ;
     assign ID_InstrSpecial     =    IF_ID_Instr     [CTRLNBITS-1    :0              ]   ;
+    assign ID_Jump_i           =    IF_ID_Instr     [NBITSJUMP-1     :0              ]  ;
 
     // EX
     // ALU Control
     assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0              ]   ;
     assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :RS+RT+INBITS   ]   ;
     //SumadorJump
-    assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;
+    //assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;
     assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
     assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ; //INBITS+RT+RS-1=16+5+5-1=25; INBITS+RT=16+5=21; [25-21]
@@ -296,6 +309,8 @@ module Top_MIPS
     ID_EX_CTRL_ZeroExtend,
     ID_EX_CTRL_LUI
     };
+    
+    assign mips_halt = MEM_WB_HALT ;
     //////////////////////////////////////////////
     /// MULTIPLEXOR BRANCH/JUMP PC
     /////////////////////////////////////////////
@@ -310,8 +325,8 @@ module Top_MIPS
         .i_PCSrc            (MEM_PcSrc_o           ),
         .i_SumadorBranch    (EX_MEM_PCBranch       ),
         .i_SumadorPC4       (IF_PC4_o              ),
-        .i_SumadorJump      (EX_Jump_o             ),
-        .i_RS               (ID_DatoLeido1_o       ),
+        .i_SumadorJump      (ID_EX_DJump           ),
+        .i_RS               (EX_AluRegA_i          ),
         .o_PC               (IF_PC_i               )
     );
 
@@ -339,11 +354,12 @@ module Top_MIPS
     Memoria_Instrucciones
     #(
         .NBITS              (NBITS          ),
-        .CELDAS             (CELDAS_M       )
+        .CELDAS             (160            )
     )
     u_Memoria_Instrucciones
     (
         .i_clk              (basys_clk      ),
+        .i_reset            (basys_reset    ),
         .i_PC               (IF_PC_o        ),
         .o_Instruction      (IF_Instr_o     )
     );
@@ -361,6 +377,7 @@ module Top_MIPS
     u_Etapa_IF_ID
     (
         .i_clk              (basys_clk          ),
+        .i_reset            (basys_reset        ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
         //.i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
@@ -389,6 +406,7 @@ module Top_MIPS
         .i_ID_EX_MemRead            (ID_EX_CTRL_MemRead     ),
         .i_EX_MEM_MemRead           (EX_MEM_MemRead         ),
         .i_JALR                     (CTRL_JALR             ),
+        .i_HALT                     (CTRL_HALT              ),
         //.i_ID_Unidad_Control_Jump   (RCTRL_Jump             ),
         .i_EX_MEM_Flush             (MEM_PcSrc_o            ),
         .i_ID_EX_Rt                 (ID_EX_Rt               ),
@@ -429,7 +447,8 @@ module Top_MIPS
         .o_TamanoFiltroL            (CTRL_TamanoFiltroL  ),
         .o_ZeroExtend               (CTRL_ZeroExtend     ),
         .o_LUI                      (CTRL_LUI            ),
-        .o_JALR                     (CTRL_JALR           )
+        .o_JALR                     (CTRL_JALR           ),
+        .o_HALT                     (CTRL_HALT           )
     );
 
     //////////////////////////////////////////////
@@ -458,6 +477,7 @@ module Top_MIPS
         .i_ZeroExtend               (CTRL_ZeroExtend    ),
         .i_LUI                      (CTRL_LUI           ),
         .i_JALR                     (CTRL_JALR          ),
+        .i_HALT                     (CTRL_HALT          ),
         .o_RegDst                   (RCTRL_RegDst        ),
         .o_Jump                     (RCTRL_Jump          ),
         .o_JAL                      (RCTRL_JAL           ),
@@ -474,9 +494,25 @@ module Top_MIPS
         .o_TamanoFiltroL            (RCTRL_TamanoFiltroL ),
         .o_ZeroExtend               (RCTRL_ZeroExtend    ),
         .o_LUI                      (RCTRL_LUI           ),
-        .o_JALR                     (RCTRL_JALR          )
+        .o_JALR                     (RCTRL_JALR          ),
+        .o_HALT                     (RCTRL_HALT          )
     );
 
+    //////////////////////////////////////////////
+    /// Sumador_PC_Jump
+    //////////////////////////////////////////////
+    Sumador_PC_Jump
+    #(
+        .NBITS      (NBITS      ),
+        .NBITSJUMP  (NBITSJUMP  )
+    )
+    u_Sumador_PC_Jump
+    (
+        .i_IJump    (ID_Jump_i  ),
+        .i_PC4      (ID_EX_PC4  ),
+        .o_IJump    (ID_Jump_o  )
+    );
+    
     //////////////////////////////////////////////
     /// REGISTROS
     /////////////////////////////////////////////
@@ -492,6 +528,7 @@ module Top_MIPS
     u_Registros
     (
         .i_clk               (basys_clk                 ),
+        .i_reset             (basys_reset               ),
         .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (ID_Reg_rs_i               ),
         .i_RT                (ID_Reg_rt_i               ),
@@ -534,6 +571,7 @@ module Top_MIPS
     (
         //General
         .i_clk                      (basys_clk                ),
+        .i_reset                    (basys_reset              ),
         .i_Flush                    (RIESGO_Latch_Flush       ),
         .i_PC4                      (IF_ID_PC4                ),
         .i_PC8                      (IF_ID_PC8                ),
@@ -559,6 +597,7 @@ module Top_MIPS
         .i_ZeroExtend               (RCTRL_ZeroExtend         ),
         .i_LUI                      (RCTRL_LUI                ),
         .i_JALR                     (RCTRL_JALR               ),
+        .i_HALT                     (RCTRL_HALT               ),
 
         //Modules
         .i_Registro1                (ID_DatoLeido1_o         ),
@@ -567,6 +606,7 @@ module Top_MIPS
         .i_Rs                       (ID_Reg_rs_i             ),
         .i_Rt                       (ID_Reg_rt_i             ),
         .i_Rd                       (ID_Reg_rd_i             ),
+        .i_DJump                    (ID_Jump_o               ),
 
         .o_PC4                      (ID_EX_PC4          ),
         .o_PC8                      (ID_EX_PC8          ),
@@ -577,6 +617,7 @@ module Top_MIPS
         .o_Rs                       (ID_EX_Rs           ),
         .o_Rt                       (ID_EX_Rt           ),
         .o_Rd                       (ID_EX_Rd           ),
+        .o_DJump                    (ID_EX_DJump        ),
 
         //ControlEX
         .o_Jump                     (ID_EX_CTRL_Jump         ),
@@ -596,7 +637,8 @@ module Top_MIPS
         .o_RegWrite                 (ID_EX_CTRL_RegWrite     ),
         .o_TamanoFiltroL            (ID_EX_CTRL_TamanoFiltroL),
         .o_ZeroExtend               (ID_EX_CTRL_ZeroExtend   ),
-        .o_LUI                      (ID_EX_CTRL_LUI          )
+        .o_LUI                      (ID_EX_CTRL_LUI          ),
+        .o_HALT                     (ID_EX_CTRL_HALT         )
     );
 
     //********************************************
@@ -605,20 +647,6 @@ module Top_MIPS
     //********************************************
     //********************************************
 
-    //////////////////////////////////////////////
-    /// Sumador_PC_Jump
-    //////////////////////////////////////////////
-    Sumador_PC_Jump
-    #(
-        .NBITS      (NBITS      ),
-        .NBITSJUMP  (NBITSJUMP  )
-    )
-    u_Sumador_PC_Jump
-    (
-        .i_IJump    (EX_Jump_i  ),
-        .i_PC4      (ID_EX_PC4  ),
-        .o_IJump    (EX_Jump_o  )
-    );
     //////////////////////////////////////////////
     /// SUMADOR BRANCH
     /////////////////////////////////////////////
@@ -647,6 +675,7 @@ module Top_MIPS
         .i_RegA             (EX_AluRegA_i           ),
         .i_RegB             (EX_AluRegB_i           ),
         .i_Shamt            (EX_AluShamtInstr_i     ),
+        .i_UShamt           (EX_UShamt              ),
         .i_Op               (EX_ALUCtrlOp_o         ),
         .o_Cero             (EX_AluCero_o           ),
         .o_Result           (EX_ALUResult_o         )
@@ -666,7 +695,8 @@ module Top_MIPS
         .i_Funct                   (EX_AluCtrlInstr_i      ),
         .i_Opcode                  (EX_AluCtrlOpcode_i     ),
         .i_ALUOp                   (ID_EX_CTRL_ALUOp       ),
-        .o_ALUOp                   (EX_ALUCtrlOp_o         )
+        .o_ALUOp                   (EX_ALUCtrlOp_o         ),
+        .o_Shamt                   (EX_UShamt              )
 
     );
     //////////////////////////////////////////////
@@ -751,6 +781,7 @@ module Top_MIPS
     (
         //General
         .i_clk                      (basys_clk              ),
+        .i_reset                    (basys_reset            ),
         .i_Flush                    (RIESGO_Latch_Flush     ),
         .i_PC4                      (ID_EX_PC4              ),
         .i_PC8                      (ID_EX_PC8              ),
@@ -775,6 +806,7 @@ module Top_MIPS
         .i_TamanoFiltroL            (ID_EX_CTRL_TamanoFiltroL ),
         .i_ZeroExtend               (ID_EX_CTRL_ZeroExtend    ),
         .i_LUI                      (ID_EX_CTRL_LUI           ),
+        .i_HALT                     (ID_EX_CTRL_HALT          ),
 
         .o_PC4                      (EX_MEM_PC4             ),
         .o_PC8                      (EX_MEM_PC8             ),
@@ -799,7 +831,8 @@ module Top_MIPS
         .o_RegWrite                 (EX_MEM_RegWrite        ),
         .o_TamanoFiltroL            (EX_MEM_TamanoFiltroL   ),
         .o_ZeroExtend               (EX_MEM_ZeroExtend      ),
-        .o_LUI                      (EX_MEM_LUI             )
+        .o_LUI                      (EX_MEM_LUI             ),
+        .o_HALT                     (EX_MEM_HALT            )
     );
     //********************************************
     //********************************************
@@ -845,6 +878,7 @@ module Top_MIPS
     u_Memoria_Datos
     (
         .i_clk                      (basys_clk          ),
+        .i_reset                    (basys_reset        ),
         .i_ALUDireccion             (EX_MEM_ALU         ),
         .i_DatoRegistro             (MEM_DatoFiltradoS_o ),
         .i_MemRead                  (EX_MEM_MemRead     ),
@@ -862,6 +896,7 @@ module Top_MIPS
     u_Etapa_MEM_WB
     (
         .i_clk              (basys_clk              ),
+        .i_reset            (basys_reset            ),
         .i_PC4              (EX_MEM_PC4             ),
         .i_PC8              (EX_MEM_PC8             ),
         .i_Instruction      (EX_MEM_Instr           ),
@@ -877,6 +912,7 @@ module Top_MIPS
         .i_ZeroExtend       (EX_MEM_ZeroExtend      ),
         .i_LUI              (EX_MEM_LUI             ),
         .i_JAL              (EX_MEM_JAL             ),
+        .i_HALT             (EX_MEM_HALT            ),
 
         .o_PC4              (MEM_WB_PC4             ),
         .o_PC8              (MEM_WB_PC8             ),
@@ -892,7 +928,8 @@ module Top_MIPS
         .o_TamanoFiltroL    (MEM_WB_TamanoFiltroL   ),
         .o_ZeroExtend       (MEM_WB_ZeroExtend      ),
         .o_LUI              (MEM_WB_LUI             ),
-        .o_JAL              (MEM_WB_JAL             )
+        .o_JAL              (MEM_WB_JAL             ),
+        .o_HALT             (MEM_WB_HALT            )
     );
     //****************** WB
     //******************************************

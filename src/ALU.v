@@ -41,6 +41,7 @@ module ALU
         input   wire    [NBITS-1    :0]     i_RegA      ,
         input   wire    [NBITS-1    :0]     i_RegB      ,
         input   wire    [RNBITS-1   :0]     i_Shamt     ,
+        input   wire                        i_UShamt    ,
         input   wire    [BOP-1      :0]     i_Op        ,
         output  wire                        o_Cero      ,
         output  wire    [NBITS-1    :0]     o_Result    
@@ -54,17 +55,17 @@ module ALU
     always @(*)
         begin : operations
             case(i_Op)
-                `AND:       result  =   i_RegA   &   i_RegB         ;
-                `OR:        result  =   i_RegA   |   i_RegB         ;
-                `ADD:       result  =   i_RegA   +   i_RegB         ;
-                `SUB:       result  =   i_RegA   -   i_RegB         ;
-                `SLT:       result  =   i_RegA   <   i_RegB ? 1:0   ;
-                `NOR:       result  =   ~(i_RegA |   i_RegB)        ;
-                `XOR:       result  =   i_RegA   ^   i_RegB         ;
-                `SLL:       result  =   i_RegB   <<  i_Shamt        ;
-                `SRL:       result  =   i_RegB   >>  i_Shamt        ;
-                `SRA:       result  =   $signed(i_RegB) >>> i_Shamt ;
-                default:    result  =   -1                          ;
+                `AND:       result  =   i_RegA   &   i_RegB                                                         ;
+                `OR:        result  =   i_RegA   |   i_RegB                                                         ;
+                `ADD:       result  =   i_RegA   +   i_RegB                                                         ;
+                `SUB:       result  =   i_RegA   -   i_RegB                                                         ;
+                `SLT:       result  =   i_RegA   <   i_RegB ? 1:0                                                   ;
+                `NOR:       result  =   ~(i_RegA |   i_RegB)                                                        ;
+                `XOR:       result  =   i_RegA   ^   i_RegB                                                         ;
+                `SLL:       result  =   (i_UShamt) ? (i_RegB << i_Shamt) : (i_RegB << i_RegA)                       ;
+                `SRL:       result  =   (i_UShamt) ? (i_RegB >> i_Shamt) : (i_RegB >> i_RegA)                       ;
+                `SRA:       result  =   (i_UShamt) ? ($signed(i_RegB) >>> i_Shamt) : ($signed(i_RegB) >>> i_RegA)   ;
+                default:    result  =   -1                                                                          ;
             endcase
         end
 endmodule

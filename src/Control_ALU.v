@@ -38,11 +38,14 @@ module Control_ALU
         input   wire    [ANBITS-1       :0]     i_Funct ,
         input   wire    [ANBITS-1       :0]     i_Opcode,
         input   wire    [NBITSCONTROL-1 :0]     i_ALUOp ,    
-        output  wire    [ALUOP-1        :0]     o_ALUOp            
+        output  wire    [ALUOP-1        :0]     o_ALUOp ,
+        output  wire                            o_Shamt            
     );
     
     reg [ALUOP-1    :0] ALUOp_Reg   ;
-    assign o_ALUOp =    ALUOp_Reg   ;
+    
+    assign o_ALUOp  =    ALUOp_Reg   ;
+    assign o_Shamt  =   (i_Funct == `SRA_C | i_Funct == `SRL_C | i_Funct == `SLL_C) ? 1 : 0 ;
     
     always @(*)
     begin : ALUOp
