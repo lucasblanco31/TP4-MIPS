@@ -41,4 +41,4 @@ def print_mips_data(response, mem_count, reg_count, inst_count):
             print("\nINSTRUCTION MEMORY:")
             for i in range(inst_count):
                 print(
-                    f"{i}:  {instruction[i]} -> {int(instruction[i].replace(' ',''), 2)}")
+                    f"{i*4}:  {instruction[i]} -> {int(instruction[i].replace(' ',''), 2)}")
