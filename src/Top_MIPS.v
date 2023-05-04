@@ -10,7 +10,7 @@ module MIPS
  
         parameter   CELDAS_REG      = 32, // 32 lugares
         parameter   CELDAS_M        = 16, // 16 lugares
-        parameter   CELDAS_I        = 64, // 64 lugares
+        parameter   CELDAS_I        = 256, // 64 lugares
         parameter   BIT_CELDAS_I    = 6,
 
         parameter   ALUNBITS        = 6,

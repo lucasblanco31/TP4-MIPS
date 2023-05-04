@@ -7,7 +7,7 @@ module MIPS_Unidad_Debug
         parameter       REGS                = 5,
         parameter       MEM_REG_SIZE        = 32,
         parameter       MEM_DATA_SIZE       = 16,
-        parameter       MEM_INST_SIZE       = 64
+        parameter       MEM_INST_SIZE       = 256
     )
     (
         input                                   clk,
@@ -241,7 +241,7 @@ module MIPS_Unidad_Debug
                     uart_rx_inst_count_next <= 0;
                     state_next              <= IDLE;        
                 end else begin
-                    uart_rx_inst_count_next <= uart_rx_inst_count + 1; //Aumenta en 1 la direccion
+                    uart_rx_inst_count_next <= uart_rx_inst_count + 4; //Aumenta en 4 la direccion
                     state_next              <= PREPARE_LOAD;
                 end
             end                     
@@ -281,7 +281,7 @@ module MIPS_Unidad_Debug
                     4: 
                     begin
                         uart_tx_data_line_next  <= i_mips_inst;
-                        uart_rx_inst_count_next <= uart_rx_inst_count + 1;
+                        uart_rx_inst_count_next <= uart_rx_inst_count + 4;
                         if(uart_rx_inst_count == MEM_INST_SIZE-1) begin
                             uart_tx_data_count_next <= uart_tx_data_count + 1;
                         end
