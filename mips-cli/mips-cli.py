@@ -32,6 +32,7 @@ file = args.flag_file
 file_bin = os.path.splitext(file)[0] + ".bin"
 serial_port = args.flag_serial
 
+
 def print_help():
     print("Accepted characters:")
     print("  r: Run the program in continuous mode")
@@ -41,16 +42,16 @@ def print_help():
 # START MIPS DEBUG CLI
 ########################
 
+
 def main():
     ser = serial.Serial(serial_port, 9600)
     mode = 'IDLE'
-    load = False
 
     print("MIPS PROCESSORS DEBUG UNIT\n")
     print(
         f"Program file: {file} - SerialPort: {serial_port} - SerialConfig: 9600-8-N-1")
     # Creates a file with instructions as binary
-    compiler.create_raw_file(file, file_bin )
+    compiler.create_raw_file(file, file_bin)
     # Load the program to the board
     uartutils.load_program(file_bin, ser)
 
@@ -88,3 +89,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

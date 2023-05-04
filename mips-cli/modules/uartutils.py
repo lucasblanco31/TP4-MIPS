@@ -1,5 +1,6 @@
 import time
 
+
 def load_program(program_file, serial):
     # Send l to start write the memory
     print('Loading...')
@@ -18,6 +19,7 @@ def load_program(program_file, serial):
         finally:
             out_file.close()
             return True
+
 
 def receive_data(serial, n):
     response = b''
