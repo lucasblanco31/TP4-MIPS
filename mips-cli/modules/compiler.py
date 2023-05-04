@@ -73,6 +73,7 @@ REGISTERS = {
     'r31': '11111'
 }
 
+
 def r_instr(instr, args):
 
     opcode = INSTRUCTIONS[instr][1]
@@ -83,23 +84,24 @@ def r_instr(instr, args):
         rd = REGISTERS[reg_rd]
         rt = REGISTERS[reg_rt]
         rs = REGISTERS[reg_rs]
-        binary = f"000000_{rs}_{rt}_{rd}_00000_{opcode}"
+        binary = f"000000{rs}{rt}{rd}00000{opcode}"
 
     elif (instr_obs == 'sa'):
         reg_rd, reg_rt, sa = map(str.strip, args.split(','))
         rd = REGISTERS[reg_rd]
         rt = REGISTERS[reg_rt]
         sa = bin(int(sa) & 0b11111)[2:].zfill(5)
-        binary = f"000000_00000_{rt}_{rd}_{sa}_{opcode}"
+        binary = f"00000000000{rt}{rd}{sa}{opcode}"
 
     else:
         reg_rd, reg_rs, reg_rt = map(str.strip, args.split(','))
         rd = REGISTERS[reg_rd]
         rt = REGISTERS[reg_rt]
         rs = REGISTERS[reg_rs]
-        binary = f"000000_{rs}_{rt}_{rd}_00000_{opcode}"
+        binary = f"000000{rs}{rt}{rd}00000{opcode}"
 
     return binary
+
 
 def i_instr(instr, args):
     
@@ -113,33 +115,34 @@ def i_instr(instr, args):
         rt = REGISTERS[reg_rt]
         base = REGISTERS[reg_base]
         boffset = bin(int(offset) & 0b1111111111111111)[2:].zfill(16)
-        binary = f"{opcode}_{base}_{rt}_{boffset}"
+        binary = f"{opcode}{base}{rt}{boffset}"
     
     elif (instr_obs == 'branch'):
         reg_rs, reg_rt, offset = map(str.strip, args.split(','))
         rs = REGISTERS[reg_rs]
         rt = REGISTERS[reg_rt]
         boffset = bin(int(offset) & 0b1111111111111111)[2:].zfill(16)
-        binary = f"{opcode}_{rs}_{rt}_{boffset}"
+        binary = f"{opcode}{rs}{rt}{boffset}"
     
     elif (instr_obs == 'jump'):
         btarget = bin(int(args) & 0b11111111111111111111111111)[2:].zfill(26)
-        binary = f"{opcode}_{btarget}"
+        binary = f"{opcode}{btarget}"
 
     elif (instr_obs == 'lui'):
         reg_rt, immediate = map(str.strip, args.split(','))
         rt = REGISTERS[reg_rt]
         bimmediate = bin(int(immediate) & 0b1111111111111111)[2:].zfill(16)
-        binary = f"{opcode}_00000_{rt}_{bimmediate}"
+        binary = f"{opcode}00000{rt}{bimmediate}"
 
     else:
         reg_rt, reg_rs, immediate = map(str.strip, args.split(','))
         rt = REGISTERS[reg_rt]
         rs = REGISTERS[reg_rs]
         bimmediate = bin(int(immediate) & 0b1111111111111111)[2:].zfill(16)
-        binary = f"{opcode}_{rs}_{rt}_{bimmediate}"
+        binary = f"{opcode}{rs}{rt}{bimmediate}"
 
     return binary
+
 
 def j_instr(instr, args):
 
@@ -147,19 +150,19 @@ def j_instr(instr, args):
 
     if opcode == INSTRUCTIONS['jalr'][1]:
         rs = bin(int(args) & 0b11111)[2:].zfill(5)
-        binary = f"000000_{rs}_00000_11111_00000_{opcode}"
+        binary = f"000000{rs}000001111100000{opcode}"
     else:
         rs = bin(int(args) & 0b11111)[2:].zfill(5)
-        binary = f"000000_{rs}_000000000000000_{opcode}"
+        binary = f"000000{rs}000000000000000{opcode}"
       
     return binary
 
 
-def main():
+def create_raw_file(asm_file, output_bin_file):
     # Open the input file for reading
-    with open('input.asm', 'r') as f:
+    with open(asm_file, 'r') as f:
         # Open the output file for writing
-        with open('output.bin', 'w') as out:
+        with open(output_bin_file, 'w') as out:
             # Loop through each line in the input file
             count = 1
             for line in f:
@@ -170,26 +173,32 @@ def main():
 
                 # If the line is not empty
                 if parts:
-                    # Get the binary code for the instruction
-                    instr_type = INSTRUCTIONS[parts[0]][0]
-                    
-                    print(str(count) + ": instr: " + str(line))
 
-                    if (instr_type == 'r'):
-                        binary = r_instr(parts[0], parts[1])
+                    if (parts[0] == 'nop'):
+                        # print(str(count) + ": instr: " + str(line))
+                        binary = f"00000000000000000000000000000000"
+                        out.write( binary + '\n' )
+                        count += 1
 
-                    elif (instr_type == 'i'):
-                        binary = i_instr(parts[0], parts[1])
-                    
-                    elif (instr_type == 'j'):
-                        binary = j_instr(parts[0], parts[1])
-                    
                     else:
-                        print("error")
+                        # Get the binary code for the instruction
+                        instr_type = INSTRUCTIONS[parts[0]][0]
+                    
+                        # print(str(count) + ": instr: " + str(line))
 
-                    count += 1
+                        if (instr_type == 'r'):
+                            binary = r_instr(parts[0], parts[1])
 
-                    out.write(binary + '\n')
+                        elif (instr_type == 'i'):
+                            binary = i_instr(parts[0], parts[1])
 
-if __name__ == "__main__":
-    main()
+                        elif (instr_type == 'j'):
+                            binary = j_instr(parts[0], parts[1])
+
+                        else:
+                            print("error")
+
+                        out.write( binary + '\n')
+                        count += 1
+
+            out.write(f"11111111111111111111111111111111")
