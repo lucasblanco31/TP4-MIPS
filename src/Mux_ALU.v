@@ -19,18 +19,30 @@ module Mux_ALU
     
     wire    [OBITS-1    :0]     Option_Reg                              ;
     reg     [NBITS-1    :0]     to_ALU                                  ;
-    assign  Option_Reg      =   {i_EX_UnidadCortocircuito, i_ALUSrc}    ;
+    //assign  Option_Reg      =   {i_EX_UnidadCortocircuito, i_ALUSrc}    ;
     assign  o_toALU         =   to_ALU                                  ;
     
     always @(*)
     begin
-        case(Option_Reg)
-        4'b0001:     to_ALU  <=  i_ExtensionData     ;
-        4'b0010:     to_ALU  <=  i_EX_MEM_Operando   ;
-        4'b0011:     to_ALU  <=  i_EX_MEM_Operando   ;
-        4'b0100:     to_ALU  <=  i_MEM_WR_Operando   ;
-        4'b0101:     to_ALU  <=  i_MEM_WR_Operando   ;
-        default:    to_ALU  <=  i_Registro          ;
-        endcase 
+        if(i_ALUSrc)
+            begin
+                to_ALU <= i_ExtensionData;
+            end
+        else
+            begin
+                case(i_EX_UnidadCortocircuito)
+                    3'b001:     to_ALU  <=  i_EX_MEM_Operando   ;
+                    3'b010:     to_ALU  <=  i_MEM_WR_Operando   ;
+                    default:    to_ALU  <=  i_Registro          ;
+                endcase
+            end
+//        case(Option_Reg)
+//        4'b0001:     to_ALU  <=  i_ExtensionData     ;
+//        4'b0010:     to_ALU  <=  i_EX_MEM_Operando   ;
+//        4'b0011:     to_ALU  <=  i_EX_MEM_Operando   ;
+//        4'b0100:     to_ALU  <=  i_MEM_WR_Operando   ;
+//        4'b0101:     to_ALU  <=  i_MEM_WR_Operando   ;
+//        default:    to_ALU  <=  i_Registro          ;
+//        endcase 
     end   
 endmodule

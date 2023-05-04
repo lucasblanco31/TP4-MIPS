@@ -8,6 +8,7 @@ module Etapa_ID_EX
     (
         //GeneralInputs
         input   wire                        i_clk           ,
+        input   wire                        i_reset         ,
         input   wire                        i_Flush         ,
         input   wire    [NBITS-1    :0]     i_PC4           ,
         input   wire    [NBITS-1    :0]     i_PC8           ,
@@ -18,6 +19,7 @@ module Etapa_ID_EX
         input   wire    [RNBITS-1   :0]     i_Rt            ,
         input   wire    [RNBITS-1   :0]     i_Rd            ,
         input   wire    [RNBITS-1   :0]     i_Rs            ,
+        input   wire    [NBITS-1    :0]     i_DJump         ,
 
         ///IControlEX
         input   wire                        i_Jump          ,
@@ -40,6 +42,7 @@ module Etapa_ID_EX
         input   wire                        i_ZeroExtend    ,
         input   wire                        i_LUI           ,
         input   wire                        i_JALR          ,
+        input   wire                        i_HALT          ,
 
 
         //GeneralOutputs
@@ -52,6 +55,7 @@ module Etapa_ID_EX
         output  wire    [RNBITS-1   :0]     o_Rs            ,
         output  wire    [RNBITS-1   :0]     o_Rt            ,
         output  wire    [RNBITS-1   :0]     o_Rd            ,
+        output  wire    [NBITS-1    :0]     o_DJump         ,
 
         ///OControlEX
         output  wire                        o_Jump          ,
@@ -73,7 +77,8 @@ module Etapa_ID_EX
         output  wire   [1           :0]     o_TamanoFiltroL ,
         output  wire                        o_ZeroExtend    ,
         output  wire                        o_LUI           ,
-        output  wire                        o_JALR
+        output  wire                        o_JALR          ,
+        output  wire                        o_HALT
     );
 
     reg     [NBITS-1    :0] PC4_reg             ;
@@ -85,6 +90,7 @@ module Etapa_ID_EX
     reg     [RNBITS-1   :0] Rs_reg              ;
     reg     [RNBITS-1   :0] Rt_reg              ;
     reg     [RNBITS-1   :0] Rd_reg              ;
+    reg     [NBITS-1    :0] DJump_reg           ;
 
     //RegEX
     reg                     Jump_reg            ;
@@ -107,6 +113,7 @@ module Etapa_ID_EX
     reg                     ZeroExtend_reg      ;
     reg                     LUI_reg             ;
     reg                     JALR_reg            ;
+    reg                     HALT_reg            ;
 
 
     assign o_PC4            =   PC4_reg         ;
@@ -118,6 +125,7 @@ module Etapa_ID_EX
     assign o_Rs             =   Rs_reg          ;
     assign o_Rt             =   Rt_reg          ;
     assign o_Rd             =   Rd_reg          ;
+    assign o_DJump          =   DJump_reg       ;
 
     //AssignEX
     assign o_Jump           =   Jump_reg        ;
@@ -140,9 +148,10 @@ module Etapa_ID_EX
     assign o_TamanoFiltroL  =   TamanoFiltroL_reg   ;
     assign o_ZeroExtend     =   ZeroExtend_reg      ;
     assign o_LUI            =   LUI_reg             ;
+    assign o_HALT           =   HALT_reg            ;
 
-    always @(posedge i_clk)
-        if(i_Flush)
+    always @(posedge i_clk, posedge i_reset)
+        if(i_Flush | i_reset)
         begin
             PC4_reg             <=  {NBITS{1'b0}}   ;
             PC8_reg             <=  {NBITS{1'b0}}   ;
@@ -153,6 +162,7 @@ module Etapa_ID_EX
             Rs_reg              <=  {RNBITS{1'b0}}  ;
             Rt_reg              <=  {RNBITS{1'b0}}  ;
             Rd_reg              <=  {RNBITS{1'b0}}  ;
+            DJump_reg           <=  {NBITS{1'b0}}   ;
 
             //EX
             Jump_reg            <=  1'b0            ;
@@ -175,6 +185,7 @@ module Etapa_ID_EX
             TamanoFiltroL_reg   <=  2'b00           ;
             ZeroExtend_reg      <=  1'b0            ;
             LUI_reg             <=  1'b0            ;
+            HALT_reg            <=  1'b0            ;
         end
         else
         begin
@@ -187,6 +198,7 @@ module Etapa_ID_EX
             Rs_reg              <=  i_Rs            ;
             Rt_reg              <=  i_Rt            ;
             Rd_reg              <=  i_Rd            ;
+            DJump_reg           <=  i_DJump         ;
 
             //EX
             Jump_reg            <=  i_Jump          ;
@@ -209,6 +221,7 @@ module Etapa_ID_EX
             TamanoFiltroL_reg   <=  i_TamanoFiltroL ;
             ZeroExtend_reg      <=  i_ZeroExtend    ;
             LUI_reg             <=  i_LUI           ;
+            HALT_reg            <=  i_HALT          ;
         end
 
 endmodule

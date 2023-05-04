@@ -7,6 +7,7 @@ module Etapa_EX_MEM
     )
     (   //GeneralInputs
         input   wire                        i_clk               ,
+        input   wire                        i_reset             ,
         input   wire                        i_Flush             ,
         input   wire    [NBITS-1    :0]     i_PC4               ,
         input   wire    [NBITS-1    :0]     i_PC8               ,        
@@ -32,6 +33,7 @@ module Etapa_EX_MEM
         input   wire    [1          :0]     i_TamanoFiltroL     ,
         input   wire                        i_ZeroExtend        ,
         input   wire                        i_LUI               ,
+        input   wire                        i_HALT              ,
         
         //GeneralOutputs
         output  wire    [NBITS-1    :0]     o_PC4               ,
@@ -57,7 +59,8 @@ module Etapa_EX_MEM
         output  wire                        o_RegWrite          ,
         output  wire   [1          :0]      o_TamanoFiltroL     ,
         output  wire                        o_ZeroExtend        ,
-        output  wire                        o_LUI
+        output  wire                        o_LUI               ,
+        output  wire                        o_HALT
     );
     
     reg     [NBITS-1    :0] PC4_reg             ;
@@ -84,6 +87,7 @@ module Etapa_EX_MEM
     reg     [1          :0] TamanoFiltroL_reg   ;
     reg                     ZeroExtend_reg      ;
     reg                     LUI_reg             ;
+    reg                     HALT_reg            ;
     
     assign o_PC4                =   PC4_reg             ;
     assign o_PC8                =   PC8_reg             ;
@@ -109,9 +113,10 @@ module Etapa_EX_MEM
     assign o_TamanoFiltroL  =   TamanoFiltroL_reg   ;
     assign o_ZeroExtend     =   ZeroExtend_reg      ;
     assign o_LUI            =   LUI_reg             ;
+    assign o_HALT           =   HALT_reg            ;
     
-    always @(posedge i_clk)
-        if(i_Flush)
+    always @(posedge i_clk, posedge i_reset)
+        if(i_Flush | i_reset)
              begin 
                 PC4_reg             <=  {NBITS{1'b0}}           ;
                 PC8_reg             <=  {NBITS{1'b0}}           ;
@@ -137,6 +142,7 @@ module Etapa_EX_MEM
                 TamanoFiltroL_reg   <=  2'b00                   ;
                 ZeroExtend_reg      <=  1'b0                    ;
                 LUI_reg             <=  1'b0                    ;
+                HALT_reg            <=  1'b0                    ;
             end
         else
             begin 
@@ -164,6 +170,7 @@ module Etapa_EX_MEM
                 TamanoFiltroL_reg   <=  i_TamanoFiltroL         ;
                 ZeroExtend_reg      <=  i_ZeroExtend            ;
                 LUI_reg             <=  i_LUI                   ;
+                HALT_reg            <=  i_HALT                  ;
             end
         
 endmodule

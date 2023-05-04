@@ -22,7 +22,10 @@ module tb_full();
     localparam  REGS      =    5;
     
     reg     basys_clk = 0;
-    reg     basys_rst = 0 ;
+    reg     basys_rst = 0;
+    
+    wire     halt ;
+    
     
         
   // Apply reset
@@ -33,7 +36,19 @@ module tb_full();
      end
 
   // Clock generation
-    always #5 basys_clk = ~basys_clk;
+    //always #5 basys_clk = ~basys_clk;
+    
+    always @* 
+    begin
+        forever 
+          begin
+            #5 basys_clk = ~basys_clk;
+            if (halt == 1'b1) 
+            begin
+                $finish;
+            end 
+          end
+    end
     
     Top_MIPS
     #(
@@ -55,7 +70,8 @@ module tb_full();
     u_top
     (
         .basys_clk              (basys_clk            ),
-        .basys_reset            (basys_rst            )   
+        .basys_reset            (basys_rst            ),
+        .mips_halt              (halt                 )   
     );
        
 endmodule

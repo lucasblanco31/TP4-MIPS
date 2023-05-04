@@ -24,6 +24,7 @@ module ID_Mux_Unidad_Riesgos
         input  wire                            i_ZeroExtend     ,
         input  wire                            i_LUI            ,
         input  wire                            i_JALR           ,
+        input  wire                            i_HALT           ,
 
         output  wire                            o_RegDst        ,
         output  wire                            o_Jump          ,
@@ -41,7 +42,8 @@ module ID_Mux_Unidad_Riesgos
         output  wire    [1              :0]     o_TamanoFiltroL ,
         output  wire                            o_ZeroExtend    ,
         output  wire                            o_LUI           ,
-        output  wire                            o_JALR
+        output  wire                            o_JALR          ,
+        output  wire                            o_HALT
     );
 
         reg                            Reg_RegDst        ;
@@ -79,6 +81,7 @@ module ID_Mux_Unidad_Riesgos
         assign o_ZeroExtend     = Reg_ZeroExtend        ;
         assign o_LUI            = Reg_LUI               ;
         assign o_JALR           = Reg_JALR              ;
+        assign o_HALT           = i_HALT                ;
 
         always @(*)
         begin
