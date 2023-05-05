@@ -1,38 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 16.07.2021 15:11:16
-// Design Name: 
-// Module Name: Mux_Memoria
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// 
-//////////////////////////////////////////////////////////////////////////////////
-//LW:   100011  | base  |   RT  |   OFFSET
-//LB:   100000  | base  |   RT  |   OFFSET
-//SW:   101011  |  base |   RT  |   OFFSET
-//ADD:  000000  |   RS  |   RT  |   RD  |   00000   |   100000
-//ADDI: 001000  |   RS  |   RT  |   IMMEDIATE
-//SUB:  000000  |   RS  |   RT  |   RD  |   00000   |   100010
-//SUBU: 000000  |   RS  |   RT  |   RD  |   00000   |   100011
-//AND:  000000  |   RS  |   RT  |   RD  |   00000   |   100100
-//OR:   000000  |   RS  |   RT  |   RD  |   00000   |   100101
-//ORI:  001101  |   RS  |   RT  |   IMMEDIATE
-//NOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100111
-//XOR:  000000  |   RS  |   RT  |   RD  |   00000   |   100110
-//SLT:  000000  |   RS  |   RT  |   RD  |   00000   |   101010
-//SLTI: 001010  |   RS  |   RT  |   IMMEDIATE
-//BEQ:  000100  |   RS  |   RT  |   OFFSET   
-//SLL:  000000  |   000000  |   RT  |   RD  |   SA  |   000000
 
 module Memoria_Instrucciones
     #(
@@ -40,20 +6,29 @@ module Memoria_Instrucciones
         parameter CELDAS    = 160
     )
     (
-        input   wire                    i_clk           ,
-        input   wire                    i_reset         ,
-        input   wire    [NBITS-1  :0]   i_PC            ,
-        output  wire    [NBITS-1  :0]   o_Instruction         
+        input   wire                        i_clk           ,
+        input   wire                        i_reset         ,
+        input   wire    [NBITS-1    :0]     i_PC            ,
+        input   wire    [NBITS-1    :0]     i_DirecDebug    ,
+        input   wire    [NBITS-1    :0]     i_DatoDebug     ,
+        input   wire                        i_WriteDebug    ,
+        output  wire    [NBITS-1    :0]     o_Instruction   ,
+        output  wire    [NBITS-1    :0]     o_DebugInst
     );
     
     reg     [NBITS-1  :0]     instruction;
+    reg     [NBITS-1  :0]     debug_instruction;
     reg     [NBITS-1  :0]     memory[CELDAS-1:0];
-    integer i;
+    integer                   i;
     
     assign o_Instruction = instruction;
+    assign o_DebugInst   = debug_instruction;
     
     initial 
     begin
+        //for (i = 0; i < CELDAS; i = i + 1) begin
+        //        memory[i] = 0;
+        //end
         memory[0]       <=      32'b111111_11111_11111_11111_11111_111111   ;
         memory[4] <= 32'b00000000001000110000000000100000; //add r0,r1,r3
         memory[8] <= 32'b00000000000000100000100000100010; //sub r1,r0,r2
@@ -107,10 +82,21 @@ module Memoria_Instrucciones
             end
         end
     end
-    
+
     always @(*)
     begin
-            instruction <=      memory[i_PC];
+        instruction  <= memory[i_PC];
     end
+
+    always @(i_DirecDebug)
+    begin
+            debug_instruction    <= memory[i_DirecDebug];
+    end
+
+    always @(posedge i_WriteDebug)
+    begin
+            memory[i_DirecDebug] <= i_DatoDebug; // Write the data to the specified address
+    end
+
 endmodule
 

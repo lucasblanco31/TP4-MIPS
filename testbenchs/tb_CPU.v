@@ -49,7 +49,30 @@ module tb_full();
             end 
           end
     end
-    
+
+    //MIPS
+    //#(
+    //    .NBITS              (NBITS          ),
+    //    .NBITSJUMP          (NBITSJUMP      ),
+    //    .INBITS             (INBITS         ),
+    //    .CELDAS_REG         (CELDAS_REG     ),
+    //    .CELDAS_M           (CELDAS_M       ),
+    //    .RS                 (RS             ),
+    //    .RT                 (RT             ),
+    //    .RD                 (RD             ),
+    //    .ALUNBITS           (ALUNBITS       ),
+    //    .ALUCNBITS          (ALUCNBITS      ),
+    //    .ALUOP              (ALUOP          ),
+    //    .BOP                (BOP            ),
+    //    .CTRLNBITS          (CTRLNBITS      ),
+    //    .REGS               (REGS           )
+    //)
+    //u_mips
+    //(
+    //    .clk              (basys_clk            ),
+    //    .reset            (basys_reset          )
+    //);
+
     Top_MIPS
     #(
         .NBITS              (NBITS          ),
