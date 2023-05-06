@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 
+//module MIPS
 module Top_MIPS
     #(
         parameter   NBITS           = 32,
@@ -10,10 +11,8 @@ module Top_MIPS
 
         parameter   CELDAS_REG      = 32,
         parameter   CELDAS_M        = 10,
-
-        parameter   RS              = 5,
-        parameter   RT              = 5,
-        parameter   RD              = 5,
+        parameter   CELDAS_I        = 256, // 64 lugares
+        parameter   BIT_CELDAS_I    = 6,
 
         parameter   ALUNBITS        = 6,
         parameter   ALUCNBITS       = 2,
@@ -29,10 +28,19 @@ module Top_MIPS
         parameter   OPTIONBITS      = 4
     )
     (
-        input   wire                            basys_clk    ,
-        input   wire                            basys_reset  ,
-        output  wire     [13           :0]      mips_status_o,
-        output  wire                            mips_halt
+        input   wire                                basys_clk                   ,
+        input   wire                                basys_reset                 ,
+        input   wire     [REGS-1            :0]     i_mips_reg_debug            ,
+        input   wire     [NBITS-1           :0]     i_mips_mem_debug            ,
+        input   wire     [BIT_CELDAS_I-1    :0]     i_mips_mem_ins_direc_debug  ,
+        input   wire     [NBITS-1           :0]     i_mips_mem_ins_dato_debug   ,
+        input   wire                                i_mips_mem_ins_write_debug  ,
+        output  wire     [11                :0]     o_mips_status               ,
+        output  wire     [NBITS-1           :0]     o_mips_pc                   ,
+        output  wire     [NBITS-1           :0]     o_mips_reg_debug            ,
+        output  wire     [NBITS-1           :0]     o_mips_mem_debug            ,
+        output  wire     [NBITS-1           :0]     o_mips_inst_debug           ,
+        output  wire                                mips_halt
     );
 
     //-----------------------------------------
@@ -43,17 +51,20 @@ module Top_MIPS
     //    IF     *
     //************
     //PC
-    wire    [NBITS-1     :0]        IF_PC_i             ;
-    wire    [NBITS-1     :0]        IF_PC_o             ;
-    wire    [NBITS-1     :0]        IF_PC4_o            ;
-    wire    [NBITS-1     :0]        IF_PC8_o            ;
+    wire    [NBITS-1     :0]        IF_PC_i                 ;
+    wire    [NBITS-1     :0]        IF_PC_o                 ;
+    wire    [NBITS-1     :0]        IF_PC4_o                ;
+    wire    [NBITS-1     :0]        IF_PC8_o                ;
 
 
-    wire    [NBITS-1     :0]        IF_PCBranch_i          ;
+    wire    [NBITS-1     :0]        IF_PCBranch_i           ;
 
 
     //MemoriaInstrucciones
-    wire    [NBITS-1     :0]        IF_Instr_o          ;
+    wire    [NBITS-1     :0]        IF_Instr_o              ;
+    wire    [NBITS-1     :0]        IF_DatoInstrDebug_o     ;
+    wire    [NBITS-1     :0]        IF_DatoInstrDebug_i     ;
+    wire    [NBITS-1     :0]        IF_DirecInstrDebug_i    ;
 
     //////////////
     //   IF_ID  //
@@ -73,7 +84,7 @@ module Top_MIPS
     wire                            RIESGO_IF_ID_Flush  ;
 
     // Unidad Control
-    wire     [CTRLNBITS-1   :0]     ID_InstrControl     ;
+    wire     [CTRLNBITS-1   :0]     ID_InstrControl     ; 
     wire     [CTRLNBITS-1   :0]     ID_InstrSpecial     ;
     wire                            CTRL_RegWrite       ;
     wire                            CTRL_MemToReg       ;
@@ -119,12 +130,14 @@ module Top_MIPS
     wire     [NBITS-1       :0]     ID_Jump_o           ;
 
     //Registros
-    wire     [RS-1        :0]       ID_Reg_rs_i         ;
-    wire     [RD-1        :0]       ID_Reg_rd_i         ;
-    wire     [RT-1        :0]       ID_Reg_rt_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rs_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rd_i         ;
+    wire     [REGS-1      :0]       ID_Reg_rt_i         ;
     wire     [NBITS-1     :0]       ID_DatoLeido1_o     ;
     wire     [NBITS-1     :0]       ID_DatoLeido2_o     ;
+    wire     [NBITS-1     :0]       ID_Reg_Debug_o      ;
     wire     [REGS-1      :0]       ID_RegistroDestino_o;
+
     // Extensor de signo
     wire     [INBITS-1    :0]       ID_Instr16_i        ;
     wire     [NBITS-1     :0]       ID_InstrExt_o       ;
@@ -142,6 +155,7 @@ module Top_MIPS
     wire    [REGS-1         :0]     ID_EX_Rt            ;
     wire    [REGS-1         :0]     ID_EX_Rd            ;
     wire    [NBITS-1        :0]     ID_EX_DJump         ;
+
     //ID/EX/CONTROL
     wire                            ID_EX_CTRL_ALUSrc        ;
     wire                            ID_EX_CTRL_Jump          ;
@@ -190,7 +204,7 @@ module Top_MIPS
     wire     [NBITS-1       :0]     EX_SumPcBranch_o    ;
 
     //MultiplexorRegistro
-    wire     [RD-1          :0]     EX_Mux_Reg_rd_o         ;
+    wire     [REGS-1        :0]     EX_Mux_Reg_rd_o         ;
 
 
     //UnidadCortocircuito
@@ -231,7 +245,7 @@ module Top_MIPS
 
     //Memoria de datos
     wire    [NBITS-1        :0]     MEM_DatoMemoria_o         ;
-
+    wire    [NBITS-1        :0]     MEM_DatoMemoriaDebug_o    ; 
 
     ///////////////
     //   MEM_WB  //
@@ -276,24 +290,34 @@ module Top_MIPS
     assign ID_InstrSpecial     =    IF_ID_Instr     [CTRLNBITS-1    :0              ]   ;
     assign ID_Jump_i           =    IF_ID_Instr     [NBITSJUMP-1     :0              ]  ;
 
+    //Memoria de instrucciones
+    assign IF_DirecInstrDebug_i =   i_mips_mem_ins_direc_debug  ;
+    assign IF_DatoInstrDebug_i  =   i_mips_mem_ins_dato_debug   ;
+    assign IF_WriteInstrDebug_i =   i_mips_mem_ins_write_debug  ;
+    assign IF_DatoInstrDebug_o  =   o_mips_inst_debug           ;
+
     // EX
     // ALU Control
     assign EX_AluCtrlInstr_i   =    ID_EX_Extension [ALUNBITS-1     :0              ]   ;
-    assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :RS+RT+INBITS   ]   ;
+    assign EX_AluCtrlOpcode_i  =    ID_EX_Instr     [NBITS-1        :REGS+REGS+INBITS   ]   ;
     //SumadorJump
     //assign EX_Jump_i           =    ID_EX_Instr    [NBITSJUMP-1     :0              ]   ;
     assign EX_AluShamtInstr_i  =    ID_EX_Instr    [10              :6              ]   ;
     //Registros
-    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+RT+RS-1  :INBITS+RT      ]   ; //INBITS+RT+RS-1=16+5+5-1=25; INBITS+RT=16+5=21; [25-21]
-    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+RT-1     :INBITS         ]   ; //INBITS+RT-1=16+5-1=20; INBITS=16; [20-16]
-    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-RD      ]   ; //INBITS-1=16-1=15; INBITS-RD=16-5=11; [15-11]
-
+    assign ID_Reg_rs_i         =    IF_ID_Instr    [INBITS+REGS+REGS-1  :INBITS+REGS      ]   ; //INBITS+RT+RS-1=16+5+5-1=25; INBITS+RT=16+5=21; [25-21]
+    assign ID_Reg_rt_i         =    IF_ID_Instr    [INBITS+REGS-1     :INBITS         ]   ; //INBITS+RT-1=16+5-1=20; INBITS=16; [20-16]
+    assign ID_Reg_rd_i         =    IF_ID_Instr    [INBITS-1        :INBITS-REGS      ]   ; //INBITS-1=16-1=15; INBITS-RD=16-5=11; [15-11]
+    assign ID_Reg_Debug_o      =    o_mips_reg_debug;
+    
+    //Memoria de datos
+    assign MEM_DatoMemoriaDebug_o      =    o_mips_mem_debug;    
+    
     //Extensor
     assign ID_Instr16_i        =   IF_ID_Instr     [INBITS-1        :0              ]   ;
 
     // OUTPUT
 
-    assign mips_status_o = {
+    assign o_mips_status = {
     ID_EX_CTRL_ALUOp[1],
     ID_EX_CTRL_ALUOp[0],
     ID_EX_CTRL_ALUSrc,
@@ -309,8 +333,8 @@ module Top_MIPS
     ID_EX_CTRL_ZeroExtend,
     ID_EX_CTRL_LUI
     };
-    
-    assign mips_halt = MEM_WB_HALT ;
+    assign o_mips_pc = IF_PC_o      ;
+    assign mips_halt = MEM_WB_HALT  ;
     //////////////////////////////////////////////
     /// MULTIPLEXOR BRANCH/JUMP PC
     /////////////////////////////////////////////
@@ -353,15 +377,19 @@ module Top_MIPS
     /////////////////////////////////////////////
     Memoria_Instrucciones
     #(
-        .NBITS              (NBITS          ),
-        .CELDAS             (160            )
+        .NBITS              (NBITS                  ),
+        .CELDAS             (CELDAS_I               )
     )
     u_Memoria_Instrucciones
     (
-        .i_clk              (basys_clk      ),
-        .i_reset            (basys_reset    ),
-        .i_PC               (IF_PC_o        ),
-        .o_Instruction      (IF_Instr_o     )
+        .i_clk              (basys_clk              ),
+        .i_reset            (basys_reset            ),
+        .i_PC               (IF_PC_o                ),
+        .i_DirecDebug       (IF_DirecInstrDebug_i   ),
+        .i_DatoDebug        (IF_DatoInstrDebug_i    ),
+        .i_WriteDebug       (IF_WriteInstrDebug_i   ),
+        .o_Instruction      (IF_Instr_o             ),
+        .o_DebugInst        (IF_DatoInstrDebug_o    )
     );
 
     //********************************************
@@ -520,9 +548,6 @@ module Top_MIPS
     #(
         .REGS               (REGS                       ),
         .NBITS              (NBITS                      ),
-        .RS                 (RS                         ),
-        .RD                 (RD                         ),
-        .RT                 (RT                         ),
         .CELDAS             (CELDAS_REG                 )
     )
     u_Registros
@@ -532,12 +557,14 @@ module Top_MIPS
         .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (ID_Reg_rs_i               ),
         .i_RT                (ID_Reg_rt_i               ),
+        .i_RegDebug          (i_mips_reg_debug          ),
         //.i_RD                (MEM_WB_RegistroDestino    ),
         .i_RD                (WB_RegistroDestino_o      ),
         .i_DatoEscritura     (WB_EscribirDato_o         ),
 
         .o_RS                (ID_DatoLeido1_o           ),
-        .o_RT                (ID_DatoLeido2_o           )
+        .o_RT                (ID_DatoLeido2_o           ),
+        .o_RegDebug          (ID_Reg_Debug_o            )
 
     );
     //////////////////////////////////////////////
@@ -877,13 +904,15 @@ module Top_MIPS
     )
     u_Memoria_Datos
     (
-        .i_clk                      (basys_clk          ),
-        .i_reset                    (basys_reset        ),
-        .i_ALUDireccion             (EX_MEM_ALU         ),
-        .i_DatoRegistro             (MEM_DatoFiltradoS_o ),
-        .i_MemRead                  (EX_MEM_MemRead     ),
-        .i_MemWrite                 (EX_MEM_MemWrite    ),
-        .o_DatoLeido                (MEM_DatoMemoria_o  )
+        .i_clk                      (basys_clk              ),
+        .i_reset                    (basys_reset            ),
+        .i_ALUDireccion             (EX_MEM_ALU             ),
+        .i_DebugDireccion           (i_mips_mem_debug       ),
+        .i_DatoRegistro             (MEM_DatoFiltradoS_o    ),
+        .i_MemRead                  (EX_MEM_MemRead         ),
+        .i_MemWrite                 (EX_MEM_MemWrite        ),
+        .o_DatoLeido                (MEM_DatoMemoria_o      ),
+        .o_DebugDato                (MEM_DatoMemoriaDebug_o )
     );
     //////////////////////////////////////////////
     /// MEM/WB
