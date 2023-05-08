@@ -31,17 +31,6 @@ module Memoria_Datos
                 memory[i] = i*2;
         end
         debug_dato  =  0;
-        //memory[0]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0000 ;
-        //memory[1]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0001 ;
-        //memory[2]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0010 ;
-        //memory[3]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0011 ;
-        //memory[4]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0100 ;
-        //memory[5]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0101 ;
-        //memory[6]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0110 ;
-        //memory[7]       <=      32'b0000_0000_0000_0000_0000_0000_0000_0111 ;
-        //memory[8]       <=      32'b0000_0000_0000_0000_0000_0000_0000_1000 ;
-        //memory[9]       <=      32'b0000_0000_0000_0000_0000_0000_0000_1011 ;
-        //instruction     <=      32'b0000_0000_0000_0000_0000_0000_0000_1011 ;
     end
     
     always @(posedge i_reset)
@@ -53,6 +42,7 @@ module Memoria_Datos
                 memory[i] <= i;
             end
             dato         <=      {NBITS{1'b0}}    ;
+            debug_dato   <=      {NBITS{1'b0}}    ;
         end
     end
 
@@ -61,7 +51,6 @@ module Memoria_Datos
         debug_dato                  <=  memory[i_DebugDireccion];
     end
 
-    //always @(posedge i_clk)
     always @(*)
     begin
         if (i_MemRead)
