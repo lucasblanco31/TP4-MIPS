@@ -27,36 +27,38 @@ module Memoria_Datos
     
     initial 
     begin
-        for (i = 1; i <= CELDAS; i = i + 1) begin
-                memory[i] = i*2;
+        for (i = 0; i < CELDAS-1; i = i + 1) begin
+                memory[i] <= i;
         end
-        debug_dato  =  0;
+        debug_dato  <=  0;
     end
     
-    always @(posedge i_reset)
-    begin
-        if(i_reset)
-        begin
-            for (i = 0; i < CELDAS-1; i = i + 1) 
-            begin
-                memory[i] <= i;
-            end
-            dato         <=      {NBITS{1'b0}}    ;
-            debug_dato   <=      {NBITS{1'b0}}    ;
-        end
-    end
+//    always @(posedge i_reset)
+//    begin
+//        if(i_reset)
+//        begin
+//            for (i = 0; i < CELDAS-1; i = i + 1) 
+//            begin
+//                memory[i] <= i;
+//            end
+//            dato         <=      {NBITS{1'b0}}    ;
+//            debug_dato   <=      {NBITS{1'b0}}    ;
+//        end
+//    end
 
     always @(i_DebugDireccion)
     begin
         debug_dato                  <=  memory[i_DebugDireccion];
     end
 
-    always @(*)
+    always @(posedge i_clk)
     begin
         if (i_MemRead)
         begin   
             dato                    <=  memory[i_ALUDireccion];
-        end 
+        end else begin
+            dato <= dato;
+        end
     end
 
     always @(negedge i_clk)

@@ -3,7 +3,7 @@
 module Memoria_Instrucciones
     #(
         parameter NBITS     = 32    ,
-        parameter CELDAS    = 160
+        parameter CELDAS    = 256
     )
     (
         input   wire                        i_clk           ,
@@ -30,17 +30,6 @@ module Memoria_Instrucciones
             memory[i] = 0;
         end  
     end
-    
-    always @(posedge i_reset)
-    begin
-        if(i_reset)
-        begin
-            for (i = 0; i < CELDAS-1; i = i + 1) 
-            begin
-                memory[i] = {NBITS{1'b0}};
-            end
-        end
-    end
 
     always @(*)
     begin
@@ -48,7 +37,7 @@ module Memoria_Instrucciones
     end
 
     // Devuelve a la unidad de debug la instruccion solicitada
-    always @(i_DirecDebug) 
+    always @(i_DirecDebug)
     begin
             debug_instruction    <= memory[i_DirecDebug];
     end

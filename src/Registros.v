@@ -23,11 +23,12 @@ module Registros
     reg     [NBITS-1    :0]     memory[CELDAS-1:0]  ;
     reg     [NBITS-1    :0]     Reg_RS              ;
     reg     [NBITS-1    :0]     Reg_RT              ;
+    reg     [NBITS-1    :0]     Reg_Debug           ;
     integer                     i                   ;
     
-    assign o_RS = Reg_RS;
-    assign o_RT = Reg_RT;
-    assign o_RegDebug = Reg_Debug;
+    assign o_RS         = Reg_RS;
+    assign o_RT         = Reg_RT;
+    assign o_RegDebug   = Reg_Debug;
     
     initial
     begin
@@ -36,30 +37,21 @@ module Registros
         end
     end
     
-    always @(posedge i_reset)
-    begin
-        if(i_reset) 
-        begin
-            Reg_RS         <=   {NBITS{1'b0}}   ;
-            Reg_RT         <=   {NBITS{1'b0}}   ;
-            o_RegDebug     <=   {NBITS{1'b0}}   ;
-            for (i = 0; i < CELDAS-1; i = i + 1) 
-            begin
-                memory[i] <= i;
-            end
-        end
-    end
 
     always @(*)
     begin
-            Reg_RS      <=  memory[i_RS]        ;
-            Reg_RT      <=  memory[i_RT]        ;
-            Reg_Debug   <=  memory[i_RegDebug]  ;
+        Reg_RS      <=  memory[i_RS]        ;
+        Reg_RT      <=  memory[i_RT]        ;
+        Reg_Debug   <=  memory[i_RegDebug]  ;
     end
 
     always @(negedge i_clk)
     begin
-        if(i_RegWrite)
+        if(i_reset) begin
+            for (i = 0; i < CELDAS; i = i + 1) begin
+                memory[i] <= 0;
+            end
+        end else if(i_RegWrite)
         begin
             memory[i_RD] <= i_DatoEscritura ;
         end

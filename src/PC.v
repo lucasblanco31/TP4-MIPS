@@ -19,20 +19,16 @@ module PC
     assign  o_PC     =   PC_Reg     ;       
     assign  o_PC_4   =   PC_Reg + 4 ;
     assign  o_PC_8   =   PC_Reg + 8 ;        
-       
-    always @(posedge i_reset)
-    begin
-        if(i_reset) 
-            begin
-                PC_Reg          <=      {NBITS{1'b0}}    ;
-            end
-    end
+      
 
     always @(negedge i_clk)
     begin
-        if(i_PC_Write)
+        if(i_reset)
+        begin
+            PC_Reg          <=      {NBITS{1'b0}}    ;
+        end else if(i_PC_Write)
         begin
                 PC_Reg          <=      i_NPC           ;
-        end
+        end 
     end
 endmodule
