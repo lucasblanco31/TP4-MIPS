@@ -1,5 +1,6 @@
 def print_mips_data(response, mem_count, reg_count, inst_count):
     if response:
+        print(len(response))
         # Gather 32bit words from the response
         words = [response[i:i+4] for i in range(0, len(response), 4)]
         # Extract program counter, clock count, registers, and memory
