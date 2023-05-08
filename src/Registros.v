@@ -42,6 +42,7 @@ module Registros
         begin
             Reg_RS         <=   {NBITS{1'b0}}   ;
             Reg_RT         <=   {NBITS{1'b0}}   ;
+            o_RegDebug     <=   {NBITS{1'b0}}   ;
             for (i = 0; i < CELDAS-1; i = i + 1) 
             begin
                 memory[i] <= i;
