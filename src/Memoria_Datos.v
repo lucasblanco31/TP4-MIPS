@@ -51,7 +51,7 @@ module Memoria_Datos
         debug_dato                  <=  memory[i_DebugDireccion];
     end
 
-    always @(posedge i_clk)
+    always @(*)
     begin
         if (i_MemRead)
         begin   
