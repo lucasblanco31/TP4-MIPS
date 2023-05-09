@@ -149,10 +149,12 @@ def j_instr(instr, args):
     opcode = INSTRUCTIONS[instr][1]
 
     if opcode == INSTRUCTIONS['jalr'][1]:
-        rs = bin(int(args) & 0b11111)[2:].zfill(5)
+        rs = REGISTERS[args]
+        ##rs = bin(int(args) & 0b11111)[2:].zfill(5)
         binary = f"000000{rs}000001111100000{opcode}"
     else:
-        rs = bin(int(args) & 0b11111)[2:].zfill(5)
+        rs = REGISTERS[args]
+        ##rs = bin(int(args) & 0b11111)[2:].zfill(5)
         binary = f"000000{rs}000000000000000{opcode}"
       
     return binary
