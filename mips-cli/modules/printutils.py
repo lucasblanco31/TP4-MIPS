@@ -1,6 +1,5 @@
-def print_mips_data(response, mem_count, reg_count, inst_count):
+def print_mips_data(response, mem_count, reg_count):
     if response:
-        print(len(response))
         # Gather 32bit words from the response
         words = [response[i:i+4] for i in range(0, len(response), 4)]
         # Extract program counter, clock count, registers, and memory
@@ -15,11 +14,6 @@ def print_mips_data(response, mem_count, reg_count, inst_count):
         for i in range(0, 16):
             memory.append(
                 ' '.join([format(byte, '08b') for byte in words[i+34]]))
-
-        instruction = []
-        for i in range(0, 64):
-            instruction.append(
-                ' '.join([format(byte, '08b') for byte in words[i+50]]))
 
         # Print the extracted information
         print(
@@ -37,6 +31,16 @@ def print_mips_data(response, mem_count, reg_count, inst_count):
             for i in range(mem_count):
                 print(
                     f"{i}:  {memory[i]} -> {int(memory[i].replace(' ',''), 2)}")
+
+
+def print_instructions(response, inst_count):
+    if response:
+        # Gather 32bit words from the response
+        words = [response[i:i+4] for i in range(0, len(response), 4)]
+        instruction = []
+        for i in range(0, 64):
+            instruction.append(
+                ' '.join([format(byte, '08b') for byte in words[i+50]]))
 
         if (inst_count > 0):
             print("\nINSTRUCTION MEMORY:")

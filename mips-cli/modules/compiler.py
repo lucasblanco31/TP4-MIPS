@@ -162,11 +162,11 @@ def j_instr(instr, args):
 
 def create_raw_file(asm_file, output_bin_file):
     # Open the input file for reading
+    count = 1
     with open(asm_file, 'r') as f:
         # Open the output file for writing
         with open(output_bin_file, 'w') as out:
             # Loop through each line in the input file
-            count = 1
             for line in f:
                 # Split the line into its individual parts
                 parts = line.strip().split(' ')
@@ -177,7 +177,6 @@ def create_raw_file(asm_file, output_bin_file):
                 if parts:
 
                     if (parts[0] == 'nop'):
-                        # print(str(count) + ": instr: " + str(line))
                         binary = f"00000000000000000000000000000000"
                         out.write( binary + '\n' )
                         count += 1
@@ -186,7 +185,6 @@ def create_raw_file(asm_file, output_bin_file):
                         # Get the binary code for the instruction
                         instr_type = INSTRUCTIONS[parts[0]][0]
                     
-                        # print(str(count) + ": instr: " + str(line))
 
                         if (instr_type == 'r'):
                             binary = r_instr(parts[0], parts[1])
@@ -204,3 +202,4 @@ def create_raw_file(asm_file, output_bin_file):
                         count += 1
 
             out.write(f"11111111111111111111111111111111")
+    return count

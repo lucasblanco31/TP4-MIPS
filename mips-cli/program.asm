@@ -23,3 +23,16 @@ andi r7,r3,10
 srl r4,r5,2
 nor r4,r1,r1
 ori r1,r0,112
+jalr r1
+or r4,r2,r3
+lwu r4,1(r2)
+xori r3,r2,19
+slt r1,r2,r3
+nop
+xori r1,r0,144
+jr r1
+lui r1,28
+sll r1,r2,8
+slti r3,r0,1
+srav r4,r5,r0
+sra r1,r3,7

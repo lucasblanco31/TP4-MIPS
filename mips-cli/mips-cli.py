@@ -14,8 +14,6 @@ parser.add_argument(
 parser.add_argument(
     '-r', '--flag_r', type=int, help='RegisterMem cells to show', default=32)
 parser.add_argument(
-    '-i', '--flag_i', type=int, help='InstructionMem cells to show', default=0)
-parser.add_argument(
     '-f', '--flag_file', type=str, help='ASM program to load', default='program.bin')
 parser.add_argument(
     '-p', '--flag_serial', type=str, help='Serial port', default='/dev/ttyUSB1')
@@ -27,10 +25,10 @@ args = parser.parse_args()
 # Access the values of the flags
 m_value = args.flag_m
 r_value = args.flag_r
-i_value = args.flag_i
 file = args.flag_file
 file_bin = os.path.splitext(file)[0] + ".bin"
 serial_port = args.flag_serial
+
 
 
 def print_help():
@@ -51,14 +49,17 @@ def main():
     print(
         f"Program file: {file} - SerialPort: {serial_port} - SerialConfig: 9600-8-N-1")
     # Creates a file with instructions as binary
-    compiler.create_raw_file(file, file_bin)
+    ins_count = compiler.create_raw_file(file, file_bin)
     # Load the program to the board
     uartutils.load_program(file_bin, ser)
+
+
 
     while True:
         # Print prompt - ask user for input
         if (mode == 'IDLE'):
             send_char = input("Enter a character to send over serial port: ")
+            print_ins = True
             if (send_char == 'h'):  # Print available commands
                 print_help()
             elif (send_char == 's'):  # Enter step mode
@@ -79,12 +80,22 @@ def main():
                 send_char = input("Step Mode - press n for a new step ")
                 if (send_char == 'n'):
                     ser.write(send_char.encode())
-                    printutils.print_mips_data(
-                        uartutils.receive_data(ser, 114), m_value, r_value, i_value)
+                    data_received = uartutils.receive_data(ser, 114)
+                    if(print_ins):
+                        printutils.print_instructions(data_received, ins_count)
+                        print_ins = False
+                    print("--------------------------------------------------------")
+                    printutils.print_mips_data( data_received, m_value, r_value)
 
             sys.exit()
         elif (mode == 'CONTINUOUS'):
             print("MIPS Processor Continuous Mode")
+            send_char == 'r'
+            ser.write(send_char.encode())
+            data_received = uartutils.receive_data(ser, 114)
+            printutils.print_instructions(data_received,ins_count )
+            printutils.print_mips_data(data_received , m_value, r_value)
+            mode = 'IDLE'
 
 
 if __name__ == "__main__":
