@@ -111,14 +111,14 @@ def print_mips_data(response, mem_count, reg_count):
                     f"{i}:  {memory[i]} -> {int(memory[i].replace(' ',''), 2)}")
 
 
-def print_instructions(response, inst_count):
+def print_instructions(response, inst_count, offset = 50):
     if response:
         # Gather 32bit data from the response
         data = [response[i:i+4] for i in range(0, len(response), 4)]
         instruction = []
-        for i in range(0, 64):
+        for i in range(0, inst_count):
             instruction.append(
-                ' '.join([format(byte, '08b') for byte in data[i+50]]))
+                ' '.join([format(byte, '08b') for byte in data[i+offset]]))
 
         if (inst_count > 0):
             print("\n\033[33mINSTRUCTION MEMORY:\033[0m")

@@ -81,14 +81,11 @@ def main():
                 send_char = input("Step Mode - press n for a new step ")
                 if (send_char == 'n'):
                     ser.write(send_char.encode())
-                    data_received, err = uartutils.receive_data(ser, 114)
+                    data_received, err = uartutils.receive_data(ser, 50)
                     if(err == 1):
                         mode = 'IDLE'
                         break
                     else:
-                        if(print_ins):
-                            printutils.print_instructions(data_received, ins_count)
-                            print_ins = False
                         print("--------------------------------------------------------")
                         printutils.print_mips_data_dif( data_received, previous_data, m_value, r_value)
                         previous_data = data_received
@@ -98,8 +95,7 @@ def main():
             print("\033[33mMIPS Processor Continuous Mode\033[0m")
             send_char == 'r'
             ser.write(send_char.encode())
-            data_received, err = uartutils.receive_data(ser, 114)
-            printutils.print_instructions(data_received,ins_count )
+            data_received, err = uartutils.receive_data(ser, 50)
             printutils.print_mips_data(data_received , m_value, r_value)
             mode = 'IDLE'
 

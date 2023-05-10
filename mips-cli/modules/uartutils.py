@@ -5,14 +5,14 @@ def load_program(program_file, serial):
     # Send l to start write the memory
     print('Loading...')
     serial.write('l'.encode())
-    time.sleep(0.2)
+    time.sleep(0.1)
     with open(program_file, 'rb') as file:
         data = file.read().replace(b'\n', b'')
         num_byte = []
         for i in range(int(len(data)/8)):
             num = int(data[i*8:(i+1)*8], 2).to_bytes(1, byteorder='big')
             serial.write(num)
-            time.sleep(0.2)
+            time.sleep(0.05)
         try:
             out_file = open("./output_code.hex", "wb")
             out_file.write((''.join(chr(i) for i in num_byte)).encode('charmap'))
