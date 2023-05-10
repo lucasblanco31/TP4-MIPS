@@ -24,7 +24,7 @@ module Etapa_MEM_WB
         input   wire                        i_ZeroExtend        , 
         input   wire                        i_LUI               ,
         input   wire                        i_JAL               ,     
-        output  wire                        i_HALT              , 
+        input   wire                        i_HALT              , 
         
         //GeneralOutput
         output  wire    [NBITS-1    :0]     o_PC4               ,
