@@ -27,7 +27,7 @@ module Etapa_IF_ID
     assign o_PC8            =   PC8_reg         ;
     assign o_Instruction    =   Instruction_reg ;
            
-    always @(posedge i_clk, posedge i_reset)
+    always @(posedge i_clk)
         //if(i_IF_ID_Flush | i_reset)
         if( i_reset)
         begin
