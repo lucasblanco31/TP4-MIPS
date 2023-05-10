@@ -1,3 +1,4 @@
+nop
 add r0,r1,r3
 sub r1,r0,r2
 xor r1,r2,r3
@@ -6,13 +7,13 @@ sw r2,4(r3)
 sllv r5,r1,r3
 srlv r5,r1,r3
 j 11
-sra r1,r2,1
+sra r1,r2,2
 addu r1,r2,r3
 subu r1,r2,r3
 lw r6,1(r8)
 and r1,r0,r6
 beq r3,r3,3
-sb r4,1(r2)
+sb r4,6(r2)
 lbu r5,1(r2)
 lhu r6,1(r2)
 lh r1,1(r2)

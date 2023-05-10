@@ -45,9 +45,9 @@ def main():
     ser = serial.Serial(serial_port, 9600)
     mode = 'IDLE'
 
-    print("MIPS PROCESSORS DEBUG UNIT\n")
+    print("\033[33mMIPS PROCESSORS DEBUG UNIT\033[0m\n")
     print(
-        f"Program file: {file} - SerialPort: {serial_port} - SerialConfig: 9600-8-N-1")
+        f"\033[36mProgram file: {file} - SerialPort: {serial_port} - SerialConfig: 9600-8-N-1\033[0m")
     # Creates a file with instructions as binary
     ins_count = compiler.create_raw_file(file, file_bin)
     # Load the program to the board
@@ -60,6 +60,7 @@ def main():
         if (mode == 'IDLE'):
             send_char = input("Enter a character to send over serial port: ")
             print_ins = True
+            previous_data = 0;
             if (send_char == 'h'):  # Print available commands
                 print_help()
             elif (send_char == 's'):  # Enter step mode
@@ -74,25 +75,30 @@ def main():
                 print("[ERROR] Press h to get the accepted commands")
         elif (mode == 'STEP'):
             print(
-                "MIPS Processor Step Mode")
+                "\033[33mMIPS Processor Step Mode\033[0m")
             # Send 'n' to execute a new step in step mode
             while (send_char != 'q'):
                 send_char = input("Step Mode - press n for a new step ")
                 if (send_char == 'n'):
                     ser.write(send_char.encode())
-                    data_received = uartutils.receive_data(ser, 114)
-                    if(print_ins):
-                        printutils.print_instructions(data_received, ins_count)
-                        print_ins = False
-                    print("--------------------------------------------------------")
-                    printutils.print_mips_data( data_received, m_value, r_value)
+                    data_received, err = uartutils.receive_data(ser, 114)
+                    if(err == 1):
+                        mode = 'IDLE'
+                        break
+                    else:
+                        if(print_ins):
+                            printutils.print_instructions(data_received, ins_count)
+                            print_ins = False
+                        print("--------------------------------------------------------")
+                        printutils.print_mips_data_dif( data_received, previous_data, m_value, r_value)
+                        previous_data = data_received
 
             sys.exit()
         elif (mode == 'CONTINUOUS'):
-            print("MIPS Processor Continuous Mode")
+            print("\033[33mMIPS Processor Continuous Mode\033[0m")
             send_char == 'r'
             ser.write(send_char.encode())
-            data_received = uartutils.receive_data(ser, 114)
+            data_received, err = uartutils.receive_data(ser, 114)
             printutils.print_instructions(data_received,ins_count )
             printutils.print_mips_data(data_received , m_value, r_value)
             mode = 'IDLE'
