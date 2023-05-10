@@ -21,7 +21,7 @@ module PC
     assign  o_PC_8   =   PC_Reg + 8 ;        
       
 
-    always @(negedge i_clk)
+    always @(negedge i_clk, posedge i_reset)
     begin
         if(i_reset)
         begin
