@@ -33,6 +33,6 @@ def receive_data(serial, n):
         else:
             time.sleep(0.1)  # Wait for more data
             error += 1
-            if(error == 50):
+            if(error == 5):
                 return response, 1
     return response, 0
