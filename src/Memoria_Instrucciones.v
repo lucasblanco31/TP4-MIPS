@@ -3,7 +3,7 @@
 module Memoria_Instrucciones
     #(
         parameter NBITS     = 32    ,
-        parameter CELDAS    = 160
+        parameter CELDAS    = 256
     )
     (
         input   wire                        i_clk           ,
@@ -12,17 +12,12 @@ module Memoria_Instrucciones
         input   wire    [NBITS-1    :0]     i_DirecDebug    ,
         input   wire    [NBITS-1    :0]     i_DatoDebug     ,
         input   wire                        i_WriteDebug    ,
-        output  wire    [NBITS-1    :0]     o_Instruction   ,
-        output  wire    [NBITS-1    :0]     o_DebugInst
+        output  reg     [NBITS-1    :0]     o_Instruction   
     );
     
-    reg     [NBITS-1  :0]     instruction;
-    reg     [NBITS-1  :0]     debug_instruction;
     reg     [NBITS-1  :0]     memory[CELDAS-1:0];
     integer                   i;
-    
-    assign o_Instruction = instruction;
-    assign o_DebugInst   = debug_instruction;
+
     
     initial 
     begin
@@ -30,27 +25,54 @@ module Memoria_Instrucciones
             memory[i] = 0;
         end  
     end
-    
-    always @(posedge i_reset)
-    begin
-        if(i_reset)
-        begin
-            for (i = 0; i < CELDAS-1; i = i + 1) 
-            begin
-                memory[i] = {NBITS{1'b0}};
-            end
-        end
-    end
+
+//    initial
+//    begin
+//        memory[0] <= 32'b00000000000000000000000000000000 ;
+//        memory[4] <= 32'b00000000001000110000000000100000 ;
+//        memory[8] <= 32'b00000000000000100000100000100010 ;
+//        memory[12] <= 32'b00000000010000110000100000100110 ;
+//        memory[16] <= 32'b10000000010001000000000000000001 ;
+//        memory[20] <= 32'b10101100011000100000000000000100 ;
+//        memory[24] <= 32'b00000000011000010010100000000100 ;
+//        memory[28] <= 32'b00000000011000010010100000000110 ;
+//        memory[32] <= 32'b00001000000000000000000000001011 ;
+//        memory[36] <= 32'b00000000000000100000100010000011 ;
+//        memory[40] <= 32'b00000000010000110000100000100001 ;
+//        memory[44] <= 32'b00000000010000110000100000100011 ;
+//        memory[48] <= 32'b10001101000001100000000000000001 ;
+//        memory[52] <= 32'b00000000000001100000100000100100 ;
+//        memory[56] <= 32'b00010000011000110000000000000011 ;
+//        memory[60] <= 32'b10100000010001000000000000000110 ;
+//        memory[64] <= 32'b10010000010001010000000000000001 ;
+//        memory[68] <= 32'b10010100010001100000000000000001 ;
+//        memory[72] <= 32'b10000100010000010000000000000001 ;
+//        memory[76] <= 32'b10100100010000110000000000000010 ;
+//        memory[80] <= 32'b00010100001000010000000000000101 ;
+//        memory[84] <= 32'b00001100000000000000000000011000 ;
+//        memory[88] <= 32'b00110000011001110000000000001010 ;
+//        memory[92] <= 32'b00000000000001010010000010000010 ;
+//        memory[96] <= 32'b00000000001000010010000000100111 ;
+//        memory[100] <= 32'b00110100000000010000000001110000 ;
+//        memory[104] <= 32'b00000000001000001111100000001001 ;
+//        memory[108] <= 32'b00000000010000110010000000100101 ;
+//        memory[112] <= 32'b10011100010001000000000000000001 ;
+//        memory[116] <= 32'b00111000010000110000000000010011 ;
+//        memory[120] <= 32'b00000000010000110000100000101010 ;
+//        memory[124] <= 32'b00000000000000000000000000000000 ;
+//        memory[128] <= 32'b00111000000000010000000010010000 ;
+//        memory[132] <= 32'b00000000001000000000000000001000 ;
+//        memory[136] <= 32'b00111100000000010000000000011100 ;
+//        memory[140] <= 32'b00000000000000100000101000000000 ;
+//        memory[144] <= 32'b00101000000000110000000000000001 ;
+//        memory[148] <= 32'b00000000000001010010000000000111 ;
+//        memory[152] <= 32'b00000000000000110000100111000011 ;
+//        memory[156] <= 32'b11111111111111111111111111111111 ;
+//    end
 
     always @(*)
     begin
-        instruction  <= memory[i_PC];
-    end
-
-    // Devuelve a la unidad de debug la instruccion solicitada
-    always @(i_DirecDebug) 
-    begin
-            debug_instruction    <= memory[i_DirecDebug];
+        o_Instruction  <= memory[i_PC];
     end
 
     // Escribe dato enviado por unidad debug en la memoria
@@ -60,4 +82,3 @@ module Memoria_Instrucciones
     end
 
 endmodule
-

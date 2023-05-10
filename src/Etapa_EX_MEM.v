@@ -115,7 +115,8 @@ module Etapa_EX_MEM
     assign o_LUI            =   LUI_reg             ;
     assign o_HALT           =   HALT_reg            ;
     
-    always @(posedge i_clk, posedge i_reset)
+    //always @(posedge i_clk, posedge i_reset, posedge i_Flush)
+    always @(posedge i_clk)
         if(i_Flush | i_reset)
              begin 
                 PC4_reg             <=  {NBITS{1'b0}}           ;

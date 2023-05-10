@@ -15,19 +15,16 @@ module Registros
         input   wire    [REGS-1         :0] i_RD            , //Escribir registro
         input   wire    [REGS-1         :0] i_RegDebug      , //Leer registro debug
         input   wire    [NBITS-1        :0] i_DatoEscritura , //Escribir dato
-        output  wire    [NBITS-1        :0] o_RS            , // Dato leido 1
-        output  wire    [NBITS-1        :0] o_RT            , // Dato leido 2
-        output  wire    [NBITS-1        :0] o_RegDebug
+        output  reg     [NBITS-1        :0] o_RS            , // Dato leido 1
+        output  reg     [NBITS-1        :0] o_RT            , // Dato leido 2
+        output  reg     [NBITS-1        :0] o_RegDebug
     );
     
     reg     [NBITS-1    :0]     memory[CELDAS-1:0]  ;
     reg     [NBITS-1    :0]     Reg_RS              ;
     reg     [NBITS-1    :0]     Reg_RT              ;
+    reg     [NBITS-1    :0]     Reg_Debug           ;
     integer                     i                   ;
-    
-    assign o_RS = Reg_RS;
-    assign o_RT = Reg_RT;
-    assign o_RegDebug = Reg_Debug;
     
     initial
     begin
@@ -36,30 +33,21 @@ module Registros
         end
     end
     
-    always @(posedge i_reset)
-    begin
-        if(i_reset) 
-        begin
-            Reg_RS         <=   {NBITS{1'b0}}   ;
-            Reg_RT         <=   {NBITS{1'b0}}   ;
-            o_RegDebug     <=   {NBITS{1'b0}}   ;
-            for (i = 0; i < CELDAS-1; i = i + 1) 
-            begin
-                memory[i] <= i;
-            end
-        end
-    end
 
     always @(*)
     begin
-            Reg_RS      <=  memory[i_RS]        ;
-            Reg_RT      <=  memory[i_RT]        ;
-            Reg_Debug   <=  memory[i_RegDebug]  ;
+        o_RS            <=  memory[i_RS]        ;
+        o_RT            <=  memory[i_RT]        ;
+        o_RegDebug      <=  memory[i_RegDebug]  ;
     end
 
-    always @(negedge i_clk)
+    always @(negedge i_clk )
     begin
-        if(i_RegWrite)
+        if(i_reset) begin
+            for (i = 0; i < CELDAS; i = i + 1) begin
+                memory[i] <= i;
+            end
+        end else if(i_RegWrite)
         begin
             memory[i_RD] <= i_DatoEscritura ;
         end
