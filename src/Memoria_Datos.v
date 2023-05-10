@@ -13,24 +13,19 @@ module Memoria_Datos
         input   wire    [NBITS-1    :0]     i_DatoRegistro  ,
         input   wire                        i_MemWrite      ,
         input   wire                        i_MemRead       ,
-        output  wire    [NBITS-1    :0]     o_DatoLeido     ,
-        output  wire    [NBITS-1    :0]     o_DebugDato
+        output  reg     [NBITS-1    :0]     o_DatoLeido     ,
+        output  reg     [NBITS-1    :0]     o_DebugDato
     );
     
     reg     [NBITS-1  :0]     memory[CELDAS-1:0];
-    reg     [NBITS-1  :0]     dato;
-    reg     [NBITS-1  :0]     debug_dato;
     integer i;
-    
-    assign o_DatoLeido  = dato;
-    assign o_DebugDato  = debug_dato;
-    
+
     initial 
     begin
         for (i = 0; i < CELDAS-1; i = i + 1) begin
                 memory[i] <= i;
         end
-        debug_dato  <=  0;
+        o_DebugDato  <=  0;
     end
     
 //    always @(posedge i_reset)
@@ -48,16 +43,16 @@ module Memoria_Datos
 
     always @(i_DebugDireccion)
     begin
-        debug_dato                  <=  memory[i_DebugDireccion];
+        o_DebugDato                  <=  memory[i_DebugDireccion];
     end
 
     always @(*)
     begin
         if (i_MemRead)
         begin   
-            dato                    <=  memory[i_ALUDireccion];
+            o_DatoLeido         <=  memory[i_ALUDireccion];
         end else begin
-            dato <= dato;
+            o_DatoLeido         <= o_DatoLeido;
         end
     end
 

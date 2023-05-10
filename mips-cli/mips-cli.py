@@ -80,10 +80,7 @@ def main():
                 send_char = input("Step Mode - press n for a new step ")
                 if (send_char == 'n'):
                     ser.write(send_char.encode())
-                    data_received = uartutils.receive_data(ser, 114)
-                    if(print_ins):
-                        printutils.print_instructions(data_received, ins_count)
-                        print_ins = False
+                    data_received = uartutils.receive_data(ser, 50)
                     print("--------------------------------------------------------")
                     printutils.print_mips_data( data_received, m_value, r_value)
 
@@ -92,8 +89,7 @@ def main():
             print("MIPS Processor Continuous Mode")
             send_char == 'r'
             ser.write(send_char.encode())
-            data_received = uartutils.receive_data(ser, 114)
-            printutils.print_instructions(data_received,ins_count )
+            data_received = uartutils.receive_data(ser, 50)
             printutils.print_mips_data(data_received , m_value, r_value)
             mode = 'IDLE'
 
