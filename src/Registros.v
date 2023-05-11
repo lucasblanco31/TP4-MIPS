@@ -10,6 +10,7 @@ module Registros
         input   wire                        i_clk           ,
         input   wire                        i_reset         ,
         input   wire                        i_RegWrite      ,
+        input   wire                        i_Step          ,
         input   wire    [REGS-1         :0] i_RS            , //Leer registro 1
         input   wire    [REGS-1         :0] i_RT            , //Leer registro 2
         input   wire    [REGS-1         :0] i_RD            , //Escribir registro
@@ -47,7 +48,7 @@ module Registros
             for (i = 0; i < CELDAS; i = i + 1) begin
                 memory[i] <= i;
             end
-        end else if(i_RegWrite)
+        end else if(i_RegWrite & i_Step)
         begin
             memory[i_RD] <= i_DatoEscritura ;
         end

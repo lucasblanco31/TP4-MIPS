@@ -30,6 +30,7 @@ module Top_MIPS
     (
         input   wire                                basys_clk                   ,
         input   wire                                basys_reset                 ,
+        input   wire                                i_mips_step                 ,
         input   wire                                i_mips_clk_ctrl             ,
         input   wire                                i_mips_reset_ctrl           ,
         input   wire     [REGS-1            :0]     i_mips_reg_debug            ,
@@ -367,6 +368,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk      ),
         .i_reset            (basys_reset    ),
+        .i_Step             (i_mips_step    ),
         .i_NPC              (IF_PC_i        ),
         .i_PC_Write         (RIESGO_PC_Write),
         .o_PC               (IF_PC_o        ),
@@ -386,6 +388,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk              ),
         .i_reset            (basys_reset            ),
+        .i_Step             (i_mips_step            ),
         .i_PC               (IF_PC_o                ),
         .i_DirecDebug       (IF_DirecInstrDebug_i   ),
         .i_DatoDebug        (IF_DatoInstrDebug_i    ),
@@ -408,6 +411,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk          ),
         .i_reset            (basys_reset        ),
+        .i_Step             (i_mips_step        ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
         //.i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
@@ -556,6 +560,7 @@ module Top_MIPS
     (
         .i_clk               (basys_clk                 ),
         .i_reset             (basys_reset               ),
+        .i_Step              (i_mips_step               ),
         .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (ID_Reg_rs_i               ),
         .i_RT                (ID_Reg_rt_i               ),
@@ -601,6 +606,7 @@ module Top_MIPS
         //General
         .i_clk                      (basys_clk                ),
         .i_reset                    (basys_reset              ),
+        .i_Step                     (i_mips_step              ),
         .i_Flush                    (RIESGO_Latch_Flush       ),
         .i_PC4                      (IF_ID_PC4                ),
         .i_PC8                      (IF_ID_PC8                ),
@@ -811,6 +817,7 @@ module Top_MIPS
         //General
         .i_clk                      (basys_clk              ),
         .i_reset                    (basys_reset            ),
+        .i_Step                     (i_mips_step            ),
         .i_Flush                    (RIESGO_Latch_Flush     ),
         .i_PC4                      (ID_EX_PC4              ),
         .i_PC8                      (ID_EX_PC8              ),
@@ -908,6 +915,7 @@ module Top_MIPS
     (
         .i_clk                      (basys_clk              ),
         .i_reset                    (basys_reset            ),
+        .i_Step                     (i_mips_step            ),
         .i_ALUDireccion             (EX_MEM_ALU             ),
         .i_DebugDireccion           (i_mips_mem_debug       ),
         .i_DatoRegistro             (MEM_DatoFiltradoS_o    ),
@@ -928,6 +936,7 @@ module Top_MIPS
     (
         .i_clk              (basys_clk              ),
         .i_reset            (basys_reset            ),
+        .i_Step             (i_mips_step            ),
         .i_PC4              (EX_MEM_PC4             ),
         .i_PC8              (EX_MEM_PC8             ),
         .i_Instruction      (EX_MEM_Instr           ),

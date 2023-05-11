@@ -11,6 +11,7 @@ module Etapa_MEM_WB
         input   wire                        i_reset             ,
         input   wire    [NBITS-1    :0]     i_PC4               ,
         input   wire    [NBITS-1    :0]     i_PC8               ,
+        input   wire                        i_Step              ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire    [NBITS-1    :0]     i_ALU               ,
         input   wire    [NBITS-1    :0]     i_DatoMemoria       ,
@@ -100,7 +101,7 @@ module Etapa_MEM_WB
                 LUI_reg             <=  1'b0                ;
                 HALT_reg            <=  1'b0                ;        
             end
-        else
+        else if (i_Step)
             begin 
                 PC4_reg             <=  i_PC4               ;
                 PC8_reg             <=  i_PC8               ;

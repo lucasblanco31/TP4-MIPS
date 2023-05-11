@@ -8,6 +8,7 @@ module Memoria_Instrucciones
     (
         input   wire                        i_clk           ,
         input   wire                        i_reset         ,
+        input   wire                        i_Step          ,
         input   wire    [NBITS-1    :0]     i_PC            ,
         input   wire    [NBITS-1    :0]     i_DirecDebug    ,
         input   wire    [NBITS-1    :0]     i_DatoDebug     ,
@@ -70,7 +71,7 @@ module Memoria_Instrucciones
 //        memory[156] <= 32'b11111111111111111111111111111111 ;
 //    end
 
-    always @(*)
+    always @i_Step)
     begin
         o_Instruction  <= memory[i_PC];
     end
