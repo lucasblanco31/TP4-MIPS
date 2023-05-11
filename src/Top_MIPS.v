@@ -30,6 +30,8 @@ module Top_MIPS
     (
         input   wire                                basys_clk                   ,
         input   wire                                basys_reset                 ,
+        input   wire                                i_mips_clk_ctrl             ,
+        input   wire                                i_mips_reset_ctrl           ,
         input   wire     [REGS-1            :0]     i_mips_reg_debug            ,
         input   wire     [NBITS-1           :0]     i_mips_mem_debug            ,
         input   wire     [BIT_CELDAS_I-1    :0]     i_mips_mem_ins_direc_debug  ,

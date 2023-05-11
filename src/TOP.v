@@ -67,8 +67,8 @@ module TOP
     wire                                uart_tx_done;
 
 
-    wire                                mips_clk;
-    wire                                mips_reset;
+    wire                                mips_clk_ctrl;
+    wire                                mips_reset_ctrl;
     wire                                mips_halt;
 
     wire    [   DATA_BITS-1:    0]      uart_rx_data;
@@ -95,8 +95,10 @@ module TOP
     )
     u_MIPS
     (
-        .clk                            (mips_clk                   ),
-        .reset                          (mips_reset                 ),
+        .clk                            (basys_clk                  ),
+        .reset                          (basys_reset                ),
+        .i_mips_clk_ctrl                (mips_clk_ctrl              ),
+        .i_mips_reset_ctrl              (mips_reset_ctrl            ),
         .i_mips_reg_debug               (mips_sel_reg_debug         ),
         .i_mips_mem_debug               (mips_sel_mem_debug         ),
         .i_mips_mem_ins_direc_debug     (mips_sel_mem_ins_debug     ),
@@ -156,8 +158,8 @@ module TOP
         .o_uart_rx_reset    (uart_rx_reset              ),
         .o_uart_tx_data     (uart_tx_data               ),
         .o_uart_tx_ready    (uart_tx_start              ),
-        .o_mips_clk         (mips_clk                   ),
-        .o_mips_reset       (mips_reset                 ),
+        .o_mips_clk_ctrl    (mips_clk_ctrl              ),
+        .o_mips_reset_ctrl  (mips_reset_ctrl            ),
         .o_mips_reg         (mips_sel_reg_debug         ),
         .o_mips_mem         (mips_sel_mem_debug         ),
         .o_mips_instr_sel   (mips_sel_mem_ins_debug     ),
