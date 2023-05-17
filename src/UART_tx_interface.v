@@ -3,7 +3,7 @@
 
 module UART_tx_interface
     #(
-        parameter       CLK_FREQ     = 5000000,  
+        parameter       CLK_FREQ     = 50000000,  
         parameter       BAUD_RATE    = 9600, 
         parameter       DATA_BITS    = 8
     )

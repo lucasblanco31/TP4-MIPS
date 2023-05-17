@@ -3,7 +3,7 @@
 // UART receiver module
 module UART_rx_interface
     #(
-        parameter       CLK_FREQ     = 5000000,  
+        parameter       CLK_FREQ     = 50000000,  
         parameter       BAUD_RATE    = 9600, 
         parameter       DIV_SAMPLE   = 16, //oversampling
         parameter       DATA_BITS    = 8 
