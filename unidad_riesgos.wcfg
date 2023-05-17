@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="198801fs"></ZoomEndTime>
-      <Cursor1Time time="1000fs"></Cursor1Time>
+      <ZoomEndTime time="154001fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="188"></NameColumnWidth>
-      <ValueColumnWidth column_width="75"></ValueColumnWidth>
+      <ValueColumnWidth column_width="67"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="33" />
    <wvobject type="logic" fp_name="/tb_full/basys_clk">
       <obj_property name="ElementShortName">basys_clk</obj_property>
       <obj_property name="ObjectShortName">basys_clk</obj_property>
@@ -31,6 +31,10 @@
    <wvobject type="logic" fp_name="/tb_full/halt">
       <obj_property name="ElementShortName">halt</obj_property>
       <obj_property name="ObjectShortName">halt</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_full/u_top/i_mips_step">
+      <obj_property name="ElementShortName">i_mips_step</obj_property>
+      <obj_property name="ObjectShortName">i_mips_step</obj_property>
    </wvobject>
    <wvobject fp_name="divider10921" type="divider">
       <obj_property name="label"> IF</obj_property>
@@ -71,6 +75,7 @@
    <wvobject type="group" fp_name="group129">
       <obj_property name="label">PC</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/tb_full/u_top/u_PC/i_NPC">
          <obj_property name="ElementShortName">i_NPC[31:0]</obj_property>
          <obj_property name="ObjectShortName">i_NPC[31:0]</obj_property>
@@ -83,6 +88,10 @@
          <obj_property name="ElementShortName">i_PC_Write</obj_property>
          <obj_property name="ObjectShortName">i_PC_Write</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_PC/i_Step">
+         <obj_property name="ElementShortName">i_Step</obj_property>
+         <obj_property name="ObjectShortName">i_Step</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/tb_full/u_top/u_PC/o_PC">
          <obj_property name="ElementShortName">o_PC[31:0]</obj_property>
          <obj_property name="ObjectShortName">o_PC[31:0]</obj_property>
@@ -93,6 +102,7 @@
    <wvobject type="group" fp_name="group483">
       <obj_property name="label">Mem Instrucciones</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb_full/u_top/u_Memoria_Instrucciones/i_clk">
          <obj_property name="ElementShortName">i_clk</obj_property>
          <obj_property name="ObjectShortName">i_clk</obj_property>
@@ -105,13 +115,17 @@
          <obj_property name="ElementShortName">i_PC[31:0]</obj_property>
          <obj_property name="ObjectShortName">i_PC[31:0]</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb_full/u_top/u_Memoria_Instrucciones/i_Step">
+         <obj_property name="ElementShortName">i_Step</obj_property>
+         <obj_property name="ObjectShortName">i_Step</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_full/u_top/u_Memoria_Instrucciones/memory">
+         <obj_property name="ElementShortName">memory[255:0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">memory[255:0][31:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/tb_full/u_top/u_Memoria_Instrucciones/o_Instruction">
          <obj_property name="ElementShortName">o_Instruction[31:0]</obj_property>
          <obj_property name="ObjectShortName">o_Instruction[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_full/u_top/u_Memoria_Instrucciones/memory">
-         <obj_property name="ElementShortName">memory[159:0][31:0]</obj_property>
-         <obj_property name="ObjectShortName">memory[159:0][31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="divider10922" type="divider">
@@ -125,10 +139,6 @@
       <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_IF_ID_Write">
          <obj_property name="ElementShortName">i_IF_ID_Write</obj_property>
          <obj_property name="ObjectShortName">i_IF_ID_Write</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_IF_ID_Flush">
-         <obj_property name="ElementShortName">i_IF_ID_Flush</obj_property>
-         <obj_property name="ObjectShortName">i_IF_ID_Flush</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_full/u_top/u_Etapa_IF_ID/i_PC8">
          <obj_property name="ElementShortName">i_PC8[31:0]</obj_property>
