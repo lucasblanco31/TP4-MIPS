@@ -7,7 +7,8 @@ module MIPS_Unidad_Debug
         parameter       REGS                = 5,
         parameter       MEM_REG_SIZE        = 32,
         parameter       MEM_DATA_SIZE       = 16,
-        parameter       MEM_INST_SIZE       = 256
+        parameter       MEM_INST_SIZE       = 256,
+        parameter       MEM_INST_BITS       = 8
     )
     (
         input                                   clk,
@@ -20,15 +21,14 @@ module MIPS_Unidad_Debug
         input           [NBITS-1        :0]     i_mips_clk_count,
         input           [NBITS-1        :0]     i_mips_reg,
         input           [NBITS-1        :0]     i_mips_mem,
-        input           [NBITS-1        :0]     i_mips_inst,
         output                                  o_uart_rx_reset,
         output          [DATA_BITS-1    :0]     o_uart_tx_data,
         output                                  o_uart_tx_ready,
-        output                                  o_mips_clk,        //Funcionara como clk del mips
-        output                                  o_mips_reset,
+        output                                  o_mips_clk_ctrl,        //Funcionara como señal de control para el mips
+        output                                  o_mips_reset_ctrl,
         output          [REGS-1         :0]     o_mips_reg,
         output          [NBITS-1        :0]     o_mips_mem,
-        output          [6-1            :0]     o_mips_instr_sel,
+        output          [MEM_INST_BITS-1:0]     o_mips_instr_sel,
         output          [NBITS-1        :0]     o_mips_instr_dato,
         output                                  o_mips_instr_write,
         output          [3              :0]     o_debug
@@ -53,7 +53,7 @@ module MIPS_Unidad_Debug
     localparam INST_COUNT_SIZE = $clog2(MEM_INST_SIZE);
 
 
-    reg                                         mips_clk;
+    reg                                         mips_clk_ctrl;
 
     reg               [          4    :0]       state, state_next;
     reg               [          3    :0]       debug, debug_next;
@@ -76,7 +76,7 @@ module MIPS_Unidad_Debug
     reg               [                 1    :0]       mips_mode, mips_mode_next;
     reg                                                mips_step, mips_step_next;
 
-    reg                                                mips_reset, mips_reset_next;
+    reg                                                mips_reset_ctrl, mips_reset_ctrl_next;
 
 
     assign o_debug         = debug;
@@ -86,8 +86,8 @@ module MIPS_Unidad_Debug
 
     assign o_uart_rx_reset = uart_rx_reset;
 
-    assign o_mips_clk      = mips_clk;
-    assign o_mips_reset    = mips_reset;
+    assign o_mips_clk_ctrl = mips_clk_ctrl;
+    assign o_mips_reset    = mips_reset_ctrl;
     assign o_mips_reg      = uart_tx_regs_count;
     assign o_mips_mem      = uart_tx_mem_count;
 
@@ -96,7 +96,7 @@ module MIPS_Unidad_Debug
     assign o_mips_instr_write   = uart_rx_inst_write;
 
 
-    always @ (posedge clk, posedge reset)
+    always @ (posedge clk)
         begin
             if (reset)begin
                 state                   <= IDLE;
@@ -114,7 +114,7 @@ module MIPS_Unidad_Debug
                 uart_tx_data_line       <= 0;
                 mips_mode               <= MIPS_STOP;
                 mips_step               <= 0;
-                mips_reset              <= 1;
+                mips_reset_ctrl              <= 1;
                 debug                   <= 0;
             end else begin
                 debug                   <= debug_next;
@@ -133,7 +133,7 @@ module MIPS_Unidad_Debug
                 uart_tx_data_line       <= uart_tx_data_line_next;
                 mips_mode               <= mips_mode_next;
                 mips_step               <= mips_step_next;
-                mips_reset              <= mips_reset_next;
+                mips_reset_ctrl              <= mips_reset_ctrl_next;
             end
         end
 
@@ -159,7 +159,7 @@ module MIPS_Unidad_Debug
 
         mips_mode_next      <= mips_mode;
         mips_step_next      <= mips_step;
-        mips_reset_next     <= mips_reset;
+        mips_reset_ctrl_next     <= mips_reset_ctrl;
 
         case (state)
             IDLE:
@@ -179,10 +179,10 @@ module MIPS_Unidad_Debug
             end
             RUN:
             begin
-                mips_reset_next <= 0;
+                mips_reset_ctrl_next <= 0;
                 mips_mode_next  <= MIPS_RUN;
                 if( i_mips_halt ) begin
-                    mips_reset_next <= 1;
+                    mips_reset_ctrl_next <= 1;
                     mips_mode_next  <= MIPS_STOP;
                     state_next      <= PREPARE_TX;
                 end
@@ -190,10 +190,10 @@ module MIPS_Unidad_Debug
             STEP:
             begin
                 debug_next <= 2;
-                mips_reset_next     <= 0;
+                mips_reset_ctrl_next     <= 0;
                 mips_mode_next      <= MIPS_STEP;
                 if( i_mips_halt ) begin
-                    mips_reset_next <= 1;
+                    mips_reset_ctrl_next <= 1;
                     mips_mode_next  <= MIPS_STOP;
                     state_next      <= PREPARE_TX;
                 end
@@ -278,16 +278,7 @@ module MIPS_Unidad_Debug
                         end
                         state_next              <= DATA_TX;
                     end
-                    4:
-                    begin
-                        uart_tx_data_line_next  <= i_mips_inst;
-                        uart_rx_inst_count_next <= uart_rx_inst_count + 4;
-                        if(uart_rx_inst_count == MEM_INST_SIZE-1) begin
-                            uart_tx_data_count_next <= uart_tx_data_count + 1;
-                        end
-                        state_next              <= DATA_TX;
-                    end
-                    5: // Termino de enviar todos los datos y vuelve a IDLE o STEP
+                    4: // Termino de enviar todos los datos y vuelve a IDLE o STEP
                     begin
                         uart_tx_data_count_next  <= 0;
                         if(mips_mode  == MIPS_STEP) begin
@@ -334,10 +325,10 @@ module MIPS_Unidad_Debug
     always @*
     begin
         case(mips_mode)
-            MIPS_RUN:   mips_clk <= clk;
-            MIPS_STEP:  mips_clk <= mips_step;
-            MIPS_STOP:  mips_clk <= 1'b0;
-            default:    mips_clk <= 1'b0;
+            MIPS_RUN:   mips_clk_ctrl <= 1'b1;
+            MIPS_STEP:  mips_clk_ctrl <= mips_step;
+            MIPS_STOP:  mips_clk_ctrl <= 1'b0;
+            default:    mips_clk_ctrl <= 1'b0;
         endcase
     end
 

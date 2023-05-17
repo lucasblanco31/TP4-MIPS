@@ -10,7 +10,8 @@ module Etapa_EX_MEM
         input   wire                        i_reset             ,
         input   wire                        i_Flush             ,
         input   wire    [NBITS-1    :0]     i_PC4               ,
-        input   wire    [NBITS-1    :0]     i_PC8               ,        
+        input   wire    [NBITS-1    :0]     i_PC8               ,
+        input   wire                        i_Step              ,
         input   wire    [NBITS-1    :0]     i_PCBranch          ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire                        i_Cero              ,
@@ -115,7 +116,8 @@ module Etapa_EX_MEM
     assign o_LUI            =   LUI_reg             ;
     assign o_HALT           =   HALT_reg            ;
     
-    always @(posedge i_clk, posedge i_reset)
+    //always @(posedge i_clk, posedge i_reset, posedge i_Flush)
+    always @(posedge i_clk)
         if(i_Flush | i_reset)
              begin 
                 PC4_reg             <=  {NBITS{1'b0}}           ;
@@ -144,7 +146,7 @@ module Etapa_EX_MEM
                 LUI_reg             <=  1'b0                    ;
                 HALT_reg            <=  1'b0                    ;
             end
-        else
+        else if (i_Step)
             begin 
                 PC4_reg             <=  i_PC4                   ;
                 PC8_reg             <=  i_PC8                   ;

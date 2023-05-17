@@ -23,6 +23,7 @@ module tb_full();
     
     reg     basys_clk = 0;
     reg     basys_rst = 0;
+    reg     mips_step = 1;
     
     wire     halt ;
     
@@ -48,6 +49,13 @@ module tb_full();
                 $finish;
             end 
           end
+    end
+    always @*
+    begin
+        forever
+            begin
+            #40 mips_step = ~mips_step;
+            end
     end
 
     //MIPS
@@ -94,6 +102,7 @@ module tb_full();
     (
         .basys_clk              (basys_clk            ),
         .basys_reset            (basys_rst            ),
+        .i_mips_step            (mips_step            ),
         .mips_halt              (halt                 )   
     );
        

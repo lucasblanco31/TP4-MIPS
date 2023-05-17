@@ -11,6 +11,7 @@ module Etapa_MEM_WB
         input   wire                        i_reset             ,
         input   wire    [NBITS-1    :0]     i_PC4               ,
         input   wire    [NBITS-1    :0]     i_PC8               ,
+        input   wire                        i_Step              ,
         input   wire    [NBITS-1    :0]     i_Instruction       ,
         input   wire    [NBITS-1    :0]     i_ALU               ,
         input   wire    [NBITS-1    :0]     i_DatoMemoria       ,
@@ -24,7 +25,7 @@ module Etapa_MEM_WB
         input   wire                        i_ZeroExtend        , 
         input   wire                        i_LUI               ,
         input   wire                        i_JAL               ,     
-        output  wire                        i_HALT              , 
+        input   wire                        i_HALT              , 
         
         //GeneralOutput
         output  wire    [NBITS-1    :0]     o_PC4               ,
@@ -79,7 +80,8 @@ module Etapa_MEM_WB
     assign o_LUI            =   LUI_reg                 ;
     assign o_HALT           =   HALT_reg                ;
     
-    always @(posedge i_clk, posedge i_reset)
+    //[always @(posedge i_clk, posedge i_reset)
+    always @(posedge i_clk)
         if(i_reset)
             begin
                 PC4_reg             <=  {NBITS{1'b0}}       ;
@@ -99,7 +101,7 @@ module Etapa_MEM_WB
                 LUI_reg             <=  1'b0                ;
                 HALT_reg            <=  1'b0                ;        
             end
-        else
+        else if (i_Step)
             begin 
                 PC4_reg             <=  i_PC4               ;
                 PC8_reg             <=  i_PC8               ;
