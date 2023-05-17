@@ -71,7 +71,7 @@ module Memoria_Instrucciones
 
 //    end
 
-    always @(*)
+    always @(posedge i_clk)
     begin
         if (i_Step)
         begin

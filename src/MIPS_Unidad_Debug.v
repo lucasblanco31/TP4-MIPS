@@ -53,7 +53,7 @@ module MIPS_Unidad_Debug
     localparam INST_COUNT_SIZE = $clog2(MEM_INST_SIZE);
 
 
-    reg                                         mips_clk;
+    reg                                         mips_clk_ctrl;
 
     reg               [          4    :0]       state, state_next;
     reg               [          3    :0]       debug, debug_next;

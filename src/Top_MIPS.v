@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 //module MIPS
-module Top_MIPS
+module MIPS
     #(
         parameter   NBITS           = 32,
         parameter   NBITSJUMP       = 26,
@@ -12,7 +12,7 @@ module Top_MIPS
         parameter   CELDAS_REG      = 32,
         parameter   CELDAS_M        = 10,
         parameter   CELDAS_I        = 256, // 64 lugares
-        parameter   BIT_CELDAS_I    = 6,
+        parameter   BIT_CELDAS_I    = 8,
 
         parameter   ALUNBITS        = 6,
         parameter   ALUCNBITS       = 2,
@@ -28,9 +28,8 @@ module Top_MIPS
         parameter   OPTIONBITS      = 4
     )
     (
-        input   wire                                basys_clk                   ,
-        input   wire                                basys_reset                 ,
-        input   wire                                i_mips_step                 ,
+        input   wire                                clk                         ,
+        input   wire                                reset                       ,
         input   wire                                i_mips_clk_ctrl             ,
         input   wire                                i_mips_reset_ctrl           ,
         input   wire     [REGS-1            :0]     i_mips_reg_debug            ,
@@ -38,11 +37,9 @@ module Top_MIPS
         input   wire     [BIT_CELDAS_I-1    :0]     i_mips_mem_ins_direc_debug  ,
         input   wire     [NBITS-1           :0]     i_mips_mem_ins_dato_debug   ,
         input   wire                                i_mips_mem_ins_write_debug  ,
-        output  wire     [11                :0]     o_mips_status               ,
         output  wire     [NBITS-1           :0]     o_mips_pc                   ,
         output  wire     [NBITS-1           :0]     o_mips_reg_debug            ,
         output  wire     [NBITS-1           :0]     o_mips_mem_debug            ,
-        output  wire     [NBITS-1           :0]     o_mips_inst_debug           ,
         output  wire                                mips_halt
     );
 
@@ -65,7 +62,6 @@ module Top_MIPS
 
     //MemoriaInstrucciones
     wire    [NBITS-1     :0]        IF_Instr_o              ;
-    wire    [NBITS-1     :0]        IF_DatoInstrDebug_o     ;
     wire    [NBITS-1     :0]        IF_DatoInstrDebug_i     ;
     wire    [NBITS-1     :0]        IF_DirecInstrDebug_i    ;
 
@@ -297,7 +293,6 @@ module Top_MIPS
     assign IF_DirecInstrDebug_i =   i_mips_mem_ins_direc_debug  ;
     assign IF_DatoInstrDebug_i  =   i_mips_mem_ins_dato_debug   ;
     assign IF_WriteInstrDebug_i =   i_mips_mem_ins_write_debug  ;
-    assign IF_DatoInstrDebug_o  =   o_mips_inst_debug           ;
 
     // EX
     // ALU Control
@@ -320,22 +315,7 @@ module Top_MIPS
 
     // OUTPUT
 
-    assign o_mips_status = {
-    ID_EX_CTRL_ALUOp[1],
-    ID_EX_CTRL_ALUOp[0],
-    ID_EX_CTRL_ALUSrc,
-    ID_EX_CTRL_Jump,
-    ID_EX_CTRL_JAL,
-    ID_EX_CTRL_RegDst,
-    ID_EX_CTRL_Branch,
-    ID_EX_CTRL_NBranch,
-    ID_EX_CTRL_MemWrite,
-    ID_EX_CTRL_MemRead,
-    ID_EX_CTRL_MemToReg,
-    ID_EX_CTRL_RegWrite,
-    ID_EX_CTRL_ZeroExtend,
-    ID_EX_CTRL_LUI
-    };
+
     assign o_mips_pc = IF_PC_o      ;
     assign mips_halt = MEM_WB_HALT  ;
     //////////////////////////////////////////////
@@ -366,9 +346,9 @@ module Top_MIPS
     )
     u_PC
     (
-        .i_clk              (basys_clk      ),
-        .i_reset            (basys_reset    ),
-        .i_Step             (i_mips_step    ),
+        .i_clk              (clk            ),
+        .i_reset            (reset          ),
+        .i_Step             (i_mips_clk_ctrl),
         .i_NPC              (IF_PC_i        ),
         .i_PC_Write         (RIESGO_PC_Write),
         .o_PC               (IF_PC_o        ),
@@ -386,15 +366,14 @@ module Top_MIPS
     )
     u_Memoria_Instrucciones
     (
-        .i_clk              (basys_clk              ),
-        .i_reset            (basys_reset            ),
-        .i_Step             (i_mips_step            ),
+        .i_clk              (clk                    ),
+        .i_reset            (reset                  ),
+        .i_Step             (i_mips_clk_ctrl        ),
         .i_PC               (IF_PC_o                ),
         .i_DirecDebug       (IF_DirecInstrDebug_i   ),
         .i_DatoDebug        (IF_DatoInstrDebug_i    ),
         .i_WriteDebug       (IF_WriteInstrDebug_i   ),
-        .o_Instruction      (IF_Instr_o             ),
-        .o_DebugInst        (IF_DatoInstrDebug_o    )
+        .o_Instruction      (IF_Instr_o             )
     );
 
     //********************************************
@@ -409,9 +388,9 @@ module Top_MIPS
     )
     u_Etapa_IF_ID
     (
-        .i_clk              (basys_clk          ),
-        .i_reset            (basys_reset        ),
-        .i_Step             (i_mips_step        ),
+        .i_clk              (clk                ),
+        .i_reset            (reset              ),
+        .i_Step             (i_mips_clk_ctrl    ),
         .i_IF_ID_Write      (RIESGO_IF_ID_Write ),
         //.i_IF_ID_Flush      (RIESGO_IF_ID_Flush ),
         .i_PC4              (IF_PC4_o           ),
@@ -558,9 +537,9 @@ module Top_MIPS
     )
     u_Registros
     (
-        .i_clk               (basys_clk                 ),
-        .i_reset             (basys_reset               ),
-        .i_Step              (i_mips_step               ),
+        .i_clk               (clk                       ),
+        .i_reset             (reset                     ),
+        .i_Step              (i_mips_clk_ctrl           ),
         .i_RegWrite          (MEM_WB_RegWrite           ),
         .i_RS                (ID_Reg_rs_i               ),
         .i_RT                (ID_Reg_rt_i               ),
@@ -604,9 +583,9 @@ module Top_MIPS
     u_Etapa_ID_EX
     (
         //General
-        .i_clk                      (basys_clk                ),
-        .i_reset                    (basys_reset              ),
-        .i_Step                     (i_mips_step              ),
+        .i_clk                      (clk                      ),
+        .i_reset                    (reset                    ),
+        .i_Step                     (i_mips_clk_ctrl          ),
         .i_Flush                    (RIESGO_Latch_Flush       ),
         .i_PC4                      (IF_ID_PC4                ),
         .i_PC8                      (IF_ID_PC8                ),
@@ -815,9 +794,9 @@ module Top_MIPS
     u_Etapa_EX_MEM
     (
         //General
-        .i_clk                      (basys_clk              ),
-        .i_reset                    (basys_reset            ),
-        .i_Step                     (i_mips_step            ),
+        .i_clk                      (clk                    ),
+        .i_reset                    (reset                  ),
+        .i_Step                     (i_mips_clk_ctrl        ),
         .i_Flush                    (RIESGO_Latch_Flush     ),
         .i_PC4                      (ID_EX_PC4              ),
         .i_PC8                      (ID_EX_PC8              ),
@@ -913,9 +892,9 @@ module Top_MIPS
     )
     u_Memoria_Datos
     (
-        .i_clk                      (basys_clk              ),
-        .i_reset                    (basys_reset            ),
-        .i_Step                     (i_mips_step            ),
+        .i_clk                      (clk                    ),
+        .i_reset                    (reset                  ),
+        .i_Step                     (i_mips_clk_ctrl        ),
         .i_ALUDireccion             (EX_MEM_ALU             ),
         .i_DebugDireccion           (i_mips_mem_debug       ),
         .i_DatoRegistro             (MEM_DatoFiltradoS_o    ),
@@ -934,9 +913,9 @@ module Top_MIPS
     )
     u_Etapa_MEM_WB
     (
-        .i_clk              (basys_clk              ),
-        .i_reset            (basys_reset            ),
-        .i_Step             (i_mips_step            ),
+        .i_clk              (clk                    ),
+        .i_reset            (reset                  ),
+        .i_Step             (i_mips_clk_ctrl        ),
         .i_PC4              (EX_MEM_PC4             ),
         .i_PC8              (EX_MEM_PC8             ),
         .i_Instruction      (EX_MEM_Instr           ),

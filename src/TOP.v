@@ -29,7 +29,7 @@ module TOP
         parameter BAUD_RATE         = 9600,
         parameter RX_DIV_SAMP       = 16,
         parameter CELDAS_MEM_DATOS  = 16,
-        parameter CELDAS_MEM_INSTR  = 64,
+        parameter CELDAS_MEM_INSTR  = 256,
         parameter CELDAS_REGISTROS  = 32
     )
     (
@@ -38,7 +38,6 @@ module TOP
         input   wire                                i_uart_rx,
         input   wire                                i_btn_tx,
         output  wire                                o_uart_tx,
-        output  wire        [       11  :0]         o_mips_state_debug,
         output  wire        [        3  :0]         o_d_unit_state_debug
     );
 
@@ -95,7 +94,7 @@ module TOP
     )
     u_MIPS
     (
-        .clk                            (basys_clk                  ),
+        .clk                            (clk_wz                     ),
         .reset                          (basys_reset                ),
         .i_mips_clk_ctrl                (mips_clk_ctrl              ),
         .i_mips_reset_ctrl              (mips_reset_ctrl            ),
@@ -104,10 +103,10 @@ module TOP
         .i_mips_mem_ins_direc_debug     (mips_sel_mem_ins_debug     ),
         .i_mips_mem_ins_dato_debug      (mips_dato_mem_ins_debug    ),
         .i_mips_mem_ins_write_debug     (mips_write_mem_ins_debug   ),
-        .o_mips_status                  (o_mips_state_debug         ),
         .o_mips_pc                      (mips_pc                    ),
         .o_mips_reg_debug               (mips_reg_debug             ),
-        .o_mips_mem_debug               (mips_mem_debug             )
+        .o_mips_mem_debug               (mips_mem_debug             ),
+        .mips_halt                      (mips_halt                  )
     );
 
     UART_tx_interface #(
@@ -168,14 +167,13 @@ module TOP
         .o_debug            (o_d_unit_state_debug       )
      );
 
-    always @(posedge mips_clk, posedge basys_reset)
+    always @(posedge clk_wz)
         begin
             if(basys_reset) begin
                 mips_clk_count = 0;
-            end else begin
+            end else if (mips_clk_ctrl) begin
                 mips_clk_count = mips_clk_count + 1;
             end
         end
 
 endmodule
-
